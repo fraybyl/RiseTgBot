@@ -1,0 +1,26 @@
+{
+    "RISE_BACKGROUND": {
+        "path": "data/photos/RiseBackground.png",
+        "file_id": "AgACAgIAAxkDAAIH72Zi4J9_Ioan1GCOWaw10q60Pa-2AAL52zEbjUkBS3Xsrv39xRDSAQADAgADdwADNQQ"
+    },
+    "RISE_SHOP": {
+        "path": "data/photos/RiseShop.png",
+        "file_id": "AgACAgIAAxkDAAIH_GZi5ktWNh89RPDr_BnkKIXV2ybKAAJX3TEb03kYS1dj8rtx0U35AQADAgADeQADNQQ"
+    },
+    "RISE_FOR_FARMERS": {
+        "path": "data/photos/RiseForFarmers.png",
+        "file_id": "AgACAgIAAxkDAAIIBmZi57yBwqM0IbiS-kra8qQqzNMHAAJ43DEbjUkBS4Y2S2qHUjK9AQADAgADeQADNQQ"
+    },
+    "RISE_PERSONAL": {
+        "path": "data/photos/RisePersonal.png",
+        "file_id": "AgACAgIAAxkDAAIIBmZi6IusuwABfHwbd_QhwszoCynm2QACitUxG41JCUvxyuylvbjh9gEAAwIAA3cAAzUE"
+    },
+    "RISE_GIFT_CODE": {
+        "path": "data/photos/RiseGiftCode.png",
+        "file_id": "AgACAgIAAxkDAAIIN2ZjAsOyjPOfFKBJfF6zsunXW9bTAAJm3DEbjUkBS_8YoRTk6Mi0AQADAgADeAADNQQ"
+    },
+    "RISE_LIMIT_ACCOUNT": {
+        "path": "data/photos/RiseLimitAccount.png",
+        "file_id": "AgACAgIAAxkDAAIIX2ZjDUSEPu2hfoIoUxa2qLNZ2wiBAAJl3DEbjUkBSxWD69wDoldiAQADAgADeQADNQQ"
+    }
+}
