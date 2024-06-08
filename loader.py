@@ -3,7 +3,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.strategy import FSMStrategy
 from aiogram.enums import ParseMode
-from bot.config import settings
+from bot.config import settings, config
 import json
 from aiogram.client.default import DefaultBotProperties
 import logging
@@ -46,5 +46,6 @@ bot = Bot(
 )
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
+configJson = config.ConfigManager('bot/config/config.json')
 
 

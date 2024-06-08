@@ -1,5 +1,5 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Float, BigInteger
-from sqlalchemy.orm import relationship, DeclarativeBase
+from sqlalchemy import DECIMAL, Column, Integer, String, DateTime, ForeignKey, Float, BigInteger, func
+from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from datetime import datetime
 from bot.config.settings import settings 
@@ -13,14 +13,24 @@ async_session = async_sessionmaker(engine)
 class User(Base):
     __tablename__ = 'user'
 
-    telegram_id = Column(BigInteger, primary_key=True, index=True, unique=True, nullable=False)
-    username = Column(String, unique=True, nullable=False)
-    created_at = Column(DateTime, default=datetime.now, nullable=False)
-    discount_percentage = Column(Float, default=0.0, nullable=False)
-    bonus_points = Column(Integer, default=0, nullable=False)
-    referred_by = Column(BigInteger, ForeignKey('user.telegram_id'), nullable=True)
+    telegram_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True, unique=True, nullable=False)
+    username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
+    discount_percentage: Mapped[float] = mapped_column(DECIMAL(5, 2), default=0.00, nullable=False)
+    bonus_points: Mapped[float] = mapped_column(DECIMAL(10, 2), default=0.00, nullable=False)
+    referred_by: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.telegram_id'), nullable=True)
 
     referrer = relationship('User', remote_side=[telegram_id])
+    
+class Product(Base):
+    __tablename__ = 'products'
+
+    id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
+    name: Mapped[str] = mapped_column(String(255))
+    price: Mapped[float] = mapped_column(DECIMAL(10, 2))
+    quantity: Mapped[int] = mapped_column(Integer)
+
+
     
 async def async_main():
     async with engine.begin() as conn:
