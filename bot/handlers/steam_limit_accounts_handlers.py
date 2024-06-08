@@ -56,8 +56,17 @@ async def process_quantity_limit_acc(message: Message, state: FSMContext):
                                        message_id=messageid, 
                                        caption=f"Вы выбрали {limit_acc}, количество: {quantity}".replace('_', r'\_'), 
                                        reply_markup=get_payment_limit_acc_kb())
+        
         await state.set_state(OrderStates.WAITING_PAYMENT)
+    
         #либо здесь логика оплаты либо в отдельной @router.callbackquery
+        #Здесь у тебя есть quantity - это заказанное количество и limit_acc это что за аккаунт на покупку взял человек
+        # отдели логику ордера покупки на отдельный файл. полностью. независимый от кнопок или еще чего. Чисто бизнес логика 
+        # и подключи его здесь как я полагаю 
+        # в любом случае сильно насирать в этом хендлере не надо. После обработки платежа сделай await state.clear()
+        # и по идеи тебе понадобятся PAYMENT_PROCCESS или что то типо такого стейта но я не уверен. возможно тебе хватит того что есть
+        # то естЬ WAITING_PAYMENT. 
+        
     except ValueError:
         await bot.edit_message_caption(chat_id=chatid, message_id=messageid, caption="Пожалуйста, введите число\\.", reply_markup=get_payment_limit_acc_kb())
 

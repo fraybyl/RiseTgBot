@@ -2,6 +2,7 @@ import asyncio
 from aiogram import Dispatcher
 from bot.handlers import start_handlers, shop_handlers, farmers_handlers, personal_handlers, strategy_handlers, steam_gift_code_handlers, steam_limit_accounts_handlers
 from loader import bot, dp
+from bot.database.models import async_main
 
 
 def register_routers(dp: Dispatcher):
@@ -14,7 +15,7 @@ def register_routers(dp: Dispatcher):
     dp.include_router(steam_limit_accounts_handlers.router)
     
 async def main() -> None:
-    #await async_main()
+    await async_main()
     register_routers(dp)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
