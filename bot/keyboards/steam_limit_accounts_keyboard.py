@@ -34,7 +34,22 @@ def get_payment_limit_acc_kb() -> InlineKeyboardMarkup:
         return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Отмена", callback_data="cancel_limit_acc"),
+                InlineKeyboardButton(text="Оплатить", callback_data="pay_limit_acc")
+            ],
+            [
+                InlineKeyboardButton(text="Использовать бонусы", callback_data="use_bonuse_limit_acc")
+            ],
+            [
+                InlineKeyboardButton(text="Назад", callback_data="cancel_limit_acc"),
+            ]
+        ]
+    )
+        
+def get_cancel_limit_acc_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Назад", callback_data="cancel_limit_acc"),
             ]
         ]
     )

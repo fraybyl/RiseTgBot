@@ -1,5 +1,5 @@
 from sqlalchemy.future import select
-from bot.database.models import async_session, User
+from bot.database.models import async_session, User, Product
 from loader import configJson
 from decimal import Decimal
 
@@ -37,3 +37,8 @@ async def get_user_by_telegram_id(telegram_id: int) -> User:
         if(isinstance(user, User)):
             return user
         
+async def get_product_by_name(product_name: str) -> Product:
+    async with async_session() as session:
+        product = await session.scalar(select(Product).where(Product.name == product_name))
+        if(isinstance(product, Product)):
+            return product

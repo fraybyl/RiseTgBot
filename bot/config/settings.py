@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     PAYMENTS_TOKEN: str
     USE_PROXY_FROM_FILE: bool = False
     model_config = SettingsConfigDict(env_file='.env', env_file_encoding='utf-8')
+    
 
 
 settings = Settings()

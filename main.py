@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Dispatcher
-from bot.handlers import start_handlers, shop_handlers, farmers_handlers, personal_handlers, strategy_handlers, steam_gift_code_handlers, steam_limit_accounts_handlers
+from bot.handlers import start_handlers, shop_handlers, farmers_handlers, personal_handlers, strategy_handlers, steam_gift_code_handlers, steam_limit_accounts_handlers, buy_handlers
 from loader import bot, dp
 from bot.database.models import async_main
 
@@ -13,6 +13,7 @@ def register_routers(dp: Dispatcher):
     dp.include_router(strategy_handlers.router)
     dp.include_router(steam_gift_code_handlers.router)
     dp.include_router(steam_limit_accounts_handlers.router)
+    dp.include_router(buy_handlers.router)
     
 async def main() -> None:
     await async_main()

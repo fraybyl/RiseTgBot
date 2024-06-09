@@ -1,4 +1,4 @@
-from sqlalchemy import DECIMAL, Column, Integer, String, DateTime, ForeignKey, Float, BigInteger, func
+from sqlalchemy import DECIMAL, Column, Integer, String, DateTime, ForeignKey, Float, BigInteger, func, VARCHAR
 from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
 from sqlalchemy.ext.asyncio import AsyncAttrs, async_sessionmaker, create_async_engine
 from datetime import datetime
@@ -27,8 +27,11 @@ class Product(Base):
 
     id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
     name: Mapped[str] = mapped_column(String(255))
+    label: Mapped[str] = mapped_column(String(64))
+    description: Mapped[str] = mapped_column(String(255))
     price: Mapped[float] = mapped_column(DECIMAL(10, 2))
     quantity: Mapped[int] = mapped_column(Integer)
+    photo_url: Mapped[str] = mapped_column(String(255))
 
 
     
