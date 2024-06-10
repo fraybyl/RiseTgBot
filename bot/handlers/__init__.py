@@ -1,1 +1,1 @@
-from . import start_handlers, shop_handlers, farmers_handlers, personal_handlers, strategy_handlers, steam_gift_code_handlers, steam_limit_accounts_handlers
+from . import products_handlers, start_handlers, error_handlers, buy_handlers, shop_handlers

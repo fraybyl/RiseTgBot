@@ -3,7 +3,7 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.strategy import FSMStrategy
 from aiogram.enums import ParseMode
-from bot.config import settings, config
+from bot.settings import settings, config
 import json
 from aiogram.client.default import DefaultBotProperties
 import logging
@@ -20,7 +20,7 @@ def get_fluent_localization() -> FluentLocalization:
 
     # Проверки, чтобы убедиться
     # в наличии правильного файла в правильном каталоге
-    locale_dir = Path(__file__).parent.joinpath("l10n")
+    locale_dir = Path(__file__).parent.joinpath("bot/l10n")
     if not locale_dir.exists():
         error = "'l10n' directory not found"
         raise FileNotFoundError(error)
@@ -68,7 +68,9 @@ class FileIds:
     def has_file_id(self, key):
         return 'file_id' in self.file_ids.get(key, {})
 
+
 fileIds = FileIds('data/file_ids.json')
+configJson = config.ConfigManager('data/config.json')
 
 # Инициализация бота и диспетчера
 bot = Bot(
@@ -77,6 +79,6 @@ bot = Bot(
 )
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
-configJson = config.ConfigManager('bot/config/config.json')
+
 
 

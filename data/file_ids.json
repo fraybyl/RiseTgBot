@@ -1,26 +1,36 @@
 {
     "RISE_BACKGROUND": {
-        "path": "data/photos/RiseBackground.png",
-        "file_id": "AgACAgIAAxkDAAIH72Zi4J9_Ioan1GCOWaw10q60Pa-2AAL52zEbjUkBS3Xsrv39xRDSAQADAgADdwADNQQ"
+        "path": "data/photos/Main.png",
+        "file_id": "AgACAgIAAxkDAAILTWZmugynuYwspnSXJyze7f1lkKv1AALS2TEbD_MwSwKNPGXH7GwlAQADAgADdwADNQQ"
     },
     "RISE_SHOP": {
-        "path": "data/photos/RiseShop.png",
-        "file_id": "AgACAgIAAxkDAAIH_GZi5ktWNh89RPDr_BnkKIXV2ybKAAJX3TEb03kYS1dj8rtx0U35AQADAgADeQADNQQ"
+        "path": "data/photos/Shop.png",
+        "file_id": "AgACAgIAAxkDAAILc2ZmwnncYySjHkofLCMJLu0OGZl7AALt2TEbD_MwS7bXfmmB1-yDAQADAgADdwADNQQ"
     },
     "RISE_FOR_FARMERS": {
-        "path": "data/photos/RiseForFarmers.png",
-        "file_id": "AgACAgIAAxkDAAIIBmZi57yBwqM0IbiS-kra8qQqzNMHAAJ43DEbjUkBS4Y2S2qHUjK9AQADAgADeQADNQQ"
+        "path": "data/photos/for_farmers.png"
     },
     "RISE_PERSONAL": {
-        "path": "data/photos/RisePersonal.png",
-        "file_id": "AgACAgIAAxkDAAIIBmZi6IusuwABfHwbd_QhwszoCynm2QACitUxG41JCUvxyuylvbjh9gEAAwIAA3cAAzUE"
+        "path": "data/photos/Personal.png"
     },
     "RISE_GIFT_CODE": {
-        "path": "data/photos/RiseGiftCode.png",
-        "file_id": "AgACAgIAAxkDAAIIN2ZjAsOyjPOfFKBJfF6zsunXW9bTAAJm3DEbjUkBS_8YoRTk6Mi0AQADAgADeAADNQQ"
+        "path": "data/photos/Steam_gift.png",
+        "file_id": "AgACAgIAAxkDAAILdWZmxEsJnwdi-8D-Lc_L22mu8O7yAAL32TEbD_MwS40iUINiYyJwAQADAgADeQADNQQ"
     },
     "RISE_LIMIT_ACCOUNT": {
-        "path": "data/photos/RiseLimitAccount.png",
-        "file_id": "AgACAgIAAxkDAAIIX2ZjDUSEPu2hfoIoUxa2qLNZ2wiBAAJl3DEbjUkBSxWD69wDoldiAQADAgADeQADNQQ"
+        "path": "data/photos/Steam_account.png",
+        "file_id": "AgACAgIAAxkDAAILdWZmxElyT_IeLmzDMrf1ohEwFKMEAAL22TEbD_MwS5tRhcZzHF3EAQADAgADeQADNQQ"
+    },
+    "RISE_STRATEGY": {
+        "path": "data/photos/strategy_info.png"
+    },
+    "AGGRESIVE": {
+        "path": "data/photos/Aggresive.png"
+    },
+    "CONSERVATIVE": {
+        "path": "data/photos/Konservate.png"
+    },
+    "MODERATE": {
+        "path": "data/photos/Moderate.png"
     }
 }

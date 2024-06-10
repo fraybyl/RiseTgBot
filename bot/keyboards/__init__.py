@@ -1,1 +1,1 @@
-from . import start_keyboard, shop_keyboard, personal_keyboard, farmers_keyboard, steam_gift_code_keyboard, steam_limit_accounts_keyboard
+from . import user_kb
