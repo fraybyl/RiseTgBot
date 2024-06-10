@@ -101,8 +101,6 @@ async def handle_back_strategy(query: CallbackQuery, state: FSMContext):
     media_type = data.get('media_type')
     text_strategy = data.get('text_strategy')
     initial_accounts = data.get('initial_accounts')
-    print(await state.get_state())
-    print(previous_state)
     
     await state.set_state(previous_state)
     
