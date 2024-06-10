@@ -1,6 +1,7 @@
+# handlers/buy_handlers.py
 import math
 import logging
-from aiogram import Router, F
+from aiogram import Router
 from aiogram.types import CallbackQuery, Message
 from aiogram.fsm.context import FSMContext
 from bot.keyboards.buy_keyboard import get_cancel_keyboard, get_payment_keyboard
@@ -9,6 +10,7 @@ from bot.states.order_states import OrderStates
 from bot.utils.calculated_minimal_price import calculate_quantity_for_min_price, calculate_discount_for_price
 from bot.database.db_requests import get_product_by_name, get_user_by_telegram_id
 from loader import bot, configJson
+from bot.utils.utils import escape_characters
 
 router = Router()
 
@@ -131,6 +133,3 @@ async def handle_payment(query: CallbackQuery, state: FSMContext):
     except Exception as e:
         logging.error(f"Error processing payment: {e}")
         await send_error_message(query.message.chat.id, query.message.message_id, "Произошла ошибка при обработке платежа. Попробуйте еще раз.")
-
-def escape_characters(text: str):
-    return text.replace('.', '\\.').replace('-', '\\-').replace('_', '\\_')

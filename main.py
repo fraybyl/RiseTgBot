@@ -1,8 +1,9 @@
 import asyncio
 from aiogram import Dispatcher
 from bot.handlers import start_handlers, shop_handlers, farmers_handlers, personal_handlers, strategy_handlers, steam_gift_code_handlers, steam_limit_accounts_handlers, buy_handlers
-from loader import bot, dp
+from loader import bot, dp, get_fluent_localization
 from bot.database.models import async_main
+from bot.middlewares.localization import L10nMiddleware
 
 
 def register_routers(dp: Dispatcher):
@@ -17,6 +18,11 @@ def register_routers(dp: Dispatcher):
     
 async def main() -> None:
     await async_main()
+    
+    locale = get_fluent_localization()
+    dp.message.outer_middleware(L10nMiddleware(locale))
+    dp.pre_checkout_query.outer_middleware(L10nMiddleware(locale))
+    
     register_routers(dp)
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
