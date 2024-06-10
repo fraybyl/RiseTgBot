@@ -1,1 +1,1 @@
-from . import products_handlers, start_handlers, error_handlers, buy_handlers, shop_handlers, personal_handlers
+from . import *

@@ -8,7 +8,8 @@
         "file_id": "AgACAgIAAxkDAAILc2ZmwnncYySjHkofLCMJLu0OGZl7AALt2TEbD_MwS7bXfmmB1-yDAQADAgADdwADNQQ"
     },
     "RISE_FOR_FARMERS": {
-        "path": "data/photos/for_farmers.png"
+        "path": "data/photos/for_farmers.png",
+        "file_id": "AgACAgIAAxkDAAIM12ZnYAgGPjkuD9fsy-x295bGxcJUAAIr3zEbsCY5S4-yTqtEmvKUAQADAgADdwADNQQ"
     },
     "RISE_PERSONAL": {
         "path": "data/photos/Personal.png",
@@ -23,15 +24,19 @@
         "file_id": "AgACAgIAAxkDAAILdWZmxElyT_IeLmzDMrf1ohEwFKMEAAL22TEbD_MwS5tRhcZzHF3EAQADAgADeQADNQQ"
     },
     "RISE_STRATEGY": {
-        "path": "data/photos/strategy_info.png"
+        "path": "data/photos/strategy_info.png",
+        "file_id": "AgACAgIAAxkDAAIM12ZnYD7AGCoqBnVqJL3hviBJD0ZyAAIH3DEbsCYxS9IzkxA91BteAQADAgADdwADNQQ"
     },
     "AGGRESIVE": {
-        "path": "data/photos/Aggresive.png"
+        "path": "data/photos/Aggresive.png",
+        "file_id": "AgACAgIAAxkDAAINBGZnY6A0kqBE5eh_yHwrzkLBwdKsAAIK3DEbsCYxS9jtfI3-Juo9AQADAgADeQADNQQ"
     },
     "CONSERVATIVE": {
-        "path": "data/photos/Konservate.png"
+        "path": "data/photos/Konservate.png",
+        "file_id": "AgACAgIAAxkDAAINIGZnbFsSbNYIjB9au9v6ZiusAAF10wACCNwxG7AmMUtEUAsleH5wdQEAAwIAA3kAAzUE"
     },
     "MODERATE": {
-        "path": "data/photos/Moderate.png"
+        "path": "data/photos/Moderate.png",
+        "file_id": "AgACAgIAAxkDAAINBmZnZJeB8O7yamWlYOonHuJ3B33gAAIJ3DEbsCYxSz3dDtPfZbX3AQADAgADeQADNQQ"
     }
 }

@@ -129,6 +129,37 @@ def get_farmers_kb() -> InlineKeyboardMarkup:
         ]
     )
     
+#--------------------------STRATEGY-----------------------
+def get_strategy_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard= [
+            [
+                InlineKeyboardButton(text="Агрессивная стратегия", callback_data="aggressive_strategy")
+            ],
+            [
+                InlineKeyboardButton(text="Умеренная стратегия", callback_data="moderate_strategy"),
+            ],
+            [
+                InlineKeyboardButton(text="Консервативная стратегия", callback_data="conservative_strategy"),
+            ],
+            [
+                InlineKeyboardButton(text="Назад", callback_data="back_farmers"),
+            ]
+        ]
+    )
+
+def get_cancel_strategy_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard= [
+            [
+                InlineKeyboardButton(text='В начало', callback_data='back_farmers')
+            ],
+            [
+                InlineKeyboardButton(text='Назад', callback_data="back_strategy")
+            ]
+        ]
+    )
+    
 #--------------------------PERSONAL-----------------------
     
 def get_personal_kb() -> InlineKeyboardMarkup:

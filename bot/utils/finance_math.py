@@ -5,7 +5,6 @@ def calculate_discount_percentage(price, discount):
     discount_percentage = round(discount_percentage, 2)
     return float(discount_percentage)
 
-
 def calculate_quantity(price, discount, minimal_price):
     discount_percentage = calculate_discount_percentage(price, discount)
     quantity = int(minimal_price) / float(discount_percentage)

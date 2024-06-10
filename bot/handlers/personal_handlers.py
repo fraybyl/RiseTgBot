@@ -1,5 +1,5 @@
 from aiogram import Router
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import CallbackQuery
 from bot.keyboards.user_kb import get_personal_kb
 from fluent.runtime import FluentLocalization
 from bot.utils import utils

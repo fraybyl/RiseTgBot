@@ -71,8 +71,8 @@ async def process_product_quantity_input(message: Message, state: FSMContext, l1
                                         reply_markup=get_payment_order_kb())
         
         await state.set_state(OrderStates.WAITING_CONFIRMATION)
-    except:
-        pass
+    except Exception as e:
+        print(e)
     
 @router.callback_query(lambda query: query.data == 'bonus_use_product', OrderStates.WAITING_CONFIRMATION)
 async def handle_bonus_use(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
@@ -101,8 +101,8 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext, l10n: Fluent
         
         await query.message.edit_caption(caption=l10n.format_value('choose-bonus', {'maxBonus': min(max_bonus, user.bonus_points)}), reply_markup=get_cancel_order_kb())
         
-    except:
-        pass
+    except Exception as e:
+        print(e)
     
 @router.message(OrderStates.WAITING_BONUS_USE)
 async def process_bonus_quantity_input(message: Message, state: FSMContext, l10n: FluentLocalization):
@@ -144,8 +144,8 @@ async def process_bonus_quantity_input(message: Message, state: FSMContext, l10n
         await state.update_data(bonus_use = bonus_use)
         
         await state.set_state(OrderStates.WAITING_CONFIRMATION)
-    except:
-        pass
+    except Exception as e:
+        print(e)
     
 @router.callback_query(lambda query: query.data == 'payment_product', OrderStates.WAITING_CONFIRMATION)
 async def handle_payment_product(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
@@ -168,7 +168,6 @@ async def handle_back_order(query: CallbackQuery, state: FSMContext, l10n: Fluen
     
     product = await get_product_by_name(current_product)
     
-    print(current_state)
     if(not isinstance(current_product, str) or current_product is None):
         await handle_error_back(query, state)
         return
