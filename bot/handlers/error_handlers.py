@@ -23,3 +23,4 @@ async def send_error_order_message(chat_id, message_id, text):
         )
     except Exception as e:
         logging.error(f"Failed to send error message: {e}")
+        

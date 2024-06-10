@@ -8,6 +8,7 @@ from bot.handlers.error_handlers import handle_error_back
 from bot.utils import utils
 from loader import bot, configJson
 from bot.database.db_requests import get_product_by_name, get_user_by_telegram_id
+from bot.utils import finance_math
 
 router = Router()
 
@@ -65,11 +66,11 @@ async def process_product_quantity_input(message: Message, state: FSMContext, l1
                                         caption=l10n.format_value('use-bonus', {'productLabel': "ХУЙ", 'quantity': quantity_product, 'bonusQuantity': 0}),
                                         reply_markup=get_payment_order_kb())
         
-        await state.set_state(OrderStates.WAITING_PAYMENT)
+        await state.set_state(OrderStates.WAITING_CONFIRMATION)
     except:
         pass
     
-@router.callback_query(lambda query: query.data == 'bonus_use_product', OrderStates.WAITING_PAYMENT)
+@router.callback_query(lambda query: query.data == 'bonus_use_product', OrderStates.WAITING_CONFIRMATION)
 async def handle_bonus_use(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     data = await state.get_data()
     current_product = data.get('current_product')
@@ -78,20 +79,24 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext, l10n: Fluent
     user = await get_user_by_telegram_id(query.from_user.id)
     
     minimal_price = await configJson.get_config_value('minimal_price')
+    quantity_product = data.get('quantity_product')
+    
+    await state.set_state(OrderStates.WAITING_BONUS_USE)
+    await state.update_data(previous_state=OrderStates.WAITING_CONFIRMATION)
     
     try:
         if not user.bonus_points:
-            await query.message.edit_caption(caption=l10n.format_value('not-bonus'), reply_markup=get_payment_order_kb())
+            await query.message.edit_caption(caption=l10n.format_value('not-bonus'), reply_markup=get_cancel_order_kb())
             return
         
-        max_bonus = 10
+        max_bonus = finance_math.calculate_max_bonus(product.price * 100, user.discount_percentage, minimal_price)
+        print(max_bonus)
         if max_bonus <= 0:
-            await query.message.edit_caption(caption=l10n.format_value('cant-use-bonus', {'minimalPprice': minimal_price}), reply_markup=get_payment_order_kb())
+            await query.message.edit_caption(caption=l10n.format_value('cant-use-bonus', {'minimalPprice': minimal_price}), reply_markup=get_cancel_order_kb())
             return
         
         await query.message.edit_caption(caption=l10n.format_value('choose-bonus', {'maxBonus': max_bonus}), reply_markup=get_cancel_order_kb())
-        await state.set_state(OrderStates.WAITING_BONUS_USE)
-        await state.update_data(previous_state=OrderStates.WAITING_PAYMENT)
+        
     except:
         pass
     
@@ -103,12 +108,15 @@ async def process_bonus_quantity_input(message: Message, state: FSMContext, l10n
     quantity_product = data.get('quantity_product')
     
     product = await get_product_by_name(current_product)
+    user = await get_user_by_telegram_id(message.from_user.id)
+    minimal_price = await configJson.get_config_value('minimal_price')
+    max_bonus = finance_math.calculate_max_bonus(product.price * 100, user.discount_percentage, minimal_price)
     
     try:
         await message.delete()
-        if not message.text.isdigit() or int(message.text) < 0:
+        if not message.text.isdigit() or int(message.text) < 0 or int(message.text) > max_bonus :
             await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                           caption=l10n.format_value('error-choose-bonus', {'maxBonus': 10}),
+                                           caption=l10n.format_value('error-choose-bonus', {'maxBonus': max_bonus}),
                                            reply_markup=get_cancel_order_kb())
             return
         
@@ -117,19 +125,20 @@ async def process_bonus_quantity_input(message: Message, state: FSMContext, l10n
                                        caption=l10n.format_value('use-bonus', {'productLabel': product.label, 'quantity': quantity_product, 'bonusQuantity': bonus_use}),
                                        reply_markup=get_payment_order_kb())
         await state.update_data(bonus_use = bonus_use)
-        await state.set_state(OrderStates.WAITING_PAYMENT)
+        
+        await state.set_state(OrderStates.WAITING_CONFIRMATION)
     except:
         pass
     
-@router.callback_query(lambda query: query.data == 'payment_product', OrderStates.WAITING_PAYMENT)
+@router.callback_query(lambda query: query.data == 'payment_product', OrderStates.WAITING_CONFIRMATION)
 async def handle_payment_product(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     data = await state.get_data()
     current_product = data.get('current_product')
     quantity_product =  data.get('quantity_product')
     bonus_use =  data.get('bonus_use')
-    await query.message.edit_caption(caption=f'{current_product}\n{quantity_product}\n{bonus_use or 0}', reply_markup=get_cancel_order_kb(), parse_mode="html")  
-    
-
+    await query.message.edit_caption(caption=f'{current_product}\n{quantity_product}\n{bonus_use or 0}', reply_markup=get_cancel_order_kb(), parse_mode="html") 
+    await state.set_state(OrderStates.WAITING_PAYMENT)
+    await state.update_data(previous_state=OrderStates.WAITING_CONFIRMATION)
     
 @router.callback_query(lambda query: query.data == "back_order")
 async def handle_back_order(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
@@ -157,7 +166,7 @@ async def handle_back_order(query: CallbackQuery, state: FSMContext, l10n: Fluen
     if(current_product in ['buy_gift_5', 'buy_gift_10', 'buy_gift_15', 'buy_gift_20']):    
         media_type = "RISE_GIFT_CODE"
     
-    if(current_state == OrderStates.WAITING_QUANTITY):
+    if(current_state in [OrderStates.WAITING_QUANTITY, OrderStates.WAITING_CONFIRMATION]):
         await state.set_state(state=None)
         await state.update_data(current_product=current_product)
         await utils.edit_message_media(query, media_type, get_buy_order_kb())
