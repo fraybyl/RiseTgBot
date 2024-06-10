@@ -26,15 +26,13 @@ class Product(Base):
     __tablename__ = 'products'
 
     id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
-    name: Mapped[str] = mapped_column(String(255))
-    label: Mapped[str] = mapped_column(String(64))
-    description: Mapped[str] = mapped_column(String(255))
-    price: Mapped[float] = mapped_column(DECIMAL(10, 2))
-    quantity: Mapped[int] = mapped_column(Integer)
-    photo_url: Mapped[str] = mapped_column(String(255))
+    name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    label: Mapped[str] = mapped_column(String(64), nullable=False)
+    description: Mapped[str] = mapped_column(String(255), nullable=True)
+    price: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=True)
+    photo_url: Mapped[str] = mapped_column(String(255), nullable=True)
 
-
-    
 async def async_main():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)

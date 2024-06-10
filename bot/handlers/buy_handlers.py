@@ -7,6 +7,7 @@ from bot.states.order_states import OrderStates
 from bot.handlers.error_handlers import handle_error_back
 from bot.utils import utils
 from loader import bot, configJson
+from bot.database.db_requests import get_product_by_name, get_user_by_telegram_id
 
 router = Router()
 
@@ -32,16 +33,18 @@ async def handle_buy_product(query: CallbackQuery, l10n: FluentLocalization, sta
         await handle_error_back(query, state)
         return
     
+    product = await get_product_by_name(current_product)
+    
     message_id = await utils.edit_message_media(query, image_to_use, get_cancel_order_kb(), 
-                                   caption=l10n.format_value("product-info", {'productQuantity': 123, 'productPrice': 15}))
+                                   caption=l10n.format_value("product-info", {'productQuantity': product.quantity, 'productPrice': product.price}))
     
     await state.set_state(OrderStates.WAITING_QUANTITY)
-    await state.update_data(previous_state=OrderStates.WAITING_QUANTITY, message_id=message_id)
+    await state.update_data(message_id=message_id)
+
 
 @router.message(OrderStates.WAITING_QUANTITY)
 async def process_product_quantity_input(message: Message, state: FSMContext, l10n: FluentLocalization):
     try:
-        
         data = await state.get_data()
         message_id  = data.get('message_id')
         
@@ -62,23 +65,25 @@ async def process_product_quantity_input(message: Message, state: FSMContext, l1
                                         caption=l10n.format_value('use-bonus', {'productLabel': "ХУЙ", 'quantity': quantity_product, 'bonusQuantity': 0}),
                                         reply_markup=get_payment_order_kb())
         
-        await state.set_state(OrderStates.WAITING_PAYMENT) 
+        await state.set_state(OrderStates.WAITING_PAYMENT)
     except:
         pass
     
 @router.callback_query(lambda query: query.data == 'bonus_use_product', OrderStates.WAITING_PAYMENT)
 async def handle_bonus_use(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     data = await state.get_data()
-    price = 15
-    bonus_points = 5
+    current_product = data.get('current_product')
+    
+    product = await get_product_by_name(current_product)
+    user = await get_user_by_telegram_id(query.from_user.id)
+    
     minimal_price = await configJson.get_config_value('minimal_price')
     
     try:
-        if not bonus_points:
+        if not user.bonus_points:
             await query.message.edit_caption(caption=l10n.format_value('not-bonus'), reply_markup=get_payment_order_kb())
             return
         
-        quantity_product = data.get('quantity_product')
         max_bonus = 10
         if max_bonus <= 0:
             await query.message.edit_caption(caption=l10n.format_value('cant-use-bonus', {'minimalPprice': minimal_price}), reply_markup=get_payment_order_kb())
@@ -86,16 +91,18 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext, l10n: Fluent
         
         await query.message.edit_caption(caption=l10n.format_value('choose-bonus', {'maxBonus': max_bonus}), reply_markup=get_cancel_order_kb())
         await state.set_state(OrderStates.WAITING_BONUS_USE)
-        
+        await state.update_data(previous_state=OrderStates.WAITING_PAYMENT)
     except:
         pass
     
 @router.message(OrderStates.WAITING_BONUS_USE)
 async def process_bonus_quantity_input(message: Message, state: FSMContext, l10n: FluentLocalization):
     data = await state.get_data()
+    current_product = data.get('current_product')
     message_id = data.get('message_id')
-    productLabel = 'ХУЙ'
     quantity_product = data.get('quantity_product')
+    
+    product = await get_product_by_name(current_product)
     
     try:
         await message.delete()
@@ -107,7 +114,7 @@ async def process_bonus_quantity_input(message: Message, state: FSMContext, l10n
         
         bonus_use = int(message.text)
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                       caption=l10n.format_value('use-bonus', {'productLabel': productLabel, 'quantity': quantity_product, 'bonusQuantity': bonus_use}),
+                                       caption=l10n.format_value('use-bonus', {'productLabel': product.label, 'quantity': quantity_product, 'bonusQuantity': bonus_use}),
                                        reply_markup=get_payment_order_kb())
         await state.update_data(bonus_use = bonus_use)
         await state.set_state(OrderStates.WAITING_PAYMENT)
@@ -133,6 +140,9 @@ async def handle_back_order(query: CallbackQuery, state: FSMContext, l10n: Fluen
     quantity_product = data.get('quantity_product')
     bonus_use = data.get('bonus_use')
     
+    product = await get_product_by_name(current_product)
+    
+    print(current_state)
     if(not isinstance(current_product, str) or current_product is None):
         await handle_error_back(query, state)
         return
@@ -154,7 +164,7 @@ async def handle_back_order(query: CallbackQuery, state: FSMContext, l10n: Fluen
     elif(current_state in [OrderStates.WAITING_BONUS_USE, OrderStates.WAITING_PAYMENT]):
         await state.set_state(previous_state)
         await utils.edit_message_media(query, media_type, get_payment_order_kb(), 
-                                        caption=l10n.format_value('use-bonus', {'productLabel': "ХУЙ", 'quantity': quantity_product, 'bonusQuantity': bonus_use or 0}))
+                                        caption=l10n.format_value('use-bonus', {'productLabel': product.label, 'quantity': quantity_product, 'bonusQuantity': bonus_use or 0}))
         
     
     

@@ -4,6 +4,7 @@ from aiogram.fsm.context import FSMContext
 from bot.keyboards.user_kb import get_limit_acc_kb, get_buy_order_kb, get_gift_code_kb
 from bot.handlers.error_handlers import handle_error_back
 from fluent.runtime import FluentLocalization
+from bot.database.db_requests import get_product_by_name
 from bot.utils import utils
 router = Router()
 
@@ -31,7 +32,9 @@ async def handle_product_selection(query: CallbackQuery, state: FSMContext, l10n
         elif('gift' in query.data):
             media_type = 'RISE_GIFT_CODE'
 
-        await utils.edit_message_media(query, media_type, get_buy_order_kb(), caption=l10n.format_value('product-select', {'productLabel': query.data}))
+        product = await get_product_by_name(query.data)
+
+        await utils.edit_message_media(query, media_type, get_buy_order_kb(), caption=l10n.format_value('product-select', {'productLabel': product.label}))
 
 
 @router.callback_query(lambda query: query.data == "back_categories")

@@ -3,6 +3,7 @@ from aiogram import Dispatcher
 from loader import bot, dp, get_fluent_localization
 from bot.middlewares.localization import L10nMiddleware
 from bot.handlers import start_handlers, shop_handlers, products_handlers, buy_handlers
+from bot.database.models import async_main
 
 def register_routers(dp: Dispatcher):
     dp.include_router(start_handlers.router)
@@ -12,7 +13,7 @@ def register_routers(dp: Dispatcher):
     
 
 async def main() -> None:
-    
+    await async_main()
     locale = get_fluent_localization()
     dp.message.outer_middleware(L10nMiddleware(locale))
     dp.callback_query.outer_middleware(L10nMiddleware(locale))
