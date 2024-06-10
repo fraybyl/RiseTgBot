@@ -48,10 +48,14 @@ async def process_product_quantity_input(message: Message, state: FSMContext, l1
     try:
         data = await state.get_data()
         message_id  = data.get('message_id')
-        
+        current_product: str = data.get('current_product')
         minimal_price = await configJson.get_config_value('minimal_price')
-        min_quantity = 1
         
+        product = await get_product_by_name(current_product)
+        user = await get_user_by_telegram_id(message.from_user.id)
+        
+        min_quantity = finance_math.calculate_quantity(product.price, user.discount_percentage, minimal_price)
+
         await message.delete()
         if not message.text.isdigit() or int(message.text) < min_quantity:
             await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
@@ -89,13 +93,13 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext, l10n: Fluent
             await query.message.edit_caption(caption=l10n.format_value('not-bonus'), reply_markup=get_cancel_order_kb())
             return
         
-        max_bonus = finance_math.calculate_max_bonus(product.price * 100, user.discount_percentage, minimal_price)
-        print(max_bonus)
+        max_bonus = finance_math.calculate_max_bonus(product.price * quantity_product, user.discount_percentage, minimal_price)
+
         if max_bonus <= 0:
             await query.message.edit_caption(caption=l10n.format_value('cant-use-bonus', {'minimalPprice': minimal_price}), reply_markup=get_cancel_order_kb())
             return
         
-        await query.message.edit_caption(caption=l10n.format_value('choose-bonus', {'maxBonus': max_bonus}), reply_markup=get_cancel_order_kb())
+        await query.message.edit_caption(caption=l10n.format_value('choose-bonus', {'maxBonus': min(max_bonus, user.bonus_points)}), reply_markup=get_cancel_order_kb())
         
     except:
         pass
@@ -110,13 +114,26 @@ async def process_bonus_quantity_input(message: Message, state: FSMContext, l10n
     product = await get_product_by_name(current_product)
     user = await get_user_by_telegram_id(message.from_user.id)
     minimal_price = await configJson.get_config_value('minimal_price')
-    max_bonus = finance_math.calculate_max_bonus(product.price * 100, user.discount_percentage, minimal_price)
+    max_bonus = finance_math.calculate_max_bonus(product.price * quantity_product, user.discount_percentage, minimal_price)
     
     try:
         await message.delete()
-        if not message.text.isdigit() or int(message.text) < 0 or int(message.text) > max_bonus :
+        
+        if not user.bonus_points:
+            await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, 
+                                           caption=l10n.format_value('not-bonus'), reply_markup=get_cancel_order_kb())
+            return
+        
+        max_bonus = finance_math.calculate_max_bonus(product.price * quantity_product, user.discount_percentage, minimal_price)
+
+        if max_bonus <= 0:
+            await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, 
+                                           caption=l10n.format_value('cant-use-bonus', {'minimalPprice': minimal_price}), reply_markup=get_cancel_order_kb())
+            return
+        
+        if not message.text.isdigit() or int(message.text) < 0 or int(message.text) > max_bonus or int(message.text) > user.bonus_points:
             await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                           caption=l10n.format_value('error-choose-bonus', {'maxBonus': max_bonus}),
+                                           caption=l10n.format_value('error-choose-bonus', {'maxBonus': min(max_bonus, user.bonus_points)}),
                                            reply_markup=get_cancel_order_kb())
             return
         

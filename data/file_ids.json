@@ -11,7 +11,8 @@
         "path": "data/photos/for_farmers.png"
     },
     "RISE_PERSONAL": {
-        "path": "data/photos/Personal.png"
+        "path": "data/photos/Personal.png",
+        "file_id": "AgACAgIAAxkDAAIM12ZnWstOJ_V5NeDwMiq3ohgWDDqYAAIL3DEbD_M4S-76hZTat6hDAQADAgADdwADNQQ"
     },
     "RISE_GIFT_CODE": {
         "path": "data/photos/Steam_gift.png",

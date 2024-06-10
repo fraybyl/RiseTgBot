@@ -1,9 +1,9 @@
-product-select = Вы выбрали {$productLabel} 
+product-select = Вы выбрали <b>{$productLabel} </b>
 
 buy-choose-category = Выберите категорию товара
 
 product-info = 
-    Введите желамое количество
+    <b>Введите желамое количество </b>
     В наличие: {$productQuantity}
     Цена: {$productPrice}
 
@@ -12,15 +12,15 @@ buy-input =
     Минимальная сумма заказа {$minimalPrice} руб.
 
 buy-product =
-    Вы выбрали {$productLabel}
+    Вы выбрали <b>{$productLabel}</b>
     количество: {$quantity}
     Нажмите "Оплатить" для оплаты
 
 choose-bonus =
     Введите количество бонусов
-    Вы можете использовать до *{$maxBonus}* бонусов
+    Вы можете использовать до <b>{$maxBonus}</b> бонусов
 
-error-choose-bonus = Пожалуйста, введите количество не больше *{$maxBonus}*
+error-choose-bonus = Пожалуйста, введите количество не больше <b>{$maxBonus}</b>
 
 not-bonus = У вас нет бонусов для использования
 
@@ -40,12 +40,11 @@ payments-error =
     Произошла ошибка при обработке платежа
     Попробуйте еще раз
 
-personal =
-    *Скидка:*  *{$user_info.discount_percentage}%*
-    *Бонусы:*   *{$user_info.bonus_points} Rise coins*
-    *Сколько вы потратили:* *{$user.money_spent} $*
-    *Реф. ссылка:* `{$link}`
-    *Спасибо что вы с нами\\!*
+personal-info =
+    <b>Скидка:  {$discountPercentage}%
+    Бонусы:  {$bonusPoints} Rise coins
+    Реф. ссылка:</b> <code>{$link}</code>
+    <b>Спасибо что вы с нами!</b>
 
 strategy-info =
     Вы выбрали {$chosen_strategy_text}

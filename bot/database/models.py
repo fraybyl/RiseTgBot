@@ -31,7 +31,6 @@ class Product(Base):
     description: Mapped[str] = mapped_column(String(255), nullable=True)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=True)
-    photo_url: Mapped[str] = mapped_column(String(255), nullable=True)
 
 async def async_main():
     async with engine.begin() as conn:

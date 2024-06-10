@@ -75,7 +75,7 @@ configJson = config.ConfigManager('data/config.json')
 # Инициализация бота и диспетчера
 bot = Bot(
     token=settings.settings.bot_token.get_secret_value(),
-    default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN_V2)
+    default=DefaultBotProperties(parse_mode=ParseMode.HTML)
 )
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)

@@ -9,7 +9,7 @@ def calculate_discount_percentage(price, discount):
 def calculate_quantity(price, discount, minimal_price):
     discount_percentage = calculate_discount_percentage(price, discount)
     quantity = int(minimal_price) / float(discount_percentage)
-    quantity = math.floor(float(quantity))
+    quantity = math.ceil(float(quantity))
     return int(quantity)
 
 def calculate_max_bonus(price, discount, minimal_price):

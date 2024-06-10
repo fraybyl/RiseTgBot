@@ -2,7 +2,7 @@ import asyncio
 from aiogram import Dispatcher
 from loader import bot, dp, get_fluent_localization
 from bot.middlewares.localization import L10nMiddleware
-from bot.handlers import start_handlers, shop_handlers, products_handlers, buy_handlers
+from bot.handlers import start_handlers, shop_handlers, products_handlers, buy_handlers, personal_handlers
 from bot.database.models import async_main
 
 def register_routers(dp: Dispatcher):
@@ -10,6 +10,7 @@ def register_routers(dp: Dispatcher):
     dp.include_router(shop_handlers.router)
     dp.include_router(products_handlers.router)
     dp.include_router(buy_handlers.router)
+    dp.include_router(personal_handlers.router)
     
 
 async def main() -> None:
