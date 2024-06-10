@@ -21,7 +21,7 @@ async def edit_message_media(callback_query: CallbackQuery, media=None, reply_ma
                 fileIds.save_file_id(sent_message.photo[-1].file_id, media)
             else:
                 raise FileNotFoundError('Не удалось найти путь к файлу.')
-        return sent_message.chat.id, sent_message.message_id
+        return sent_message.message_id
     except Exception as e:
         logging.error(f'Произошла непредвиденная ошибка: {e}')
 

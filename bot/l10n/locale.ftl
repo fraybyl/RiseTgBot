@@ -1,58 +1,54 @@
-product-select=
-    Вы выбрали {$productLabel} 
+product-select = Вы выбрали {$productLabel} 
 
-buy-choose-category=
-    Выберите категорию товара
+buy-choose-category = Выберите категорию товара
 
-product-info= 
+product-info = 
     Введите желамое количество
     В наличие: {$productQuantity}
     Цена: {$productPrice}
 
-buy-input=
-    Пожалуйста, введите количество не меньше {$min_quantity}
-    Минимальная сумма заказа {$minimal_price} руб.
+buy-input =
+    Пожалуйста, введите количество не меньше {$minQuantity}
+    Минимальная сумма заказа {$minimalPrice} руб.
 
-buy-product=
-    Вы выбрали {$product.label}
+buy-product =
+    Вы выбрали {$productLabel}
     количество: {$quantity}
     Нажмите "Оплатить" для оплаты
 
-choose-bonus=
+choose-bonus =
     Введите количество бонусов
-    Вы можете использовать до *{$max_bonus_to_use}* бонусов
+    Вы можете использовать до *{$maxBonus}* бонусов
 
-error-choose-bonus=
-    Пожалуйста, введите число не больше *{$max_bonus_to_use}*
+error-choose-bonus = Пожалуйста, введите количество не больше *{$maxBonus}*
 
-not-bonus=
-    У вас нет бонусов для использования
+not-bonus = У вас нет бонусов для использования
 
-positive-bonus=
-    Пожалуйста, введите положительное число
+positive-bonus = Пожалуйста, введите положительное число
 
-cant-use-bonus=
+cant-use-bonus =
     Вы не можете использовать бонусы для данной покупки
-    Минимальная сумма заказа {minimal_price} руб
+    Минимальная сумма заказа {$minimalPprice} руб
 
-use-bonus=
-    Вы используете: {bonus_quantity} бонусов
+use-bonus =
+    Вы выбрали {$productLabel}
+    количество: {$quantity}
+    Вы используете: {$bonusQuantity} бонусов
     Нажмите "Оплатить" для оплаты
 
-payments-error=
+payments-error =
     Произошла ошибка при обработке платежа
     Попробуйте еще раз
 
-personal=
+personal =
     *Скидка:*  *{$user_info.discount_percentage}%*
     *Бонусы:*   *{$user_info.bonus_points} Rise coins*
     *Сколько вы потратили:* *{$user.money_spent} $*
     *Реф. ссылка:* `{$link}`
     *Спасибо что вы с нами\\!*
 
-strategy-info=
+strategy-info =
     Вы выбрали {$chosen_strategy_text}
     Введите количество аккаунтов:
 
-strategy-weуks=
-    Введите количество недель планируемого инвестирования:
+strategy-weуks = Введите количество недель планируемого инвестирования:

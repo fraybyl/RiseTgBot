@@ -90,6 +90,21 @@ def get_buy_order_kb() -> InlineKeyboardMarkup:
         ]
     )
 
+def get_payment_order_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text='Оплатить', callback_data='payment_product')
+            ],
+            [
+                InlineKeyboardButton(text='Использовать бонусы', callback_data='bonus_use_product')
+            ],
+            [
+                InlineKeyboardButton(text='Назад', callback_data='back_order')
+            ]
+        ]
+    )
+
 def get_cancel_order_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
