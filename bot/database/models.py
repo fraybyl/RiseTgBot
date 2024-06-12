@@ -17,7 +17,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
     discount_percentage: Mapped[float] = mapped_column(DECIMAL(5, 2), default=0.00, nullable=False)
-    bonus_points: Mapped[float] = mapped_column(DECIMAL(10, 2), default=0.00, nullable=False)
+    bonus_points: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
     referred_by: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.telegram_id'), nullable=True)
     
     referrer = relationship('User', remote_side=[telegram_id])
