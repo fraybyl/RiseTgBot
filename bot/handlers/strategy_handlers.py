@@ -9,6 +9,7 @@ from bot.states.state_func import push_state, pop_state
 from bot.handlers.error_handlers import handle_error_back
 from bot.states.strategy_states import StrategyStates
 from bot.filters.correct_number import CorrectNumberFilter
+from bot.utils.avg_price_drop import get_avg_drop
 from loader import bot, configJson
 
 router = Router()
@@ -59,14 +60,16 @@ async def process_total_weeks(message: Message, state: FSMContext):
         message_id = data.get('message_id')
         initial_accounts = data.get('initial_accounts')
         text_strategy = data.get('text_strategy')
+        float_strategy = data.get('float_strategy')
         total_weeks = message.text
         account_cost = await configJson.get_config_value('account_price')
-        
+        avg_price = await get_avg_drop()
         await message.delete()
-        accounts_after, profit = simulate_investment_strategy(initial_accounts, account_cost, 50.23, total_weeks, 0.8)
+        
+        accounts_after, profit = simulate_investment_strategy(initial_accounts, account_cost, avg_price, total_weeks, float_strategy)
         caption_text = (f"Вы выбрали <b>{text_strategy}</b>.\n"
                         f"Вы инвестируете <b>{total_weeks} недель</b>\n"
-                        f"Средняя цена дропа: <b>{50}</b>\n"
+                        f"Средняя цена дропа: <b>{avg_price}</b>\n"
                         f"Цена аккаунта: <b>{account_cost}</b>\n"
                         f"Количество аккаунтов: <b>{accounts_after}</b>\n"
                         f"Сохраненная прибыль: <b>{profit:.1f} рублей</b>")
