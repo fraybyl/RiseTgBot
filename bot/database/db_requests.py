@@ -1,5 +1,6 @@
+from sqlalchemy import Integer, cast
 from sqlalchemy.future import select
-from bot.database.models import async_session, User, Product
+from bot.database.models import async_session, User, Product, Category
 from loader import configJson
 from decimal import Decimal
 
@@ -40,5 +41,29 @@ async def get_user_by_telegram_id(telegram_id: int) -> User:
 async def get_product_by_name(product_name: str) -> Product:
     async with async_session() as session:
         product = await session.scalar(select(Product).where(Product.name == product_name))
+        if(isinstance(product, Product)):
+            return product
+        
+async def get_all_categories() -> Category:
+    async with async_session() as session:
+        result = await session.scalars(select(Category))
+        categories = result.all()
+        return categories
+    
+async def get_category_by_id(category_id: int) -> Category:
+    async with async_session() as session:
+        result = await session.scalar(select(Category).where(Category.id ==category_id ))
+        if(isinstance(result, Category)):
+            return result
+    
+async def get_products_by_category(category_id: int) -> Product:
+    async with async_session() as session:
+        products = await session.scalars(select(Product).where(Product.category_id == category_id))
+        products = products.all()
+        return products
+        
+async def get_product_by_id(product_id: int) -> Product:
+    async with async_session() as session:
+        product = await session.scalar(select(Product).where(Product.id == product_id))
         if(isinstance(product, Product)):
             return product

@@ -19,18 +19,32 @@ class User(Base):
     discount_percentage: Mapped[float] = mapped_column(DECIMAL(5, 2), default=0.00, nullable=False)
     bonus_points: Mapped[float] = mapped_column(DECIMAL(10, 2), default=0.00, nullable=False)
     referred_by: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.telegram_id'), nullable=True)
-
+    
     referrer = relationship('User', remote_side=[telegram_id])
     
+class Category(Base):
+    __tablename__ = 'categories'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
+    photo_filename: Mapped[str] = mapped_column(String(64), nullable=False)
+
+    products = relationship('Product', back_populates='category')
+
 class Product(Base):
     __tablename__ = 'products'
 
-    id: Mapped[int] = mapped_column(Integer, unique=True, primary_key=True)
-    name: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
     label: Mapped[str] = mapped_column(String(64), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=True)
     price: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
     quantity: Mapped[int] = mapped_column(Integer, nullable=True)
+    photo_filename: Mapped[str] = mapped_column(String(64), nullable=False)
+
+    category_id: Mapped[int] = mapped_column(Integer, ForeignKey('categories.id'), nullable=False)
+    
+    category = relationship('Category', back_populates='products')
 
 async def async_main():
     async with engine.begin() as conn:

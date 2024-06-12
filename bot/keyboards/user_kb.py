@@ -1,4 +1,6 @@
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from bot.database.db_requests import get_all_categories, get_products_by_category, get_product_by_id
 
 
 #--------------------------START-----------------------
@@ -20,75 +22,41 @@ def get_start_kb() -> InlineKeyboardMarkup:
     )
     
 #--------------------------SHOP-----------------------
-def get_shop_kb() -> InlineKeyboardMarkup: 
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Аккаунты LIMIT", callback_data="limit_accounts"),
-            ],
-            [
-                InlineKeyboardButton(text="Steam Gift Code", callback_data="steam_gift_code"),
-            ],
-            [
-                InlineKeyboardButton(text="Назад", callback_data="back_start"),
-            ]
-        ]
-    )
+async def get_shop_kb() -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
     
-#--------------------------LIMIT-ACC-----------------------
-def get_limit_acc_kb() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="NON-SDA", callback_data="buy_sda_non")
-            ],
-            [
-                InlineKeyboardButton(text="SDA", callback_data="buy_sda")
-            ],
-            [
-                InlineKeyboardButton(text="SDA-2LVL", callback_data="buy_sda_2lvl")
-            ],
-            [
-                InlineKeyboardButton(text="Назад", callback_data="back_shop")
-            ]
-        ]
-    )
+    categories = await get_all_categories()
     
-#--------------------------GIFT-CODE-----------------------
-def get_gift_code_kb() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="GIFT-5", callback_data="buy_gift_5")
-            ],
-            [
-                InlineKeyboardButton(text="GIFT-10", callback_data="buy_gift_10")
-            ],
-            [
-                InlineKeyboardButton(text="GIFT-15", callback_data="buy_gift_15")
-            ],
-            [
-                InlineKeyboardButton(text="GIFT-20", callback_data="buy_gift_20")
-            ],
-            [
-                InlineKeyboardButton(text="Назад", callback_data="back_shop")
-            ]
-        ]
-    )
-       
+    for category in categories:
+        kb.row(InlineKeyboardButton(text=category.name, callback_data=f"category_{category.id}"))
+    
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_start"))
+
+    return kb.as_markup()
+
+async def get_products_kb(category_id: int) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    
+    products = await get_products_by_category(category_id)
+    
+    for product in products:
+        kb.row(InlineKeyboardButton(text=product.label, callback_data=f"product_{product.id}"))
+
+    kb.row(InlineKeyboardButton(text="Назад", callback_data="back_shop"))
+    
+    return kb.as_markup()
+    
 
 #--------------------------BUY-ORDER-----------------------
-def get_buy_order_kb() -> InlineKeyboardMarkup:
-    return InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                InlineKeyboardButton(text="Купить", callback_data="buy_product")
-            ],
-            [
-                InlineKeyboardButton(text="Назад", callback_data="back_categories")
-            ]
-        ]
-    )
+async def get_buy_order_kb(product_id: int) -> InlineKeyboardMarkup:
+    kb = InlineKeyboardBuilder()
+    
+    product = await get_product_by_id(product_id)
+    
+    kb.row(InlineKeyboardButton(text="Купить", callback_data=f"buy_product_{product.id}"))
+    kb.row(InlineKeyboardButton(text="Назад", callback_data=f"back_product_{product.category_id}"))
+    
+    return kb.as_markup()
 
 def get_payment_order_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
@@ -100,16 +68,25 @@ def get_payment_order_kb() -> InlineKeyboardMarkup:
                 InlineKeyboardButton(text='Использовать бонусы', callback_data='bonus_use_product')
             ],
             [
-                InlineKeyboardButton(text='Назад', callback_data='back_order')
+                InlineKeyboardButton(text='Назад', callback_data='back_payment')
             ]
         ]
     )
-
-def get_cancel_order_kb() -> InlineKeyboardMarkup:
+   
+def get_payment_settings_kb() -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-                InlineKeyboardButton(text="Назад", callback_data="back_order")
+                InlineKeyboardButton(text='Назад', callback_data='back_payment')
+            ]
+        ]
+    )
+    
+def get_cancel_order_kb(product_id: int) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="Назад", callback_data=f"back_order_{product_id}")
             ]
         ]
     )

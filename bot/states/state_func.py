@@ -10,11 +10,15 @@ async def push_state(state: FSMContext, new_state: str):
 async def pop_state(state: FSMContext) -> str:
     data = await state.get_data()
     state_stack = data.get('state_stack', [])
-    if state_stack:
+    if len(state_stack) > 1:
         state_stack.pop()
-    if state_stack:
         previous_state = state_stack[-1]
+        await state.update_data(state_stack=state_stack)
+        return previous_state
+    elif len(state_stack) == 1:
+        state_stack.pop()
+        await state.update_data(state_stack=state_stack)
+        await state.set_state(state=None)
+        return None
     else:
-        previous_state = None
-    await state.update_data(state_stack=state_stack)
-    return previous_state
+        return None

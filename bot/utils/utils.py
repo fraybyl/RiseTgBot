@@ -24,4 +24,3 @@ async def edit_message_media(callback_query: CallbackQuery, media=None, reply_ma
         return sent_message.message_id
     except Exception as e:
         logging.error(f'Произошла непредвиденная ошибка: {e}')
-
