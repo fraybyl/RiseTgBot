@@ -21,15 +21,15 @@ async def handle_shop(query: CallbackQuery):
 async def handle_strategy_choice(query: CallbackQuery, state: FSMContext):
     if query.data == 'aggressive_strategy':
         float_strategy = 0.8
-        text_strategy = 'Агрессивную стратегию'
+        text_strategy = 'агрессивную стратегию'
         media_type = 'AGGRESIVE'
     elif query.data == 'moderate_strategy':
         float_strategy = 0.6
-        text_strategy = 'Умеренную стратегию'
+        text_strategy = 'умеренную стратегию'
         media_type = 'MODERATE'
     elif query.data == 'conservative_strategy':
         float_strategy = 0.4
-        text_strategy = 'Консервативную стратегию'
+        text_strategy = 'консервативную стратегию'
         media_type = 'CONSERVATIVE'
         
     message_id = await utils.edit_message_media(callback_query=query, media=media_type, reply_markup=get_cancel_strategy_kb(), caption=f'Вы выбрали: {text_strategy}.\nПожалуйста, введите количество аккаунтов')
@@ -58,18 +58,18 @@ async def process_total_weeks(message: Message, state: FSMContext):
         data = await state.get_data()
         message_id = data.get('message_id')
         initial_accounts = data.get('initial_accounts')
-        current_strategy = data.get('current_strategy')
+        text_strategy = data.get('text_strategy')
         total_weeks = message.text
         account_cost = await configJson.get_config_value('account_price')
         
         await message.delete()
         accounts_after, profit = simulate_investment_strategy(initial_accounts, account_cost, 50.23, total_weeks, 0.8)
-        caption_text = (f"Вы выбрали {current_strategy}.\n"
-                        f"Вы инвестируете {total_weeks} недель\n"
-                        f"Средняя цена дропа: {50}\n"
-                        f"Цена аккаунта: {account_cost}\n"
-                        f"Количество аккаунтов: {accounts_after}\n"
-                        f"Сохраненная прибыль: {profit:.1f} рублей")
+        caption_text = (f"Вы выбрали <b>{text_strategy}</b>.\n"
+                        f"Вы инвестируете <b>{total_weeks} недель</b>\n"
+                        f"Средняя цена дропа: <b>{50}</b>\n"
+                        f"Цена аккаунта: <b>{account_cost}</b>\n"
+                        f"Количество аккаунтов: <b>{accounts_after}</b>\n"
+                        f"Сохраненная прибыль: <b>{profit:.1f} рублей</b>")
         
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_cancel_strategy_kb(),
                                        caption=caption_text)
@@ -80,14 +80,7 @@ async def process_total_weeks(message: Message, state: FSMContext):
 
 @router.message(CorrectNumberFilter(StrategyStates.INITIAL_ACCOUNTS, StrategyStates.TOTAL_WEEKS))
 async def handle_non_digit_message(message: Message, state: FSMContext):
-    data = await state.get_data()
-    message_id = data.get('message_id')
     await message.delete()
-    try:
-        print('бля ну это заглушка канеш но я хуй знает че с этим ещё сделать')
-        await bot.edit_message_caption(chat_id=message.from_user.id, message_id=message_id, caption='Пожалуйста, введите корректное число...', reply_markup=get_cancel_strategy_kb())
-    except:
-        pass
 
 @router.callback_query(lambda query: query.data == 'back_strategy')
 async def handle_back_strategy(query: CallbackQuery, state: FSMContext):

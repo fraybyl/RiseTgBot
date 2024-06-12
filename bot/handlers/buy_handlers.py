@@ -7,6 +7,7 @@ from aiogram.fsm.context import FSMContext
 from bot.states.order_states import OrderStates
 from bot.states.state_func import pop_state, push_state
 from bot.utils.finance_math import calculate_quantity, calculate_max_bonus
+from bot.filters.correct_number import CorrectNumberFilter
 from loader import bot, configJson
 
 router = Router()
@@ -20,7 +21,7 @@ async def handle_buy_product(query: CallbackQuery, state: FSMContext):
     minimal_price = await configJson.get_config_value('minimal_price')
     min_quantity = calculate_quantity(product.price, user.discount_percentage, minimal_price)
     
-    message = await query.message.edit_caption(caption=f"Введите количество не меньше {min_quantity}", reply_markup=get_cancel_order_kb(product_id))
+    message = await query.message.edit_caption(caption=f"Введите количество не меньше {min_quantity} и не больше {product.quantity}", reply_markup=get_cancel_order_kb(product_id))
     
     await state.set_state(OrderStates.WAITING_PRODUCT_QUANTITY)
     await state.update_data(min_quantity=min_quantity)
@@ -38,7 +39,7 @@ async def process_product_quantity(message: Message, state: FSMContext):
     min_quantity = data.get('min_quantity')
     await message.delete()
     
-    if(quantity_msg < min_quantity):
+    if(quantity_msg < min_quantity or quantity_msg > product.quantity):
         return
     
     await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_payment_order_kb(), caption=f"Число: {quantity_msg}")
@@ -85,14 +86,19 @@ async def handle_payment_product(query: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     quantity_product = data.get('quantity_product')
     quantity_bonus = data.get('quantity_bonus')
-    await query.message.edit_caption(caption=f"Продукта {quantity_product}\n Бонусов: {quantity_bonus or 0}", reply_markup=get_payment_order_kb())
+    await query.message.edit_caption(caption=f"Продукта {quantity_product}\n Бонусов: {quantity_bonus or 0}", reply_markup=get_payment_settings_kb())
+    await state.set_state(OrderStates.WAITING_PAYMENT)
+
+@router.message(CorrectNumberFilter(OrderStates.WAITING_BONUS_QUANTITY, OrderStates.WAITING_PRODUCT_QUANTITY))
+async def handle_non_digit_message(message: Message, state: FSMContext):
+    await message.delete()
 
 @router.callback_query(lambda query: query.data == "back_payment")
 async def handle_back_payment(query: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     current_state = await state.get_state() 
     
-    if(current_state is None):
+    if current_state is None:
         product = data.get('product')
         min_quantity = data.get('min_quantity')
         await query.message.edit_caption(caption=f"Введите количество не меньше {min_quantity}", reply_markup=get_cancel_order_kb(product.id))
@@ -100,7 +106,7 @@ async def handle_back_payment(query: CallbackQuery, state: FSMContext):
         await state.update_data(quantity_bonus=None)
         await state.set_state(OrderStates.WAITING_PRODUCT_QUANTITY)
 
-    if(current_state == OrderStates.WAITING_BONUS_QUANTITY):
+    if(current_state in [ OrderStates.WAITING_BONUS_QUANTITY, OrderStates.WAITING_PAYMENT]):
         quantity_product = data.get('quantity_product')
         quantity_bonus = data.get('quantity_bonus')
         caption=f"Число товара: {quantity_product}"
