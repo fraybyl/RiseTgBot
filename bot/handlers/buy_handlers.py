@@ -69,6 +69,7 @@ async def proccess_bonus_quantity(message: Message, state: FSMContext, l10n: Flu
     data = await state.get_data()
     quantity_msg = int(message.text)
     max_bonus = data.get('max_bonus')
+    quantity_product = data.get('quantity_product')
     
     await message.delete()
     
@@ -78,7 +79,7 @@ async def proccess_bonus_quantity(message: Message, state: FSMContext, l10n: Flu
     message_id = data.get('message_id')
     product = data.get('product')
     
-    await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_payment_order_kb(), caption=l10n.format_value('product-info', {'name': product.label, 'quantity': quantity_msg, 'bonus': quantity_msg}))
+    await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_payment_order_kb(), caption=l10n.format_value('product-info', {'name': product.label, 'quantity': quantity_product, 'bonus': quantity_msg}))
     await state.update_data(quantity_bonus=quantity_msg)
     await state.update_data(previous_state=OrderStates.WAITING_BONUS_QUANTITY)
     await state.set_state(state=None)

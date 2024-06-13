@@ -21,11 +21,21 @@ class User(Base):
     referred_by: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.telegram_id'), nullable=True)
     
     referrer = relationship('User', remote_side=[telegram_id])
+    steam_accounts = relationship('SteamAccount', back_populates='user')
+
+class SteamAccount(Base):
+    __tablename__ = 'steam_accounts'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, unique=True, nullable=False)
+    steam_url: Mapped[BigInteger] = mapped_column(BigInteger, unique=False, nullable=False)
+    user_id: Mapped[BigInteger] = mapped_column(BigInteger, ForeignKey('user.telegram_id'), nullable=False, index=True)
+
+    user = relationship('User', back_populates='steam_accounts')
     
 class Category(Base):
     __tablename__ = 'categories'
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, nullable=False)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
     photo_filename: Mapped[str] = mapped_column(String(64), nullable=False)
 
@@ -34,7 +44,7 @@ class Category(Base):
 class Product(Base):
     __tablename__ = 'products'
 
-    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String(64), unique=True, nullable=False, index=True)
     label: Mapped[str] = mapped_column(String(64), nullable=False)
     description: Mapped[str] = mapped_column(String(255), nullable=True)
