@@ -9,7 +9,7 @@ def get_fluent_localization() -> FluentLocalization:
 
     # Проверки, чтобы убедиться
     # в наличии правильного файла в правильном каталоге
-    locale_dir = Path(__file__).parent.joinpath("bot/l10n")
+    locale_dir = Path(__file__).parent.joinpath(".")
     if not locale_dir.exists():
         error = "'l10n' directory not found"
         raise FileNotFoundError(error)
