@@ -1,4 +1,3 @@
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.future import select
 from bot.database.models import async_session, User, Product, Category, SteamAccount
 from loader import configJson

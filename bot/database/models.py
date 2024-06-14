@@ -56,6 +56,9 @@ class Product(Base):
     
     category = relationship('Category', back_populates='products')
 
-async def async_main():
+async def start_db_postegre():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        
+async def close_db_postegre(async_session):
+    await async_session.close()

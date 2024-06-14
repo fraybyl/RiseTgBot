@@ -1,5 +1,6 @@
 {
     "referral_bonus": 10.00,
     "minimal_price": 150.00,
-    "account_price": 1203
+    "account_price": 1203,
+    "steam_web_api_key": "89017D6FB681B31C8CCF8E6C050FFBA3"
 }

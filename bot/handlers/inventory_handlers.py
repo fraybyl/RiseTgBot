@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 import aiohttp
 from bot.keyboards.user_kb import get_inventory_kb, get_inventory_settings_kb
 from bot.utils import utils
-from bot.utils.steamid import steam_urls_parse
+from bot.utils.steamid import steam_urls_parse, get_table
 from bot.states.inventory_states import InventoryStates
 from loader import bot
 from bot.handlers.error_handlers import handle_error_back
@@ -33,6 +33,7 @@ async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
 @router.callback_query(lambda query: query.data == 'accounts_statistics')
 async def handle_accounts_statistics(query: CallbackQuery):
     all_accounts = await get_all_steamid64()
+    await get_table(all_accounts)
     await query.message.edit_caption(caption=f'Общая статистика\nВсего аккаунтов - {len(all_accounts)}', reply_markup=get_inventory_settings_kb())
     
 
@@ -63,7 +64,6 @@ async def process_inventory_list(message: Message, state: FSMContext):
     
     try:
         successful_result = await steam_urls_parse(lines)
-        print(successful_result)
         await message.delete()
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_inventory_kb(), caption=f"Ваши аккаунты: ")
         await set_steamid64_for_user(message.from_user.id, successful_result)
