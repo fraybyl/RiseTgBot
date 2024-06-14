@@ -39,3 +39,11 @@ product-info =
     }
     Нажмите <b>"Оплатить"</b> для продолжение.
     </blockquote>
+
+general-accounts-info = 
+    <blockquote>
+    Всего аккаунтов - <b>{$accounts}</b>
+    Всего забанено - <b>{$total_bans}</b>
+    VAC баны - <b>{$total_vac}</b>
+    Community баны <b>{$total_community}</b>
+    Всего банов за последние 7 дней <b>{$bans_in_last_week}</b>

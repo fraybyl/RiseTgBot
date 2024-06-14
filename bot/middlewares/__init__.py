@@ -1,1 +1,1 @@
-from . import localization
+__all__ = ['localization']

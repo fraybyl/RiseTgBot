@@ -24,7 +24,7 @@ class RedisCache:
     async def set(self, key, value, expire=None):
         try:
             if expire:
-                await self.client.setex(key, value, expire)
+                await self.client.setex(key, expire, value)
             else:
                 await self.client.set(key, value)
         except redis.RedisError as e:

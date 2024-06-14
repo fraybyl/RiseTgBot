@@ -1,9 +1,12 @@
 import asyncio
+import hashlib
+import json
 import logging
 import re
 import aiohttp
 import orjson
-from loader import configJson
+from bot.database.redis_db import RedisCache
+from loader import configJson, redis_ban_check
 
 # Precompiled patterns
 url_pattern = re.compile(
@@ -62,41 +65,68 @@ async def steam_urls_parse(lines: list[str], concurrency_limit=500) -> list[int]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         return [result for result in results if isinstance(result, int)]
     
-async def fetch_GetPlayerBans(session, url, semaphore):
+async def fetch_get_player_bans(session, url, semaphore, cache, expire=3600):
+    def generate_cache_key(url):
+        return f"player_bans:{hashlib.md5(url.encode()).hexdigest()}"
+    
+    cache_key = generate_cache_key(url)
+    try:
+        cached_response = await cache.get(cache_key)
+        if cached_response:
+            return orjson.loads(cached_response)  
+    except Exception as e:
+        logging.error(f"Error accessing cache for URL: {url}, {e}")
+
     try:
         async with semaphore:
             async with session.get(url) as response:
-                response.raise_for_status()  # raise exception for non-200 responses
-                return await response.read()  # Use .read() to get bytes response
+                response.raise_for_status()  
+                data = await response.json()
+
+                try:
+                    await cache.set(cache_key, orjson.dumps(data), expire)
+                except Exception as e:
+                    logging.error(f"Error setting cache for URL: {url}, {e}")
+
+                return data
     except aiohttp.ClientError as e:
         logging.error(f"Error fetching URL: {url}, {e}")
         return None
 
-async def get_player_bans(steam_ids: list[int], api_key, cache):
+
+async def get_player_bans(steam_ids: list[int], api_key, cache: RedisCache):
+    """получает информацию по бану пользователей
+    
+
+    Args:
+        steam_ids (list[int]): принимает лист steam_ids
+        api_key (_type_): апи ключ. в configjson
+        cache (RedisCache): передать экземпляр RedisCache
+
+    Returns:
+        _type_: Выдает json формата players->{SteamId, CommunityBanned, VACBanned, NumberOfVACBans, DaysSinceLastBan, NumberOfGameBans, EconomyBan}
+    """
+    
     semaphore = asyncio.Semaphore(10)
     tasks = []
 
-    async with aiohttp.ClientSession() as session:
-        for i in range(0, len(steam_ids), 100):
-            steam_ids_chunk = steam_ids[i:i + 100]
-            url = f'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/?key={api_key}&steamids={steam_ids_chunk}'
+    await cache.connect()
+    try:
+        async with aiohttp.ClientSession() as session:
+            for i in range(0, len(steam_ids), 100):
+                steam_ids_chunk = steam_ids[i:i + 100]
+                url = (
+                    f'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/'
+                    f'?key={api_key}&steamids={",".join(map(str, steam_ids_chunk))}'
+                )
 
-            # Check if data exists in cache
-            cache_key = f"player_bans:{','.join(map(str, steam_ids_chunk))}"
-            cached_data = await cache.get(cache_key)
+                task = fetch_get_player_bans(session, url, semaphore, cache)
+                tasks.append(task)
 
-            if cached_data:
-                tasks.append(orjson.loads(cached_data))
-            else:
-                # Fetch data from API
-                data = await fetch_GetPlayerBans(session, url, semaphore)
-                if data:
-                    decoded_data = orjson.loads(data)
-                    tasks.append(decoded_data)
-                    # Cache data for 1 hour (3600 seconds)
-                    await cache.set(cache_key, orjson.dumps(decoded_data), expire=3600)
+            results = await asyncio.gather(*tasks)
+    finally:
+        await cache.close()
 
-    results = await asyncio.gather(*tasks)
     return results
 
 async def get_table(steam_ids: list[int]):
@@ -108,8 +138,7 @@ async def get_table(steam_ids: list[int]):
     bans_in_last_week = 0
     total_accounts = 0
 
-    results = await get_player_bans(steam_ids, STEAM_API_KEY, ban_check_db)
-    
+    results = await get_player_bans(steam_ids, STEAM_API_KEY, redis_ban_check)
     for result in results:
         if result and 'players' in result:
             for player in result['players']:

@@ -1,1 +1,1 @@
-from . import settings, config
+__all__ = ['config', 'settings']

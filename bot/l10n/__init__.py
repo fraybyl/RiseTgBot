@@ -1,1 +1,1 @@
-from . import fluent_localization
+__all__ = ['fluent_localization']

@@ -1,1 +1,1 @@
-from . import correct_number
+__all__ = ['correct_number']

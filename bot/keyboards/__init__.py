@@ -1,1 +1,1 @@
-from . import user_kb
+__all__ = ['user_kb']
