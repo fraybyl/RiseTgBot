@@ -1,4 +1,4 @@
-from sqlalchemy import Integer, cast
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.future import select
 from bot.database.models import async_session, User, Product, Category, SteamAccount
 from loader import configJson
@@ -12,102 +12,153 @@ logger = logging.getLogger(__name__)
 async def set_user(telegram_id: int, username: str = None, referral_code: str = None) -> User:
     """Sets or retrieves a user based on telegram_id, with optional referral code for bonuses."""
     async with async_session() as session:
-        user = await session.scalar(select(User).where(User.telegram_id == telegram_id))
+        try:
+            user = await session.scalar(select(User).where(User.telegram_id == telegram_id))
 
-        if not user:
-            referred_by = None
-            if referral_code:
-                try:
-                    referrer_id = int(referral_code)
-                    referrer = await session.scalar(select(User).where(User.telegram_id == referrer_id))
-                    if referrer:
-                        referred_by = referrer.telegram_id
-                    else:
-                        logger.info(f"Referral code {referral_code} does not exist")
-                except ValueError:
-                    logger.info(f"Invalid referral code: {referral_code}")
+            if not user:
+                referred_by = None
+                if referral_code:
+                    try:
+                        referrer_id = int(referral_code)
+                        referrer = await session.scalar(select(User).where(User.telegram_id == referrer_id))
+                        if referrer:
+                            referred_by = referrer.telegram_id
+                        else:
+                            logger.info(f"Referral code {referral_code} does not exist")
+                    except ValueError:
+                        logger.info(f"Invalid referral code: {referral_code}")
 
-            user = User(telegram_id=telegram_id, username=username, referred_by=referred_by)
-            session.add(user)
-            if referred_by:
-                bonus_points = await configJson.get_config_value('referral_bonus')
-                if bonus_points > 0:
-                    referrer.bonus_points += Decimal(bonus_points)
-                    session.add(referrer)
+                user = User(telegram_id=telegram_id, username=username, referred_by=referred_by)
+                session.add(user)
+                if referred_by:
+                    bonus_points = await configJson.get_config_value('referral_bonus')
+                    if bonus_points > 0:
+                        referrer.bonus_points += Decimal(bonus_points)
+                        session.add(referrer)
 
-            await session.commit()
-        return user
+                await session.commit()
+            return user
+        except Exception as e:
+            logger.error(f"Error in set_user: {e}")
+            await session.rollback()
+            raise
 
 async def get_user_by_telegram_id(telegram_id: int) -> User:
     """Retrieves a user by their telegram_id."""
     async with async_session() as session:
-        user = await session.scalar(select(User).where(User.telegram_id == telegram_id))
-        return user
+        try:
+            user = await session.scalar(select(User).where(User.telegram_id == telegram_id))
+            return user
+        except Exception as e:
+            logger.error(f"Error in get_user_by_telegram_id: {e}")
+            raise
 
 async def get_product_by_name(product_name: str) -> Product:
     """Retrieves a product by its name."""
     async with async_session() as session:
-        product = await session.scalar(select(Product).where(Product.name == product_name))
-        return product
+        try:
+            product = await session.scalar(select(Product).where(Product.name == product_name))
+            return product
+        except Exception as e:
+            logger.error(f"Error in get_product_by_name: {e}")
+            raise
 
 async def get_all_categories() -> list[Category]:
     """Retrieves all categories."""
     async with async_session() as session:
-        result = await session.scalars(select(Category))
-        categories = result.all()
-        return categories
+        try:
+            result = await session.scalars(select(Category))
+            categories = result.all()
+            return categories
+        except Exception as e:
+            logger.error(f"Error in get_all_categories: {e}")
+            raise
 
 async def get_category_by_id(category_id: int) -> Category:
     """Retrieves a category by its ID."""
     async with async_session() as session:
-        category = await session.scalar(select(Category).where(Category.id == category_id))
-        return category
+        try:
+            category = await session.scalar(select(Category).where(Category.id == category_id))
+            return category
+        except Exception as e:
+            logger.error(f"Error in get_category_by_id: {e}")
+            raise
 
 async def get_products_by_category(category_id: int) -> list[Product]:
     """Retrieves products by category ID."""
     async with async_session() as session:
-        products = await session.scalars(select(Product).where(Product.category_id == category_id))
-        products_list = products.all()
-        return products_list
+        try:
+            products = await session.scalars(select(Product).where(Product.category_id == category_id))
+            products_list = products.all()
+            return products_list
+        except Exception as e:
+            logger.error(f"Error in get_products_by_category: {e}")
+            raise
 
 async def get_product_by_id(product_id: int) -> Product:
     """Retrieves a product by its ID."""
     async with async_session() as session:
-        product = await session.scalar(select(Product).where(Product.id == product_id))
-        return product
+        try:
+            product = await session.scalar(select(Product).where(Product.id == product_id))
+            return product
+        except Exception as e:
+            logger.error(f"Error in get_product_by_id: {e}")
+            raise
 
-async def get_steam_urls_by_userid(user_id: int) -> list[int]:
-    """Retrieves Steam URLs"""
+async def get_steamid64_by_userid(user_id: int) -> list[int]:
+    """Retrieves Steam URLs by user ID."""
     async with async_session() as session:
-        result = await session.execute(select(SteamAccount.steam_url).where(SteamAccount.user_id == user_id))
-        steam_accounts = result.scalars().all()
-        return steam_accounts
+        try:
+            result = await session.execute(select(SteamAccount.steamid64).where(SteamAccount.user_id == user_id))
+            steam_accounts = result.scalars().all()
+            return steam_accounts
+        except Exception as e:
+            logger.error(f"Error in get_steamid64_by_userid: {e}")
+            raise
     
-async def get_all_steam_urls() -> list[int]:
-    """Retrieves Steam URLs associated with a user ID."""
+async def get_all_steamid64() -> list[int]:
+    """Retrieves all Steam URLs."""
     async with async_session() as session:
-        result = await session.execute(select(SteamAccount.steam_url))
-        steam_accounts = result.scalars().all()
-        return steam_accounts
+        try:
+            result = await session.execute(select(SteamAccount.steamid64))
+            steam_accounts = result.scalars().all()
+            return steam_accounts
+        except Exception as e:
+            logger.error(f"Error in get_all_steamid64: {e}")
+            raise
 
-async def set_steam_urls_for_user(user_id: int, steam_accounts: list[int]) -> bool:
+async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> bool:
     """Sets Steam URLs for a user, avoiding duplicates."""
     async with async_session() as session:
-        existing_accounts_result = await session.execute(
-            select(SteamAccount.steam_url).where(SteamAccount.user_id == user_id)
-        )
-        existing_steam_urls = set(existing_accounts_result.scalars().all())
+        try:
+            # Выполнение запроса на получение steamid64 для указанного user_id
+            existing_accounts_result = await session.execute(
+                select(SteamAccount.steamid64).where(SteamAccount.user_id == user_id)
+            )
+            
+            # Преобразование результатов в набор steamid64
+            existing_steam_urls = set(row[0] for row in existing_accounts_result.all())
 
-        new_steam_accounts = [acc for acc in steam_accounts if acc not in existing_steam_urls]
+            # Отфильтровать новые аккаунты, которые уже существуют в базе данных
+            new_steam_accounts = [acc for acc in steamid64 if acc not in existing_steam_urls]
 
-        if not new_steam_accounts:
+            # Если нет новых аккаунтов для добавления, возвращаем True
+            if not new_steam_accounts:
+                return True
+
+            # Создание объектов SteamAccount для новых аккаунтов
+            new_steam_account_objects = [
+                SteamAccount(steamid64=steamid64, user_id=user_id) for steamid64 in new_steam_accounts
+            ]
+            session.add_all(new_steam_account_objects)
+
+            # Коммит транзакции
+            await session.commit()
             return True
+        except Exception as e:
+            # Логирование ошибки и откат транзакции в случае исключения
+            logger.error(f"Error in set_steamid64_for_user: {e}")
+            await session.rollback()
+            raise
 
-        new_steam_account_objects = [
-            SteamAccount(steam_url=steam_url, user_id=user_id) for steam_url in new_steam_accounts
-        ]
-        session.add_all(new_steam_account_objects)
 
-        await session.commit()
-        return True
-                

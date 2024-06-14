@@ -89,10 +89,6 @@ async def handle_non_digit_message(message: Message, state: FSMContext):
 @router.callback_query(lambda query: query.data == 'back_strategy')
 async def handle_back_strategy(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     previous_state = await pop_state(state)
-    current_state = await state.get_state()
-    if current_state is None:
-        await handle_error_back(query, state)
-        return
     
     data = await state.get_data()
     text_strategy = data.get('text_strategy')
