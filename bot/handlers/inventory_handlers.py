@@ -79,8 +79,9 @@ async def process_inventory_list(message: Message, state: FSMContext):
     try:
         successful_result = await steam_urls_parse(lines)
         await message.delete()
+        await set_steamid64_for_user(message.from_user.id, successful_result) 
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_inventory_kb(), caption=f"Ваши аккаунты: ")
-        await set_steamid64_for_user(message.from_user.id, successful_result)
+        await state.clear()
     except Exception as e:
         print(f"Error processing inventory list: {e}")
         await message.reply("There was an error processing your file.")
