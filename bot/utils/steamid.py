@@ -129,33 +129,19 @@ async def get_player_bans(steam_ids: list[int], api_key, cache: RedisCache):
 
     return results
 
-async def get_table(steam_ids: list[int]):
+async def get_accounts_statistics(steam_ids: list[int]):
     STEAM_API_KEY = await configJson.get_config_value('steam_web_api_key')
-    total_bans = 0
-    vac_bans = 0
-    community_bans = 0
-    game_bans = 0
-    bans_in_last_week = 0
-    total_accounts = 0
 
     results = await get_player_bans(steam_ids, STEAM_API_KEY, redis_ban_check)
+    
     for result in results:
-        if result and 'players' in result:
-            for player in result['players']:
-                total_accounts += 1
-                if player.get('NumberOfVACBans', 0) > 0 or player.get('CommunityBanned', False) or player.get('NumberOfGameBans', 0) > 0:
-                    total_bans += 1
-                    vac_bans += player.get('NumberOfVACBans', 0)
-                    community_bans += player.get('CommunityBanned', False)
-                    game_bans += player.get('NumberOfGameBans', 0)
-                    
-                    if player.get('DaysSinceLastBan', 0) <= 7:
-                        bans_in_last_week += 1
+        players = result['players']  # Получаем игроков из текущего результата
+        total_vac_bans = sum(1 for player in players if player['VACBanned'])
+        total_community_bans = sum(1 for player in players if player['CommunityBanned'])
+        total_game_bans = sum(player['NumberOfGameBans'] for player in players)
+        bans_last_week = sum(1 for player in players if player['DaysSinceLastBan'] <= 7 and player['DaysSinceLastBan'] > 0)
 
-    # Print or return aggregated statistics
-    print(f"Total Bans: {total_accounts}")
-    print(f"Total Bans: {total_bans}")
-    print(f"Total VAC Bans: {vac_bans}")
-    print(f"Total Community Bans: {community_bans}")
-    print(f"Total Game Bans: {game_bans}")
-    print(f"Bans in Last 7 Days: {bans_in_last_week}")
+        # Общее количество забаненных аккаунтов
+        total_bans = total_vac_bans + total_community_bans + total_game_bans
+        
+        return total_bans, total_vac_bans, total_community_bans, total_game_bans, bans_last_week
