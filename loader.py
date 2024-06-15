@@ -20,6 +20,8 @@ storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
 redis_ban_check = RedisCache(db=0)
+redis_steam_market = RedisCache(db=1)
+
 
 
 

@@ -19,7 +19,7 @@ class RedisCache:
 
     async def close(self):
         if self.client:
-            await self.client.close()
+            await self.client.aclose()
 
     async def set(self, key, value, expire=None):
         try:

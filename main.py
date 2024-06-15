@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Dispatcher
-from loader import bot, dp, redis_ban_check
+from loader import bot, dp, redis_ban_check, redis_steam_market
 from bot.middlewares.localization import L10nMiddleware
 from bot.handlers import start_handlers, shop_handlers, personal_handlers, farmers_handlers, strategy_handlers, product_handlers, buy_handlers, inventory_handlers
 from bot.database.models import start_db_postegre
@@ -19,9 +19,11 @@ def register_routers(dp: Dispatcher):
 async def main() -> None:
     await start_db_postegre()
     await redis_ban_check.connect()
+    await redis_steam_market.connect()
+    
     
     locale = get_fluent_localization()
-    dp.message.outer_middleware(L10nMiddleware(locale))
+    dp.message.outer_middleware(L10nMiddleware(locale)) 
     dp.callback_query.outer_middleware(L10nMiddleware(locale))
     dp.pre_checkout_query.outer_middleware(L10nMiddleware(locale))
     
