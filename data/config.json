@@ -2,5 +2,15 @@
     "referral_bonus": 10.00,
     "minimal_price": 150.00,
     "account_price": 1203,
-    "steam_web_api_key": "89017D6FB681B31C8CCF8E6C050FFBA3"
+    "steam_web_api_key": "89017D6FB681B31C8CCF8E6C050FFBA3",
+    "proxies": [
+        "http://RfYmiuW:eemufFU@212.193.138.174:63710",
+        "http://SCE64vu1:D96zD5EP@82.117.86.161:64058",
+        "http://SCE64vu1:D96zD5EP@82.117.86.122:64294",
+        "http://sQkJGuxOSU:IxcaPYAjQq@185.156.75.247:12519",
+        "http://z0ENY891Xd:gfYquBr1sb@193.233.62.153:23673",
+        "http://OvOe76:mLB0aqVXdk@109.248.204.38:1050",
+        "http://OvOe76:mLB0aqVXdk@212.115.49.101:1050",
+        "http://QkpVNC:4DwC7L@168.196.238.244:9372"
+    ]
 }

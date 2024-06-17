@@ -41,20 +41,17 @@ product-info =
     </blockquote>
 
 general-accounts-info = 
-    <code><b>Личная статистика</b>
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    Всего аккаунтов: <b>{$personal_accounts}</b>
-    Всего забанено: <b>{$personal_bans}</b>
-    VAC баны: <b>{$personal_vac}</b>
-    Community баны: <b>{$personal_community}</b>
-    Game баны: <b>{$personal_gameban}</b>
-    Банов за последние 7 дней: <b>{$personal_bans_in_last_week}</b>
-
-    <b>Общая статистика</b>
+    <code><b>Общая статистика</b>
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     Всего аккаунтов: <b>{$accounts}</b>
     Всего забанено: <b>{$total_bans}</b>
     VAC баны: <b>{$total_vac}</b>
     Community баны: <b>{$total_community}</b>
     Game баны: <b>{$total_gameban}</b>
-    Банов за последние 7 дней: <b>{$bans_in_last_week}</b></code>
+    Банов за последние 7 дней: <b>{$bans_in_last_week}</b>
+    
+    <b>Общая статистика инвентарей</b>
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    Всего предметов: <b>{$items}</b>
+    Всего кейсов: <b>{$cases}</b>
+    Общая цена: <b>{$prices}</b></code>

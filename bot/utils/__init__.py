@@ -1,1 +1,1 @@
-__all__ = ['avg_price_drop', 'finance_math', 'investments_calculator', 'steamid', 'utils']
+__all__ = ['avg_price_drop', 'finance_math', 'investments_calculator', 'utils']

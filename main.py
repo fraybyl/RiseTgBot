@@ -5,7 +5,8 @@ from bot.middlewares.localization import L10nMiddleware
 from bot.handlers import start_handlers, shop_handlers, personal_handlers, farmers_handlers, strategy_handlers, product_handlers, buy_handlers, inventory_handlers
 from bot.database.models import start_db_postegre
 from bot.l10n.fluent_localization import get_fluent_localization
-from bot.scheduled.ban_stat import ban_stat
+from bot.scheduled.ban_stat import ban_stat_schedule
+from bot.scheduled.market_parse import market_schedule
 
 def register_routers(dp: Dispatcher):
     dp.include_router(start_handlers.router)
@@ -28,10 +29,12 @@ async def on_startup():
     
     register_routers(dp)
 
-    #asyncio.create_task(ban_stat())
+    #asyncio.create_task(ban_stat_schedule())
+    #asyncio.create_task(market_schedule())
     
 async def on_shutdown():
     await redis_db.aclose()
+    await redis_cache.aclose()
 
 
 async def main() -> None:

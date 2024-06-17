@@ -5,9 +5,10 @@ from aiogram.fsm.context import FSMContext
 from fluent.runtime import FluentLocalization
 from bot.keyboards.user_kb import get_inventory_kb, get_inventory_settings_kb
 from bot.utils import utils
-from bot.utils.steamid import steam_urls_parse, get_accounts_statistics, get_player_bans
+from bot.utils.steam_utils.steamid import steam_urls_parse, get_accounts_statistics, get_player_bans
+from bot.utils.steam_utils.parser.inventory_parser import SteamParser
 from bot.states.inventory_states import InventoryStates
-from loader import bot
+from loader import bot, configJson
 from bot.handlers.error_handlers import handle_error_back
 from bot.database.db_requests import  get_steamid64_by_userid, set_steamid64_for_user, get_all_steamid64
 
@@ -33,19 +34,16 @@ async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
 @router.callback_query(lambda query: query.data == 'accounts_statistics')
 async def handle_accounts_statistics(query: CallbackQuery, l10n: FluentLocalization):
     total_bans, total_vac, total_community, total_game_bans, bans_last_week, total_accounts = await get_accounts_statistics()
-    
-    text = l10n.format_value('general-accounts-info', {'personal_accounts': 12321312,
-                                                'personal_bans': 0,
-                                                'personal_vac': 0,
-                                                'personal_community': 0, 
-                                                'personal_gameban': 0,
-                                                'personal_bans_in_last_week': 0,
+    text = l10n.format_value('general-accounts-info', {
                                                 'accounts': total_accounts, 
                                                 'total_bans': total_bans, 
                                                 'total_vac': total_vac, 
                                                 'total_community': total_community, 
                                                 'total_gameban': total_game_bans,  
-                                                'bans_in_last_week': bans_last_week})
+                                                'bans_in_last_week': bans_last_week,
+                                                'items': 0,
+                                                'cases': 0,
+                                                'prices': 0})
     await query.message.edit_caption(caption=text, reply_markup=get_inventory_settings_kb())
     
 
