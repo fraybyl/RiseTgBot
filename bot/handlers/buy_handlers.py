@@ -56,15 +56,18 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext):
     user = data.get('user')
     minimal_price = data.get('minimal_price')
     
-    max_bonus = calculate_max_bonus(product.price * quantity_product, user.discount_percentage, minimal_price)
+    if(user.bonus_points > 0):
+        max_bonus = calculate_max_bonus(product.price * quantity_product, user.discount_percentage, minimal_price)
+        
+        await query.message.edit_caption(caption=f"Введите количество не больше {min(max_bonus, user.bonus_points):.0f}", reply_markup=get_payment_settings_kb())
+        
+        await state.update_data(max_bonus=min(max_bonus, user.bonus_points))
+        await state.set_state(OrderStates.WAITING_BONUS_QUANTITY)
+    else:
+        await query.message.edit_caption(caption=f"У вас нет бонусов для использования", reply_markup=get_payment_order_kb())
     
-    await query.message.edit_caption(caption=f"Введите количество не больше {max_bonus}", reply_markup=get_payment_settings_kb())
     
-    await state.update_data(max_bonus=max_bonus)
-    await state.set_state(OrderStates.WAITING_BONUS_QUANTITY)
-    
-    
-@router.message(OrderStates.WAITING_BONUS_QUANTITY, lambda message: message.text.isdigit() and int(message.text) > 0)
+@router.message(OrderStates.WAITING_BONUS_QUANTITY, lambda message: message.text.isdigit() and int(message.text) >= 0)
 async def proccess_bonus_quantity(message: Message, state: FSMContext, l10n: FluentLocalization):
     data = await state.get_data()
     quantity_msg = int(message.text)

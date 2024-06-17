@@ -12,6 +12,6 @@ class CorrectNumberFilter(BaseFilter):
             return False  
         try:
             number = float(message.text)
-            return number <= 0  
+            return number < 0  
         except ValueError:
             return True  
