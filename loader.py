@@ -3,8 +3,8 @@ from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.enums import ParseMode
 from bot.settings import settings, config
 from aiogram.client.default import DefaultBotProperties
-from bot.database.redis_db import RedisCache
 import logging
+import redis.asyncio as redis
 
 logging.basicConfig(level=logging.INFO)
 
@@ -19,9 +19,11 @@ bot = Bot(
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
-redis_ban_check = RedisCache(db=0)
-redis_steam_market = RedisCache(db=1)
+pool_db = redis.ConnectionPool().from_url("redis://127.0.0.1", db=0)
+pool_cache = redis.ConnectionPool().from_url("redis://127.0.0.1", db=1)
 
+redis_db = redis.Redis(connection_pool=pool_db)
+redis_cache = redis.Redis(connection_pool=pool_cache)
 
 
 

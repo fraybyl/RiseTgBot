@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from fluent.runtime import FluentLocalization
 from bot.keyboards.user_kb import get_inventory_kb, get_inventory_settings_kb
 from bot.utils import utils
-from bot.utils.steamid import steam_urls_parse, get_accounts_statistics
+from bot.utils.steamid import steam_urls_parse, get_accounts_statistics, get_player_bans
 from bot.states.inventory_states import InventoryStates
 from loader import bot
 from bot.handlers.error_handlers import handle_error_back
@@ -32,17 +32,15 @@ async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
     
 @router.callback_query(lambda query: query.data == 'accounts_statistics')
 async def handle_accounts_statistics(query: CallbackQuery, l10n: FluentLocalization):
-    all_accounts = await get_all_steamid64()
-    personal_accounts = await get_steamid64_by_userid(query.from_user.id)
-    personal_bans, personal_vac, personal_community, personal_game_bans, personal_bans_last_week = await get_accounts_statistics(personal_accounts)
-    total_bans, total_vac, total_community, total_game_bans, bans_last_week = await get_accounts_statistics(all_accounts)
-    text = l10n.format_value('general-accounts-info', {'personal_accounts': len(personal_accounts),
-                                                'personal_bans': personal_bans,
-                                                'personal_vac': personal_vac,
-                                                'personal_community': personal_community, 
-                                                'personal_gameban': personal_game_bans,
-                                                'personal_bans_in_last_week': personal_bans_last_week,
-                                                'accounts': len(all_accounts), 
+    total_bans, total_vac, total_community, total_game_bans, bans_last_week, total_accounts = await get_accounts_statistics()
+    
+    text = l10n.format_value('general-accounts-info', {'personal_accounts': 12321312,
+                                                'personal_bans': 0,
+                                                'personal_vac': 0,
+                                                'personal_community': 0, 
+                                                'personal_gameban': 0,
+                                                'personal_bans_in_last_week': 0,
+                                                'accounts': total_accounts, 
                                                 'total_bans': total_bans, 
                                                 'total_vac': total_vac, 
                                                 'total_community': total_community, 
@@ -80,6 +78,7 @@ async def process_inventory_list(message: Message, state: FSMContext):
         successful_result = await steam_urls_parse(lines)
         await message.delete()
         await set_steamid64_for_user(message.from_user.id, successful_result) 
+        await get_player_bans(successful_result)
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_inventory_kb(), caption=f"Ваши аккаунты: ")
         await state.clear()
     except Exception as e:

@@ -1,6 +1,6 @@
 from sqlalchemy.future import select
 from bot.database.models import async_session, User, Product, Category, SteamAccount
-from loader import configJson
+from loader import configJson, redis_cache
 from decimal import Decimal
 
 import logging
@@ -106,11 +106,20 @@ async def get_product_by_id(product_id: int) -> Product:
 
 async def get_steamid64_by_userid(user_id: int) -> list[int]:
     """Retrieves Steam URLs by user ID."""
+    cached_result = await redis_cache.get(f"steamid64::{user_id}")
+    if cached_result:
+        return [int(id) for id in cached_result.decode().split(',')]
+    
     async with async_session() as session:
         try:
             result = await session.execute(select(SteamAccount.steamid64).where(SteamAccount.user_id == user_id))
             steam_accounts = result.scalars().all()
-            return steam_accounts
+            steamid64_list = [acc for acc in steam_accounts]
+            
+            # Store in Redis for future use with 1-hour expiry (adjust as needed)
+            await redis_cache.set(f"steamid64::{user_id}", ','.join(map(str, steamid64_list)))
+            
+            return steamid64_list
         except Exception as e:
             logger.error(f"Error in get_steamid64_by_userid: {e}")
             raise
@@ -153,6 +162,7 @@ async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> bool:
 
             # Коммит транзакции
             await session.commit()
+            await redis_cache.delete(f"steamid64::{user_id}")
             return True
         except Exception as e:
             # Логирование ошибки и откат транзакции в случае исключения

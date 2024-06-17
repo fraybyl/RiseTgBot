@@ -64,7 +64,7 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext):
         await state.update_data(max_bonus=min(max_bonus, user.bonus_points))
         await state.set_state(OrderStates.WAITING_BONUS_QUANTITY)
     else:
-        await query.message.edit_caption(caption=f"У вас нет бонусов для использования", reply_markup=get_payment_order_kb())
+        await query.message.edit_caption(caption=f"У вас нет бонусов для использования", reply_markup=get_payment_settings_kb())
     
     
 @router.message(OrderStates.WAITING_BONUS_QUANTITY, lambda message: message.text.isdigit() and int(message.text) >= 0)
