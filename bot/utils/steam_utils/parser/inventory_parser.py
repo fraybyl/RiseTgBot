@@ -2,7 +2,6 @@ import orjson
 import ua_generator
 import aiohttp
 import logging
-import ast
 import urllib.parse
 from loader import redis_db
 from aiolimiter import AsyncLimiter
@@ -51,6 +50,9 @@ class SteamParser:
                     return None
                 
     async def __parse_hash_name_data(self, market_hash_name: str, proxy: str) -> float:
+        if await redis_db.sismember('blacklist', market_hash_name):
+            return None
+        
         cache_hash = await redis_db.get(f'steam_market::{market_hash_name}')
         
         if(cache_hash):
@@ -60,7 +62,7 @@ class SteamParser:
         
         data = await self.__fetch_hash_name_data(encoded_market_hash_name, proxy)
         if data:
-            price = data.get('lowest_price') or data.get('median_price')
+            price = data.get('lowest_price') or data.get('median_price') or None
             if price:
                 try:
                     price_float = float(price.split(' ')[0].replace(',', '.'))
@@ -137,14 +139,18 @@ class SteamParser:
             tasks.append(self.__parse_hash_name_data(item, proxy))
             
         results = await asyncio.gather(*tasks)
+        
         combined_data = []
         
         for (item, count), price_str in zip(inventory_data, results):
+            if(price_str is None):
+                await redis_db.sadd("blacklist", item)
+                continue
             try:
                 price_str = price_str.decode('utf-8')
                 price_dict = orjson.loads(price_str)
-                price = price_dict.get('price')
-                total_price = price * count
+                price = round(price_dict.get('price'), 2)
+                total_price = float(price) * count
                 combined_data.append((item, count, total_price))
             except ValueError:
                 logging.error('Не удалось преобразовать цену в число: %s', price)

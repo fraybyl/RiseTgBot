@@ -3,12 +3,13 @@ from aiogram import Router, F
 from aiogram.types import CallbackQuery, Message, ContentType
 from aiogram.fsm.context import FSMContext
 from fluent.runtime import FluentLocalization
+import orjson
 from bot.keyboards.user_kb import get_inventory_kb, get_inventory_settings_kb
 from bot.utils import utils
 from bot.utils.steam_utils.steamid import add_new_accounts, steam_urls_parse, get_accounts_statistics, get_player_bans
 from bot.utils.steam_utils.parser.inventory_parser import SteamParser
 from bot.states.inventory_states import InventoryStates
-from loader import bot, configJson
+from loader import bot, configJson, redis_cache
 from bot.handlers.error_handlers import handle_error_back
 from bot.database.db_requests import  get_steamid64_by_userid, set_steamid64_for_user, get_all_steamid64
 
@@ -28,47 +29,66 @@ async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
     message_id = await query.message.edit_caption(caption='Введите пажэ список инвентарей.\nСписок можно передать в формате steamid64 или ссылками на профиль. Если отправляете сообщением, то не больше 90 строк.', reply_markup=get_inventory_settings_kb())
     await state.set_state(InventoryStates.WAITING_INVENTORY_LIST)
     await state.update_data(message_id=message_id.message_id)
-    
+
 @router.callback_query(lambda query: query.data == 'accounts_statistics')
 async def handle_accounts_statistics(query: CallbackQuery, l10n: FluentLocalization):
-    # Получаем старые значения
-    total_bans, total_vac, total_community, total_game_bans, bans_last_week, total_accounts = await get_accounts_statistics()
-    
+    # Получаем старые значения из Redis
+    cached_data = None
+    cached = await redis_cache.get("accounts_statistics")
+    if cached:
+        cached_data = orjson.loads(cached)
+        
+    if not cached_data:
+        # Если данных нет, показываем плейсхолдеры
+        cached_data = {
+            'total_bans': 'Loading...',
+            'total_vac': 'Loading...',
+            'total_community': 'Loading...',
+            'total_game_bans': 'Loading...',
+            'bans_last_week': 'Loading...',
+            'total_accounts': 'Loading...',
+            'total_elements': 'Loading...',
+            'sum_price': 'Loading...',
+            'filtered_items': 'Loading...'
+        }
+
     # Показываем старые значения
     text = l10n.format_value('general-accounts-info', {
-        'accounts': total_accounts,
-        'total_bans': total_bans,
-        'total_vac': total_vac,
-        'total_community': total_community,
-        'total_gameban': total_game_bans,
-        'bans_in_last_week': bans_last_week,
-        'items': 'Loading...',  # Placeholder text
-        'cases': 'Loading...',  # Placeholder text
-        'prices': 'Loading...'  # Placeholder text
+        'accounts': cached_data['total_accounts'],
+        'total_bans': cached_data['total_bans'],
+        'total_vac': cached_data['total_vac'],
+        'total_community': cached_data['total_community'],
+        'total_gameban': cached_data['total_game_bans'],
+        'bans_in_last_week': cached_data['bans_last_week'],
+        'items': cached_data['total_elements'],
+        'cases': cached_data['filtered_items'],
+        'prices': round(cached_data['sum_price']) if isinstance(cached_data['sum_price'], (int, float)) else cached_data['sum_price']
     })
     await query.message.edit_caption(caption=text, reply_markup=get_inventory_settings_kb())
 
-    # Создаем задачу для получения новых значений
-    task = asyncio.create_task(update_statistics(query, l10n))
+    # Создаем фоновую задачу для обновления данных
+    asyncio.create_task(update_statistics())
 
-async def update_statistics(query: CallbackQuery, l10n: FluentLocalization):
+async def update_statistics():
     # Получаем новые значения
-    total_elements, sum_price, filtered_items = await process_inventories()
-    
-    # Обновляем сообщение новыми значениями
     total_bans, total_vac, total_community, total_game_bans, bans_last_week, total_accounts = await get_accounts_statistics()
-    text = l10n.format_value('general-accounts-info', {
-        'accounts': total_accounts,
+    total_elements, sum_price, filtered_items = await process_inventories()
+
+    # Обновляем кэш новыми значениями
+    new_data = {
         'total_bans': total_bans,
         'total_vac': total_vac,
         'total_community': total_community,
-        'total_gameban': total_game_bans,
-        'bans_in_last_week': bans_last_week,
-        'items': total_elements,
-        'cases': filtered_items,
-        'prices': round(sum_price)
-    })
-    await query.message.edit_caption(caption=text, reply_markup=get_inventory_settings_kb())
+        'total_game_bans': total_game_bans,
+        'bans_last_week': bans_last_week,
+        'total_accounts': total_accounts,
+        'total_elements': total_elements,
+        'sum_price': sum_price,
+        'filtered_items': filtered_items
+    }
+
+    await redis_cache.set("accounts_statistics", orjson.dumps(new_data))
+
     
 async def process_inventories():
     all_steamid = await get_all_steamid64()
