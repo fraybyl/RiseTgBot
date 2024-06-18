@@ -14,6 +14,7 @@ from bot.handlers.error_handlers import handle_error_back
 from bot.database.db_requests import  get_steamid64_by_userid, set_steamid64_for_user, get_all_steamid64
 
 router = Router()
+semaphore = asyncio.Semaphore(1)
 
 @router.callback_query(lambda query: query.data == "inventory")
 async def handle_inventory(query: CallbackQuery):
@@ -65,41 +66,46 @@ async def handle_accounts_statistics(query: CallbackQuery, l10n: FluentLocalizat
         'prices': round(cached_data['sum_price']) if isinstance(cached_data['sum_price'], (int, float)) else cached_data['sum_price']
     })
     await query.message.edit_caption(caption=text, reply_markup=get_inventory_settings_kb())
-
-    # Создаем фоновую задачу для обновления данных
+    
+    try:
+        if cached_data['total_accounts'] < cached_data['total_need_update']:
+            print(cached_data['total_accounts'], cached_data['total_need_update'])
+    except:
+        pass
+    
     asyncio.create_task(update_statistics())
 
 async def update_statistics():
-    # Получаем новые значения
-    total_bans, total_vac, total_community, total_game_bans, bans_last_week, total_accounts = await get_accounts_statistics()
-    total_elements, sum_price, filtered_items = await process_inventories()
+    async with semaphore:
+        total_bans, total_vac, total_community, total_game_bans, bans_last_week, total_accounts = await get_accounts_statistics()
+        total_elements, sum_price, filtered_items, all_steamid = await process_inventories()
 
-    # Обновляем кэш новыми значениями
-    new_data = {
-        'total_bans': total_bans,
-        'total_vac': total_vac,
-        'total_community': total_community,
-        'total_game_bans': total_game_bans,
-        'bans_last_week': bans_last_week,
-        'total_accounts': total_accounts,
-        'total_elements': total_elements,
-        'sum_price': sum_price,
-        'filtered_items': filtered_items
-    }
+        # Обновляем кэш новыми значениями с временем истечения 60 секунд
+        new_data = {
+            'total_bans': total_bans,
+            'total_vac': total_vac,
+            'total_community': total_community,
+            'total_game_bans': total_game_bans,
+            'bans_last_week': bans_last_week,
+            'total_accounts': total_accounts,
+            'total_elements': total_elements,
+            'total_need_update': all_steamid,
+            'sum_price': sum_price,
+            'filtered_items': filtered_items
+        }
 
-    await redis_cache.set("accounts_statistics", orjson.dumps(new_data))
+        await redis_cache.set("accounts_statistics", orjson.dumps(new_data), expire=60)
 
-    
 async def process_inventories():
     all_steamid = await get_all_steamid64()
     proxies = await configJson.get_config_value('proxies')
     steamParser = SteamParser(proxies)
-    result = await steamParser.process_inventories(all_steamid)
+    all_steamid = await steamParser.process_inventories(all_steamid)
     total_elements = 0
     sum_price = 0
     filtered_items = []
 
-    for sublist in result:
+    for sublist in all_steamid:
         for item in sublist:
             if isinstance(item, tuple):
                 if len(item) >= 2:
@@ -109,7 +115,8 @@ async def process_inventories():
                 if len(item) >= 1 and "Case" in item[0]:
                     filtered_items.append(item[1])
 
-    return total_elements, sum_price, sum(filtered_items)
+    return total_elements, sum_price, sum(filtered_items), all_steamid
+
 
 
 
@@ -142,7 +149,7 @@ async def process_inventory_list(message: Message, state: FSMContext):
         successful_result = await steam_urls_parse(lines)
         await message.delete()
         await set_steamid64_for_user(message.from_user.id, successful_result) 
-        await add_new_accounts(successful_result)
+        await add_new_accounts(successful_result, semaphore)
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_inventory_kb(), caption=f"Ваши аккаунты: ")
         await state.clear()
     except Exception as e:

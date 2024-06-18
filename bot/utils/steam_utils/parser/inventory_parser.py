@@ -8,7 +8,7 @@ from aiolimiter import AsyncLimiter
 import asyncio
 
 class SteamParser:
-    def __init__(self, proxies: dict[str], currency: int = 5, rate_limit_seconds: int = 4):
+    def __init__(self, proxies: dict[str], currency: int = 5, rate_limit_seconds: int = 5):
         self.headers = self.generate_headers()
         self.currency = currency
         self.rate_limit_seconds = rate_limit_seconds
@@ -21,7 +21,7 @@ class SteamParser:
     async def __fetch_inventory_data(self, steam_id: int, proxy: str) -> dict:
         inventory_url = f"https://steamcommunity.com/inventory/{steam_id}/730/2?l=english&count=1999"
         if proxy not in self.proxy_limiters:
-            self.proxy_limiters[proxy] = AsyncLimiter(max_rate=1, time_period=2) # яебал тут лимит  1 запрос в 4 сек ставить
+            self.proxy_limiters[proxy] = AsyncLimiter(max_rate=1, time_period=4) # яебал тут лимит  1 запрос в 4 сек ставить
         
         async with aiohttp.ClientSession(headers=self.headers) as session:
             async with self.proxy_limiters[proxy]:
@@ -159,38 +159,40 @@ class SteamParser:
         return combined_data
                 
     async def process_inventories(self, steam_ids: list[int]) -> list[tuple[str, int, float]]:
-        """смотрит цену всех инвентарей
+        """
+        Смотрит цену всех инвентарей.
         Args:
-            steam_ids (int): лист стим айди
-            proxies (list[str]): лист прокси
+            steam_ids (list[int]): лист стим айди
 
         Returns:
-            list[tuple[str, int, float]]: вернет лист с кортежом с названием, количеством, ценой т.е result[0][0](значение)
+            list[tuple[str, int, float]]: вернет лист с кортежом с названием, количеством, ценой.
         """
         results = []
         num_proxies = len(self.proxies)
         num_steam_ids = len(steam_ids)
+        proxy_index = 0
+
         while steam_ids:
             tasks = []
             if num_steam_ids > num_proxies:
-                # Если steam_ids больше чем прокси, выполняем порциями минимум по 2 прокси
-                for i in range(min(num_steam_ids, num_proxies // 2)):
-                    steam_id = steam_ids.pop(0)
-                    proxies_chunk = self.proxies[i*2:(i*2) + 2]
+                # Если steam_ids больше чем прокси, распределяем прокси циклически
+                for steam_id in steam_ids[:num_proxies]:
+                    proxies_chunk = [self.proxies[proxy_index % num_proxies]]
+                    proxy_index += 1
                     tasks.append(self.process_inventory_price(steam_id, proxies_chunk))
+                steam_ids = steam_ids[num_proxies:]
             else:
                 # Если прокси больше или равно количеству steam_ids, распределяем прокси равномерно
                 num_proxies_per_task = num_proxies // num_steam_ids
                 remainder = num_proxies % num_steam_ids
 
                 start_index = 0
-                for i, steam_id in enumerate(steam_ids[:]):
+                for i, steam_id in enumerate(steam_ids):
                     count = num_proxies_per_task + (1 if i < remainder else 0)
                     proxies_chunk = self.proxies[start_index:start_index + count]
                     start_index += count
                     tasks.append(self.process_inventory_price(steam_id, proxies_chunk))
                 steam_ids.clear()
-                
 
             # Выполнение задач текущей порции
             results.extend(await asyncio.gather(*tasks))

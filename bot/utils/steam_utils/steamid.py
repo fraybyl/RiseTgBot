@@ -87,7 +87,7 @@ async def fetch_get_player_bans(session, url, semaphore, update = True):
             logging.error(f"Error fetching URL: {url}, {e}")
             return None, None
 
-async def get_player_bans(steam_ids: list[int], update = True, max_concurrent_requests=2):
+async def get_player_bans(steam_ids: list[int], update = True, max_concurrent_requests=3):
     api_key = await configJson.get_config_value('steam_web_api_key')
     semaphore = asyncio.Semaphore(max_concurrent_requests)
     tasks = []
@@ -107,38 +107,39 @@ async def get_player_bans(steam_ids: list[int], update = True, max_concurrent_re
 
     return temp_and_final_keys
 
-async def add_new_accounts(steam_ids: list[int]):
-    steam_ids_set = set(steam_ids)
-    cursor = '0'
-    tasks = []
-    try:
-        while cursor != 0:
-            cursor, keys = await redis_db.scan(cursor=cursor, count=500, match='ban_stat::*')
-            if keys:
-                tasks.append(fetch_keys(redis_db, keys))
-        
-        if tasks:
-            results = await asyncio.gather(*tasks)
-            for result in results:
-                for value in result:
-                    try:
-                        for data_list in value:
-                            data_dict = orjson.loads(data_list)
-                            for data in data_dict:
-                                steam_id = int(data.get('SteamId', 0))
-                                steam_ids_set.discard(steam_id)
-                    except orjson.JSONDecodeError as e:
-                        print(f"JSON decode error: {e}")
-                    except Exception as e:
-                        print(f"Unexpected error: {e}")
-                        
-    except Exception as e:
-        print(f"Error during Redis scan or key fetching: {e}")
-    if(len(list(steam_ids_set))):
-        temp_and_final_keys = await get_player_bans(list(steam_ids_set), True)
-        temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
-        final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
-        await switch_keys(temp_keys, final_keys, redis_db)
+async def add_new_accounts(steam_ids: list[int], semaphore: asyncio.Semaphore):
+    async with semaphore:
+        steam_ids_set = set(steam_ids)
+        cursor = '0'
+        tasks = []
+        try:
+            while cursor != 0:
+                cursor, keys = await redis_db.scan(cursor=cursor, count=500, match='ban_stat::*')
+                if keys:
+                    tasks.append(fetch_keys(redis_db, keys))
+            
+            if tasks:
+                results = await asyncio.gather(*tasks)
+                for result in results:
+                    for value in result:
+                        try:
+                            for data_list in value:
+                                data_dict = orjson.loads(data_list)
+                                for data in data_dict:
+                                    steam_id = int(data.get('SteamId', 0))
+                                    steam_ids_set.discard(steam_id)
+                        except orjson.JSONDecodeError as e:
+                            print(f"JSON decode error: {e}")
+                        except Exception as e:
+                            print(f"Unexpected error: {e}")
+                            
+        except Exception as e:
+            print(f"Error during Redis scan or key fetching: {e}")
+        if(len(list(steam_ids_set))):
+            temp_and_final_keys = await get_player_bans(list(steam_ids_set), True)
+            temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
+            final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
+            await switch_keys(temp_keys, final_keys, redis_db)
         
 async def switch_keys(temp_keys, final_keys, pipe):
     for temp_key, final_key in zip(temp_keys, final_keys):
