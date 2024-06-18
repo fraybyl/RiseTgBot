@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from fluent.runtime import FluentLocalization
 from bot.keyboards.user_kb import get_inventory_kb, get_inventory_settings_kb
 from bot.utils import utils
-from bot.utils.steam_utils.steamid import steam_urls_parse, get_accounts_statistics, get_player_bans
+from bot.utils.steam_utils.steamid import add_new_accounts, steam_urls_parse, get_accounts_statistics, get_player_bans
 from bot.utils.steam_utils.parser.inventory_parser import SteamParser
 from bot.states.inventory_states import InventoryStates
 from loader import bot, configJson
@@ -22,8 +22,6 @@ async def handle_inventory(query: CallbackQuery):
     else:
         await utils.edit_message_media(query, 'RISE_FOR_FARMERS', get_inventory_kb(), caption='У вас нет добавленных аккаунтов. Нажмите кнопку "Добавить аккаунты"')
     
-
-
     
 @router.callback_query(lambda query: query.data == 'add_accounts')
 async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
@@ -33,19 +31,67 @@ async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
     
 @router.callback_query(lambda query: query.data == 'accounts_statistics')
 async def handle_accounts_statistics(query: CallbackQuery, l10n: FluentLocalization):
+    # Получаем старые значения
+    total_bans, total_vac, total_community, total_game_bans, bans_last_week, total_accounts = await get_accounts_statistics()
+    
+    # Показываем старые значения
+    text = l10n.format_value('general-accounts-info', {
+        'accounts': total_accounts,
+        'total_bans': total_bans,
+        'total_vac': total_vac,
+        'total_community': total_community,
+        'total_gameban': total_game_bans,
+        'bans_in_last_week': bans_last_week,
+        'items': 'Loading...',  # Placeholder text
+        'cases': 'Loading...',  # Placeholder text
+        'prices': 'Loading...'  # Placeholder text
+    })
+    await query.message.edit_caption(caption=text, reply_markup=get_inventory_settings_kb())
+
+    # Создаем задачу для получения новых значений
+    task = asyncio.create_task(update_statistics(query, l10n))
+
+async def update_statistics(query: CallbackQuery, l10n: FluentLocalization):
+    # Получаем новые значения
+    total_elements, sum_price, filtered_items = await process_inventories()
+    
+    # Обновляем сообщение новыми значениями
     total_bans, total_vac, total_community, total_game_bans, bans_last_week, total_accounts = await get_accounts_statistics()
     text = l10n.format_value('general-accounts-info', {
-                                                'accounts': total_accounts, 
-                                                'total_bans': total_bans, 
-                                                'total_vac': total_vac, 
-                                                'total_community': total_community, 
-                                                'total_gameban': total_game_bans,  
-                                                'bans_in_last_week': bans_last_week,
-                                                'items': 0,
-                                                'cases': 0,
-                                                'prices': 0})
+        'accounts': total_accounts,
+        'total_bans': total_bans,
+        'total_vac': total_vac,
+        'total_community': total_community,
+        'total_gameban': total_game_bans,
+        'bans_in_last_week': bans_last_week,
+        'items': total_elements,
+        'cases': filtered_items,
+        'prices': round(sum_price)
+    })
     await query.message.edit_caption(caption=text, reply_markup=get_inventory_settings_kb())
     
+async def process_inventories():
+    all_steamid = await get_all_steamid64()
+    proxies = await configJson.get_config_value('proxies')
+    steamParser = SteamParser(proxies)
+    result = await steamParser.process_inventories(all_steamid)
+    total_elements = 0
+    sum_price = 0
+    filtered_items = []
+
+    for sublist in result:
+        for item in sublist:
+            if isinstance(item, tuple):
+                if len(item) >= 2:
+                    total_elements += item[1]
+                if len(item) >= 3:
+                    sum_price += item[2] * item[1]
+                if len(item) >= 1 and "Case" in item[0]:
+                    filtered_items.append(item[1])
+
+    return total_elements, sum_price, sum(filtered_items)
+
+
 
 @router.callback_query(lambda query: query.data == 'back_inventory')
 async def handle_back_inventory(query:CallbackQuery, state: FSMContext):
@@ -76,7 +122,7 @@ async def process_inventory_list(message: Message, state: FSMContext):
         successful_result = await steam_urls_parse(lines)
         await message.delete()
         await set_steamid64_for_user(message.from_user.id, successful_result) 
-        await get_player_bans(successful_result)
+        await add_new_accounts(successful_result)
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_inventory_kb(), caption=f"Ваши аккаунты: ")
         await state.clear()
     except Exception as e:

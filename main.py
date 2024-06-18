@@ -29,7 +29,7 @@ async def on_startup():
     
     register_routers(dp)
 
-    #asyncio.create_task(ban_stat_schedule())
+    asyncio.create_task(ban_stat_schedule())
     #asyncio.create_task(market_schedule())
     
 async def on_shutdown():

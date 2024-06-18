@@ -30,7 +30,8 @@ class SteamParser:
                     logging.info('fetch %s with proxy: %s' % (steam_id, proxy))
                     if response.status == 200:
                         return await response.json()
-                    
+                    elif response.status == 403 or response.status == 401:
+                        await redis_db.sadd("blacklist", steam_id)
                     logging.error("Failed to fetch inventory data with status: %s", response.status)
                     return None
 
@@ -63,19 +64,24 @@ class SteamParser:
             if price:
                 try:
                     price_float = float(price.split(' ')[0].replace(',', '.'))
-                    await redis_db.set(f'steam_market::{market_hash_name}', price_float)
-                    return price_float
+                    item_data = {
+                            'price': price_float,
+                            'sell_count': 0
+                    }
+                    
+                    await redis_db.set(f'steam_market::{market_hash_name}', orjson.dumps(item_data))
+                    return orjson.dumps(item_data)
                 except ValueError:
                     logging.error('Не преобразовало епта: %s', market_hash_name)
-                    return 0.0
+                    return None
 
-        return 0.0
+        return None
 
     async def __parse_inventory_data(self, steamid: int, proxy: str) -> list[tuple[str, int]]:
         cache_key = f"inventory::{steamid}"
         cached_data = await redis_db.get(cache_key)
         if cached_data:
-            return eval(cached_data)  # Unserialize cached data
+            return orjson.loads(cached_data)  # Unserialize cached data
         
         inventory_data = await self.__fetch_inventory_data(steamid, proxy)
         
@@ -106,7 +112,7 @@ class SteamParser:
         if not item_names_with_count:
             logging.info("No marketable items found.")
             
-        await redis_db.set(cache_key, repr(item_names_with_count))
+        await redis_db.set(cache_key, orjson.dumps(item_names_with_count))
 
         return item_names_with_count
     
@@ -121,6 +127,9 @@ class SteamParser:
             list[tuple[str, int, float]]: вернет название, количество, цену
         """
         
+        if await redis_db.sismember('blacklist', steam_id):
+            return []
+        
         inventory_data = await self.__parse_inventory_data(steam_id, proxies[0])
         tasks = []
         for i, (item, count) in enumerate(inventory_data):
@@ -133,8 +142,8 @@ class SteamParser:
         for (item, count), price_str in zip(inventory_data, results):
             try:
                 price_str = price_str.decode('utf-8')
-                price_str = orjson.loads(price_str)
-                price = price_str.get('price')
+                price_dict = orjson.loads(price_str)
+                price = price_dict.get('price')
                 total_price = price * count
                 combined_data.append((item, count, total_price))
             except ValueError:

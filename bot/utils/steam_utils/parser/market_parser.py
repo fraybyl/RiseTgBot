@@ -1,5 +1,7 @@
-import datetime
+from datetime import datetime
 import orjson
+from requests import request
+import requests
 import ua_generator
 import aiohttp
 from loader import redis_db, logging
@@ -15,6 +17,7 @@ class SteamMarketParser:
         self.url = f"https://steamcommunity.com/market/search/render/?query=appid%3A730"
         self.proxies = proxies
         self.headers = self.generate_headers()
+        self.price_rub = self.get_price_rub()
 
     def generate_headers(self):
         return ua_generator.generate(browser=('chrome', 'edge', 'firefox')).headers.get()
@@ -51,18 +54,16 @@ class SteamMarketParser:
                 for item in items:
                     if 'sell_price_text' in item:
                         item_name = item.get('hash_name')
-                        price = item.get('sell_price_text')
+                        price = float(item.get('sell_price_text').replace('$', '').replace(',', ''))
                         sell_count = item.get('sell_listings')
-
                         item_data = {
-                            'name': item_name,
-                            'price': price,
+                            'price':  price * self.price_rub,
                             'sell_count': sell_count
                         }
 
                         result.append(item_data)
-                        await redis_db.set(f'steam_market::{item_name}', str(item_data))
-
+                        await redis_db.set(f'steam_market::{item_name}', orjson.dumps(item_data))
+                        
                 return result
 
         except (aiohttp.ClientError, asyncio.TimeoutError) as e:
@@ -123,25 +124,24 @@ class SteamMarketParser:
 
         return results
 
-    async def get_price_rub(self, proxy: str) -> dict[str, str]:
+    def get_price_rub(self) -> float:
         """
         Получает цену в рублях с использованием случайного прокси.
 
         :return: Словарь с ценой в рублях.
         """
         price_url = "https://api.steam-currency.ru/currency/USD:RUB"
-        async with aiohttp.ClientSession(headers=self.headers) as session:
-            async with session.get(price_url, timeout=5) as response:
-                response.raise_for_status()
-                response_json = await response.json()
-                data = response_json.get('data', [])
-                if not data:
-                    return {}
-                
-                latest_item = max(data, key=lambda x: datetime.strptime(x["created_at"], "%Y-%m-%d %H:%M:%S"))
-                rub_price = latest_item.get('close_price')
+        response  = requests.get(price_url, headers=self.headers)
+        response.raise_for_status()
+        response_json = response.json()
+        data = response_json.get('data', [])
+        if not data:
+            return {}
+        
+        latest_item = max(data, key=lambda x: datetime.strptime(x["created_at"], "%Y-%m-%d %H:%M:%S"))
+        rub_price = latest_item.get('close_price')
 
-                return rub_price
+        return float(rub_price)
 
     async def get_all_keys(self) -> list[str]:
         """
@@ -175,7 +175,6 @@ class SteamMarketParser:
                 cached_count = cached_data.get("sell_count")
 
                 if cached_price is not None and cached_count is not None:
-                    cleaned_price = float(cached_price.replace('$', '').replace(',', ''))
-                    total_price += cleaned_price * int(cached_count)
+                    total_price += cached_price * int(cached_count)
 
         return total_price

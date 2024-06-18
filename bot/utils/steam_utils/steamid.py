@@ -3,6 +3,7 @@ import hashlib
 import re
 import aiohttp
 import orjson
+from bot.database.db_requests import get_all_steamid64
 from loader import configJson, redis_db, logging
 
 # Precompiled patterns
@@ -62,7 +63,14 @@ async def steam_urls_parse(lines: list[str], concurrency_limit: int = 500) -> li
         results = await asyncio.gather(*tasks, return_exceptions=True)
         return [result for result in results if isinstance(result, int)]
         
-async def fetch_get_player_bans(session, url, semaphore):
+async def fetch_get_player_bans(session, url, semaphore, update = True):
+    def generate_cache_key(url, temp=False):
+        prefix = "ban_stat_temp" if temp else "ban_stat"
+        return f"{prefix}::{hashlib.md5(url.encode()).hexdigest()}"
+
+    cache_key_temp = generate_cache_key(url, temp=update)
+    cache_key_final = generate_cache_key(url)
+
     async with semaphore:
         try:
             async with session.get(url) as response:
@@ -70,20 +78,16 @@ async def fetch_get_player_bans(session, url, semaphore):
                 data = await response.json()
 
                 try:
-                    for player in data.get('players', []):
-                        steam_id = player.get('SteamId')
-                        del player['SteamId']
-                        if steam_id:
-                            await redis_db.set(f'ban_stat::{steam_id}', orjson.dumps(player))
+                    await redis_db.set(cache_key_temp, orjson.dumps(data.get('players')))
                 except Exception as e:
-                    logging.error(f"Error setting cache for URL: {url}, {e}")
+                    logging.error(f"Error setting temp cache for URL: {url}, {e}")
 
-                return data
+                return cache_key_temp, cache_key_final
         except aiohttp.ClientError as e:
             logging.error(f"Error fetching URL: {url}, {e}")
-            return None
+            return None, None
 
-async def get_player_bans(steam_ids: list[int], max_concurrent_requests=1):
+async def get_player_bans(steam_ids: list[int], update = True, max_concurrent_requests=2):
     api_key = await configJson.get_config_value('steam_web_api_key')
     semaphore = asyncio.Semaphore(max_concurrent_requests)
     tasks = []
@@ -96,13 +100,51 @@ async def get_player_bans(steam_ids: list[int], max_concurrent_requests=1):
                 f'?key={api_key}&steamids={",".join(map(str, steam_ids_chunk))}'
             )
 
-            task = fetch_get_player_bans(session, url, semaphore)
+            task = fetch_get_player_bans(session, url, semaphore, update)
             tasks.append(task)
 
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        temp_and_final_keys = await asyncio.gather(*tasks, return_exceptions=True)
 
-    return results
+    return temp_and_final_keys
 
+async def add_new_accounts(steam_ids: list[int]):
+    steam_ids_set = set(steam_ids)
+    cursor = '0'
+    tasks = []
+    try:
+        while cursor != 0:
+            cursor, keys = await redis_db.scan(cursor=cursor, count=500, match='ban_stat::*')
+            if keys:
+                tasks.append(fetch_keys(redis_db, keys))
+        
+        if tasks:
+            results = await asyncio.gather(*tasks)
+            for result in results:
+                for value in result:
+                    try:
+                        for data_list in value:
+                            data_dict = orjson.loads(data_list)
+                            for data in data_dict:
+                                steam_id = int(data.get('SteamId', 0))
+                                steam_ids_set.discard(steam_id)
+                    except orjson.JSONDecodeError as e:
+                        print(f"JSON decode error: {e}")
+                    except Exception as e:
+                        print(f"Unexpected error: {e}")
+                        
+    except Exception as e:
+        print(f"Error during Redis scan or key fetching: {e}")
+    if(len(list(steam_ids_set))):
+        temp_and_final_keys = await get_player_bans(list(steam_ids_set), True)
+        temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
+        final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
+        await switch_keys(temp_keys, final_keys, redis_db)
+        
+async def switch_keys(temp_keys, final_keys, pipe):
+    for temp_key, final_key in zip(temp_keys, final_keys):
+        if temp_key and final_key:
+            await pipe.rename(temp_key, final_key)
+        
 async def get_accounts_statistics():
     total_vac_bans = 0
     total_community_bans = 0
@@ -113,31 +155,34 @@ async def get_accounts_statistics():
     tasks = []
     cursor = '0'
     while cursor != 0:
-        cursor, keys = await redis_db.scan(cursor=cursor, count=20000, match='ban_stat::*')
+        cursor, keys = await redis_db.scan(cursor=cursor, count=500, match='ban_stat::*')
         if keys:
             tasks.append(fetch_keys(redis_db, keys))
     
     # Собираем результаты
     results = await asyncio.gather(*tasks)
-    for account_list in results:
-        for data_bytes in account_list:
-            for data in data_bytes:
-                # Извлекаем данные из байтов в строку
-                data_str = data.decode('utf-8')
-                # Преобразуем строку JSON в словарь
-                data_dict = orjson.loads(data_str)
-
-                total_accounts += 1
-                total_vac_bans += data_dict.get('VACBanned', 0)
-                total_game_bans += data_dict.get('NumberOfGameBans', 0)
-                total_community_bans += data_dict.get('CommunityBanned', 0)
-                last_ban = data_dict.get('DaysSinceLastBan', 0)
-                
-                if last_ban > 0:
-                    total_bans += 1
-                    if last_ban <= 7:
-                        bans_last_week += 1
-
+    for result in results:
+        for value in result:
+            try:
+                for data_bytes in value:
+                    data_list = orjson.loads(data_bytes)
+                    
+                    for data_dict in data_list:
+                        total_accounts += 1
+                        total_vac_bans += data_dict.get('VACBanned', 0)
+                        total_game_bans += data_dict.get('NumberOfGameBans', 0)
+                        total_community_bans += data_dict.get('CommunityBanned', 0)
+                        last_ban = data_dict.get('DaysSinceLastBan', 0)
+                        
+                        if last_ban > 0:
+                            total_bans += 1
+                            if last_ban <= 7:
+                                bans_last_week += 1
+            except orjson.JSONDecodeError as e:
+                print(f"JSON decode error: {e}")
+            except Exception as e:
+                print(f"Unexpected error: {e}")
+    
     return total_bans, total_vac_bans, total_community_bans, total_game_bans, bans_last_week, total_accounts
         
 async def fetch_keys(client, keys):

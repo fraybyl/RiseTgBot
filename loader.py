@@ -19,11 +19,11 @@ bot = Bot(
 storage = MemoryStorage()
 dp = Dispatcher(storage=storage)
 
-pool_db = redis.ConnectionPool().from_url("redis://127.0.0.1", db=0)
-pool_cache = redis.ConnectionPool().from_url("redis://127.0.0.1", db=1)
+pool_db = redis.ConnectionPool(decode_responses=True).from_url("redis://127.0.0.1", db=0)
+pool_cache = redis.ConnectionPool(decode_responses=True).from_url("redis://127.0.0.1", db=1)
 
-redis_db = redis.Redis(connection_pool=pool_db, decode_responses=True)
-redis_cache = redis.Redis(connection_pool=pool_cache, decode_responses=True)
+redis_db = redis.Redis(connection_pool=pool_db)
+redis_cache = redis.Redis(connection_pool=pool_cache)
 
 
 

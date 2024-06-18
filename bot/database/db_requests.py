@@ -128,7 +128,7 @@ async def get_all_steamid64() -> list[int]:
     """Retrieves all Steam URLs."""
     async with async_session() as session:
         try:
-            result = await session.execute(select(SteamAccount.steamid64))
+            result = await session.execute(select(SteamAccount.steamid64).distinct())
             steam_accounts = result.scalars().all()
             return steam_accounts
         except Exception as e:
