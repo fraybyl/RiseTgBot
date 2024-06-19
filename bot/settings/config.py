@@ -1,27 +1,29 @@
 import json
+import os
 
 class ConfigManager:
-    def __init__(self, config_file):
+    def __init__(self, config_file: str):
         self.config_file = config_file
+        self._config = self._load_config()
 
-    async def load_config(self):
-        with open(self.config_file, 'r') as f:
+    def _load_config(self) -> dict[str, any]:
+        if not os.path.exists(self.config_file):
+            raise FileNotFoundError(f"Config file {self.config_file} not found.")
+        with open(self.config_file, 'r', encoding='utf-8') as f:
             return json.load(f)
 
-    async def save_config(self, config):
-        with open(self.config_file, 'w') as f:
-            json.dump(config, f, indent=4)
+    def _save_config(self) -> None:
+        with open(self.config_file, 'w', encoding='utf-8') as f:
+            json.dump(self._config, f, indent=4)
 
-    async def get_config_value(self, key):
-        config = await self.load_config()
-        if key not in config:
-            raise ValueError(f"Config key {key} does not exist")
-        return config[key]
+    def get_config_value(self, key: str) -> any:
+        if key not in self._config:
+            raise KeyError(f"Config key {key} does not exist")
+        return self._config[key]
 
-    async def set_config_value(self, key, value):
-        config = await self.load_config()
-        config[key] = value
-        await self.save_config(config)
+    def set_config_value(self, key: str, value: any) -> None:
+        self._config[key] = value
+        self._save_config()
 
 class FileIds:
     def __init__(self, json_path):

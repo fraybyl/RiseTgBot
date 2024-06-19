@@ -12,7 +12,7 @@ async def ban_stat_schedule() -> None:
     temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
     final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
     
-    async with redis_db.pipeline(transaction=True) as pipe:
+    async with redis_db.pipeline() as pipe:
         try:
             old_keys = await redis_db.keys('ban_stat::*')
             if old_keys:

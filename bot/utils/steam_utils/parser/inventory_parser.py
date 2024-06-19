@@ -8,7 +8,7 @@ from aiolimiter import AsyncLimiter
 import asyncio
 
 class SteamParser:
-    def __init__(self, proxies: dict[str], currency: int = 5, rate_limit_seconds: int = 5):
+    def __init__(self, proxies: list[str], currency: int = 5, rate_limit_seconds: int = 5):
         self.headers = self.generate_headers()
         self.currency = currency
         self.rate_limit_seconds = rate_limit_seconds
@@ -21,7 +21,7 @@ class SteamParser:
     async def __fetch_inventory_data(self, steam_id: int, proxy: str) -> dict:
         inventory_url = f"https://steamcommunity.com/inventory/{steam_id}/730/2?l=english&count=1999"
         if proxy not in self.proxy_limiters:
-            self.proxy_limiters[proxy] = AsyncLimiter(max_rate=1, time_period=4) # яебал тут лимит  1 запрос в 4 сек ставить
+            self.proxy_limiters[proxy] = AsyncLimiter(max_rate=1, time_period=4)
         
         async with aiohttp.ClientSession(headers=self.headers) as session:
             async with self.proxy_limiters[proxy]:
@@ -29,7 +29,7 @@ class SteamParser:
                     logging.info('fetch %s with proxy: %s' % (steam_id, proxy))
                     if response.status == 200:
                         return await response.json()
-                    elif response.status == 403 or response.status == 401:
+                    elif response.status in {403, 401}:
                         await redis_db.sadd("blacklist", steam_id)
                     logging.error("Failed to fetch inventory data with status: %s", response.status)
                     return None
@@ -55,8 +55,9 @@ class SteamParser:
         
         cache_hash = await redis_db.get(f'steam_market::{market_hash_name}')
         
-        if(cache_hash):
-            return cache_hash
+        if cache_hash:
+            cached_data = orjson.loads(cache_hash)
+            return cached_data['price']
         
         encoded_market_hash_name = urllib.parse.quote(market_hash_name)
         
@@ -67,14 +68,14 @@ class SteamParser:
                 try:
                     price_float = float(price.split(' ')[0].replace(',', '.'))
                     item_data = {
-                            'price': price_float,
-                            'sell_count': 0
+                        'price': price_float,
+                        'sell_count': 0
                     }
                     
                     await redis_db.set(f'steam_market::{market_hash_name}', orjson.dumps(item_data))
                     return orjson.dumps(item_data)
                 except ValueError:
-                    logging.error('Не преобразовало епта: %s', market_hash_name)
+                    logging.error('Failed to parse price for item: %s', market_hash_name)
                     return None
 
         return None
@@ -83,7 +84,7 @@ class SteamParser:
         cache_key = f"inventory::{steamid}"
         cached_data = await redis_db.get(cache_key)
         if cached_data:
-            return orjson.loads(cached_data)  # Unserialize cached data
+            return orjson.loads(cached_data)  
         
         inventory_data = await self.__fetch_inventory_data(steamid, proxy)
         
@@ -113,24 +114,14 @@ class SteamParser:
 
         if not item_names_with_count:
             logging.info("No marketable items found.")
-            
+        
         await redis_db.set(cache_key, orjson.dumps(item_names_with_count))
 
         return item_names_with_count
     
-    async def process_inventory_price(self, steam_id: int, proxies: list[str]) -> tuple[str, int, float]:
-        """Смотрит цену 1 инвентаря
-
-        Args:
-            steam_id (int): стим айди че тупень
-            proxies (list[str]): лист прокси
-
-        Returns:
-            list[tuple[str, int, float]]: вернет название, количество, цену
-        """
-        
+    async def process_inventory_price(self, steam_id: int, proxies: list[str]) -> tuple[int, list[tuple[str, int, float]]]:
         if await redis_db.sismember('blacklist', steam_id):
-            return []
+            return steam_id, []
         
         inventory_data = await self.__parse_inventory_data(steam_id, proxies[0])
         tasks = []
@@ -142,49 +133,40 @@ class SteamParser:
         
         combined_data = []
         
-        for (item, count), price_str in zip(inventory_data, results):
-            if(price_str is None):
+        for (item, count), price in zip(inventory_data, results):
+            if price is None:
                 await redis_db.sadd("blacklist", item)
                 continue
             try:
-                price_str = price_str.decode('utf-8')
-                price_dict = orjson.loads(price_str)
-                price = round(price_dict.get('price'), 2)
-                total_price = float(price) * count
+                total_price = round(price * count, 2)
                 combined_data.append((item, count, total_price))
             except ValueError:
-                logging.error('Не удалось преобразовать цену в число: %s', price)
-                combined_data.append((item, count, 0.0))  
+                logging.error('Failed to convert price to number: %s', price)
+                combined_data.append((item, count, 0.0))
         
-        return combined_data
-                
-    async def process_inventories(self, steam_ids: list[int]) -> list[tuple[str, int, float]]:
-        """
-        Смотрит цену всех инвентарей.
-        Args:
-            steam_ids (list[int]): лист стим айди
+        return steam_id, combined_data
+    
+    async def __is_in_cache(self, steam_id: int):
+        return await redis_db.exists(f'inventory::{steam_id}')
 
-        Returns:
-            list[tuple[str, int, float]]: вернет лист с кортежом с названием, количеством, ценой.
-        """
+    async def process_inventories(self, steam_ids: list[int]) -> list[tuple[int, list[tuple[str, int, float]]]]:
         results = []
         num_proxies = len(self.proxies)
-        num_steam_ids = len(steam_ids)
         proxy_index = 0
+
+        steam_ids = [steam_id for steam_id in steam_ids if not await self.__is_in_cache(steam_id)]
 
         while steam_ids:
             tasks = []
-            if num_steam_ids > num_proxies:
-                # Если steam_ids больше чем прокси, распределяем прокси циклически
+            if len(steam_ids) > num_proxies:
                 for steam_id in steam_ids[:num_proxies]:
                     proxies_chunk = [self.proxies[proxy_index % num_proxies]]
                     proxy_index += 1
                     tasks.append(self.process_inventory_price(steam_id, proxies_chunk))
                 steam_ids = steam_ids[num_proxies:]
             else:
-                # Если прокси больше или равно количеству steam_ids, распределяем прокси равномерно
-                num_proxies_per_task = num_proxies // num_steam_ids
-                remainder = num_proxies % num_steam_ids
+                num_proxies_per_task = num_proxies // len(steam_ids)
+                remainder = num_proxies % len(steam_ids)
 
                 start_index = 0
                 for i, steam_id in enumerate(steam_ids):
@@ -194,8 +176,10 @@ class SteamParser:
                     tasks.append(self.process_inventory_price(steam_id, proxies_chunk))
                 steam_ids.clear()
 
-            # Выполнение задач текущей порции
-            results.extend(await asyncio.gather(*tasks))
-            num_steam_ids = len(steam_ids)
+            results_batch = await asyncio.gather(*tasks)
+            for steam_id, result in results_batch:
+                if result:
+                    await redis_db.set(f"inventory::{steam_id}", orjson.dumps(result))
+            results.extend(results_batch)
 
         return results

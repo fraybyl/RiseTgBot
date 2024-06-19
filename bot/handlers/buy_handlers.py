@@ -19,7 +19,7 @@ async def handle_buy_product(query: CallbackQuery, state: FSMContext, l10n: Flue
     product = await get_product_by_id(product_id)
     user = await get_user_by_telegram_id(query.from_user.id)
     
-    minimal_price = await configJson.get_config_value('minimal_price')
+    minimal_price = configJson.get_config_value('minimal_price')
     min_quantity = calculate_quantity(product.price, user.discount_percentage, minimal_price)
     
     message = await query.message.edit_caption(caption=l10n.format_value('product-quantity', {'quantity': product.quantity, 'min': min_quantity}), reply_markup=get_cancel_order_kb(product_id))

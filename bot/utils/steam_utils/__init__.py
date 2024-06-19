@@ -1,1 +1,1 @@
-__all__ = ['steamid']
+__all__ = ['steamid', 'statistic']

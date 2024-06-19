@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Dispatcher
-from loader import bot, dp, redis_db, redis_cache
+from loader import bot, dp, redis_db, redis_cache, pool_db, pool_cache 
 from bot.middlewares.localization import L10nMiddleware
 from bot.handlers import start_handlers, shop_handlers, personal_handlers, farmers_handlers, strategy_handlers, product_handlers, buy_handlers, inventory_handlers
 from bot.database.models import start_db_postegre
@@ -35,7 +35,8 @@ async def on_startup():
 async def on_shutdown():
     await redis_db.aclose()
     await redis_cache.aclose()
-
+    await pool_db.disconnect()
+    await pool_cache.disconnect()
 
 async def main() -> None:
 

@@ -30,7 +30,7 @@ async def set_user(telegram_id: int, username: str = None, referral_code: str = 
                 user = User(telegram_id=telegram_id, username=username, referred_by=referred_by)
                 session.add(user)
                 if referred_by:
-                    bonus_points = await configJson.get_config_value('referral_bonus')
+                    bonus_points = configJson.get_config_value('referral_bonus')
                     if bonus_points > 0:
                         referrer.bonus_points += Decimal(bonus_points)
                         session.add(referrer)

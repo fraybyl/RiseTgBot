@@ -55,3 +55,19 @@ general-accounts-info =
     Всего предметов: <b>{$items}</b>
     Всего кейсов: <b>{$cases}</b>
     Общая цена: <b>{$prices} рублей</b></code>
+
+personal-accounts-info = 
+    <code><b>Личная статистика</b>
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    Всего аккаунтов: <b>{$accounts}</b>
+    Всего забанено: <b>{$total_bans}</b>
+    VAC баны: <b>{$total_vac}</b>
+    Community баны: <b>{$total_community}</b>
+    Game баны: <b>{$total_gameban}</b>
+    Банов за последние 7 дней: <b>{$bans_in_last_week}</b>
+    
+    <b>Личная статистика инвентарей</b>
+    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    Всего предметов: <b>{$items}</b>
+    Всего кейсов: <b>{$cases}</b>
+    Общая цена: <b>{$prices} рублей</b></code>

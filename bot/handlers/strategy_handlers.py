@@ -62,7 +62,7 @@ async def process_total_weeks(message: Message, state: FSMContext, l10n: FluentL
         text_strategy = data.get('text_strategy')
         float_strategy = data.get('float_strategy')
         total_weeks = message.text
-        account_cost = await configJson.get_config_value('account_price')
+        account_cost = configJson.get_config_value('account_price')
         avg_price = await get_avg_drop()
         await message.delete()
         

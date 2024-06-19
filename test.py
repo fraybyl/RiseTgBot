@@ -1,63 +1,110 @@
 import asyncio
+import hashlib
+import time
+from typing import Optional
 
+import aiohttp
+import orjson
+from loader import redis_db, logging, configJson, pool_db
 
+semaphore = asyncio.Semaphore(1)
 
-class InventoryProcessor:
-    def __init__(self, proxies: list[str]):
-        self.proxies = proxies
+async def fetch_get_player_bans(session, url, semaphore, update = True):
+    def generate_cache_key(url, temp=False):
+        prefix = "ban_stat_temp" if temp else "ban_stat"
+        return f"{prefix}::{hashlib.md5(url.encode()).hexdigest()}"
 
-    async def process_inventory_price(self, steam_id: int, proxies: list[str]):
-        # Это пример функции для обработки цены инвентаря.
-        # Ваша реальная функция должна быть здесь.
-        await asyncio.sleep(1)  # эмуляция задержки
-        return (f"Steam ID: {steam_id}", len(proxies), sum(len(proxy) for proxy in proxies))
+    cache_key_temp = generate_cache_key(url, temp=update)
+    cache_key_final = generate_cache_key(url)
 
-    async def process_inventories(self, steam_ids: list[int]) -> list[tuple[str, int, float]]:
-        """
-        Смотрит цену всех инвентарей.
-        Args:
-            steam_ids (list[int]): лист стим айди
+    async with semaphore:
+        try:
+            async with session.get(url) as response:
+                response.raise_for_status()
+                data = await response.json()
 
-        Returns:
-            list[tuple[str, int, float]]: вернет лист с кортежом с названием, количеством, ценой.
-        """
-        results = []
-        num_proxies = len(self.proxies)
-        num_steam_ids = len(steam_ids)
-        proxy_index = 0
+                try:
+                    await redis_db.set(cache_key_temp, orjson.dumps(data.get('players')))
+                except Exception as e:
+                    logging.error(f"Error setting temp cache for URL: {url}, {e}")
 
-        while steam_ids:
-            tasks = []
-            if num_steam_ids > num_proxies:
-                # Если steam_ids больше чем прокси, распределяем прокси циклически
-                for steam_id in steam_ids[:num_proxies]:
-                    proxies_chunk = [self.proxies[proxy_index % num_proxies]]
-                    proxy_index += 1
-                    tasks.append(self.process_inventory_price(steam_id, proxies_chunk))
-                steam_ids = steam_ids[num_proxies:]
-            else:
-                # Если прокси больше или равно количеству steam_ids, распределяем прокси равномерно
-                num_proxies_per_task = num_proxies // num_steam_ids
-                remainder = num_proxies % num_steam_ids
+                return cache_key_temp, cache_key_final
+        except aiohttp.ClientError as e:
+            logging.error(f"Error fetching URL: {url}, {e}")
+            return None, None
 
-                start_index = 0
-                for i, steam_id in enumerate(steam_ids):
-                    count = num_proxies_per_task + (1 if i < remainder else 0)
-                    proxies_chunk = self.proxies[start_index:start_index + count]
-                    start_index += count
-                    tasks.append(self.process_inventory_price(steam_id, proxies_chunk))
-                steam_ids.clear()
+async def get_player_bans(steam_ids: list[int], update = True, max_concurrent_requests=3):
+    api_key = configJson.get_config_value('steam_web_api_key')
+    semaphore = asyncio.Semaphore(max_concurrent_requests)
+    tasks = []
 
-            # Выполнение задач текущей порции
-            results.extend(await asyncio.gather(*tasks))
-            num_steam_ids = len(steam_ids)
+    async with aiohttp.ClientSession() as session:
+        for i in range(0, len(steam_ids), 100):
+            steam_ids_chunk = steam_ids[i:i + 100]
+            url = (
+                f'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/'
+                f'?key={api_key}&steamids={",".join(map(str, steam_ids_chunk))}'
+            )
 
-        return results
+            task = fetch_get_player_bans(session, url, semaphore, update)
+            tasks.append(task)
 
-# Пример использования
-proxies = ["proxy1", "proxy2", "proxy3", "proxy4"]
-steam_ids = [1, 2, 3, 4, 5, 6, 7]
+        temp_and_final_keys = await asyncio.gather(*tasks, return_exceptions=True)
 
-processor = InventoryProcessor(proxies)
-results = asyncio.run(processor.process_inventories(steam_ids))
-print(results)
+    return temp_and_final_keys
+
+async def add_new_accounts(steam_ids: list[int], semaphore: asyncio.Semaphore):
+    async with semaphore:
+        steam_ids_set = set(steam_ids)
+        cursor = '0'
+        try:
+            while cursor != 0:
+                cursor, keys = await redis_db.scan(cursor=cursor, count=30000, match='ban_stat::*')
+                if keys:
+                    pipeline = redis_db.pipeline()
+                    pipeline.mget(*keys)
+                    results = await pipeline.execute()
+                    
+                    for result in results:
+                        if result:
+                            try:
+                                for bytes in result:
+                                    data_str = bytes.decode('utf-8')
+                                    data_list = orjson.loads(data_str)
+                                    
+                                    for data_dict in data_list:
+                                        steam_id = int(data_dict.get('SteamId', 0))
+                                        if steam_id in steam_ids_set:
+                                            steam_ids_set.discard(steam_id)
+
+                            except orjson.JSONDecodeError as e:
+                                print(f"JSON decode error: {e}")
+                            except Exception as e:
+                                print(f"Unexpected error: {e}")
+                            
+        except Exception as e:
+            print(f"Error during Redis scan or key fetching: {e}")
+        if steam_ids_set:
+            temp_and_final_keys = await get_player_bans(list(steam_ids_set), True)
+            temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
+            final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
+            await switch_keys(temp_keys, final_keys, redis_db)
+            await pool_db.disconnect()
+
+async def switch_keys(temp_keys, final_keys, pipe):
+    for temp_key, final_key in zip(temp_keys, final_keys):
+        if temp_key and final_key:
+            await pipe.rename(temp_key, final_key)
+            
+
+steam_ids = [76561198965030463,
+76561198986923662,
+76561198069678468,
+76561198855186239,
+76561198007241107,
+76561199121686454,
+76561198136072517]
+    
+if __name__ == "__main__":
+    asyncio.run(add_new_accounts(steam_ids, semaphore))
+    
