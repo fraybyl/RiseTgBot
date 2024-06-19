@@ -57,7 +57,7 @@ class SteamMarketParser:
                         price = float(item.get('sell_price_text').replace('$', '').replace(',', ''))
                         sell_count = item.get('sell_listings')
                         item_data = {
-                            'price':  price * self.price_rub,
+                            'price':  round(price * self.price_rub, 2),
                             'sell_count': sell_count
                         }
 

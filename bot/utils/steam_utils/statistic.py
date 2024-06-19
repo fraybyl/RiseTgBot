@@ -72,13 +72,12 @@ async def get_inventories_statistics(steam_ids: Optional[list[int]] = None) -> d
             for result in results:
                 if result:
                     values_list = orjson.loads(result)
-                    for item in values_list:
-                        item_name, quantity, price = item
+                    for list in values_list:
+                        item_name, quantity, price = list
                         total_elements += quantity
                         sum_price += price * quantity
                         if 'case' in item_name.lower():
                             filtered_items += quantity
-
     return {
         'total_elements': total_elements,
         'sum_price': sum_price,
@@ -90,9 +89,10 @@ async def get_general_statistics(l10n: FluentLocalization) -> str:
     cache = await redis_cache.get('accounts_statistics')
     if cache:    
         return cache
+    
     inventories = await get_inventories_statistics()
     accounts = await get_accounts_statistics()
-    
+
     text = l10n.format_value('general-accounts-info', {
         'accounts': accounts['total_accounts'],
         'total_bans': accounts['total_bans'],
@@ -115,7 +115,6 @@ async def get_personal_statistics(steam_ids: list[int], user_id: int, l10n: Flue
     
     inventories = await get_inventories_statistics(steam_ids)
     accounts = await get_accounts_statistics(steam_ids)
-    
     text = l10n.format_value('personal-accounts-info', {
         'accounts': accounts['total_accounts'],
         'total_bans': accounts['total_bans'],

@@ -67,13 +67,7 @@ class SteamParser:
             if price:
                 try:
                     price_float = float(price.split(' ')[0].replace(',', '.'))
-                    item_data = {
-                        'price': price_float,
-                        'sell_count': 0
-                    }
-                    
-                    await redis_db.set(f'steam_market::{market_hash_name}', orjson.dumps(item_data))
-                    return orjson.dumps(item_data)
+                    return price_float
                 except ValueError:
                     logging.error('Failed to parse price for item: %s', market_hash_name)
                     return None
@@ -138,6 +132,12 @@ class SteamParser:
                 await redis_db.sadd("blacklist", item)
                 continue
             try:
+                item_data = {
+                    'price': price,
+                    'sell_count': 0
+                }
+                
+                await redis_db.set(f'steam_market::{item}', orjson.dumps(item_data))
                 total_price = round(price * count, 2)
                 combined_data.append((item, count, total_price))
             except ValueError:
