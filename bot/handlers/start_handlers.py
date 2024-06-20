@@ -8,7 +8,7 @@ from fluent.runtime import FluentLocalization
 from bot.utils import utils
 from bot.database import db_requests
 
-router = Router()
+router = Router(name=__name__)
 
 @router.message(CommandStart())
 async def command_start_handler(message: Message, command: CommandObject, l10n: FluentLocalization) -> None:

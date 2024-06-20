@@ -12,7 +12,7 @@ from bot.filters.correct_number import CorrectNumberFilter
 from bot.utils.avg_price_drop import get_avg_drop
 from loader import bot, configJson
 
-router = Router()
+router = Router(name=__name__)
 
 @router.callback_query(lambda query: query.data == "strategy")
 async def handle_shop(query: CallbackQuery):

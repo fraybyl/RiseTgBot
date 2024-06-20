@@ -14,7 +14,7 @@ from loader import bot, configJson
 from bot.handlers.error_handlers import handle_error_back
 from bot.database.db_requests import  get_steamid64_by_userid, set_steamid64_for_user, get_all_steamid64
 
-router = Router()
+router = Router(name=__name__)
 semaphore = asyncio.Semaphore(1)
 
 @router.callback_query(lambda query: query.data == "inventory")

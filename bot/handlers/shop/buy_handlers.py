@@ -11,7 +11,7 @@ from bot.filters.correct_number import CorrectNumberFilter
 from fluent.runtime.types import FluentNumber, FluentNone
 from loader import bot, configJson
 
-router = Router()
+router = Router(name=__name__)
 
 @router.callback_query(lambda query: query.data.startswith("buy_product_"))
 async def handle_buy_product(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):

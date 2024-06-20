@@ -2,21 +2,11 @@ import asyncio
 from aiogram import Dispatcher
 from loader import bot, dp, redis_db, redis_cache, pool_db, pool_cache , logging
 from bot.middlewares.localization import L10nMiddleware
-from bot.handlers import start_handlers, shop_handlers, personal_handlers, farmers_handlers, strategy_handlers, product_handlers, buy_handlers, inventory_handlers
 from bot.database.models import start_db_postegre
 from bot.l10n.fluent_localization import get_fluent_localization
 from bot.scheduled.ban_stat import ban_stat_schedule
 from bot.scheduled.market_parse import market_schedule
-
-def register_routers(dp: Dispatcher):
-    dp.include_router(start_handlers.router)
-    dp.include_router(shop_handlers.router)
-    dp.include_router(personal_handlers.router)
-    dp.include_router(farmers_handlers.router)
-    dp.include_router(strategy_handlers.router)
-    dp.include_router(product_handlers.router)
-    dp.include_router(buy_handlers.router)
-    dp.include_router(inventory_handlers.router)
+from bot.handlers import router as main_router
 
 async def on_startup():
     await start_db_postegre()
@@ -26,8 +16,6 @@ async def on_startup():
     dp.message.outer_middleware(L10nMiddleware(locale)) 
     dp.callback_query.outer_middleware(L10nMiddleware(locale))
     dp.pre_checkout_query.outer_middleware(L10nMiddleware(locale))
-    
-    register_routers(dp)
 
     #asyncio.create_task(ban_stat_schedule())
     #asyncio.create_task(market_schedule())
@@ -39,7 +27,8 @@ async def on_shutdown():
     await pool_cache.disconnect()
 
 async def main() -> None:
-
+    dp.include_router(main_router)
+    
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
 

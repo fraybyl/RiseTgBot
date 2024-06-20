@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from bot.database.db_requests import get_category_by_id, get_product_by_id
 from bot.utils import utils
 
-router = Router()
+router = Router(name=__name__)
 
 @router.callback_query(lambda query: query.data.startswith("category_"))
 async def handle_products_category(query: CallbackQuery):

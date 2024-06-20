@@ -5,7 +5,7 @@ from fluent.runtime import FluentLocalization
 from bot.utils import utils
 
 
-router = Router()
+router = Router(name=__name__)
 
 @router.callback_query(lambda query: query.data == "shop")
 async def handle_shop(query: CallbackQuery):

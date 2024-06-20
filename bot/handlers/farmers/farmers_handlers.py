@@ -5,7 +5,7 @@ from bot.keyboards.user_kb import get_farmers_kb
 from bot.utils import utils
 
 
-router = Router()
+router = Router(name=__name__)
 
 @router.callback_query(lambda query: query.data == "farmers")
 async def handle_farmers(query: CallbackQuery):

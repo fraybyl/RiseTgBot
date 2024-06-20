@@ -7,7 +7,7 @@ from aiogram.utils.deep_linking import create_start_link
 from bot.database.db_requests import get_user_by_telegram_id
 from loader import bot
 
-router = Router()
+router = Router(name=__name__)
 
 @router.callback_query(lambda query: query.data == "personal")
 async def handle_personal_callback(query: CallbackQuery, l10n: FluentLocalization):
