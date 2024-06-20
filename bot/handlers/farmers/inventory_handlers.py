@@ -15,7 +15,6 @@ from bot.handlers.error_handlers import handle_error_back
 from bot.database.db_requests import  get_steamid64_by_userid, set_steamid64_for_user, get_all_steamid64
 
 router = Router(name=__name__)
-semaphore = asyncio.Semaphore(1)
 
 @router.callback_query(lambda query: query.data == "inventory")
 async def handle_inventory(query: CallbackQuery, l10n: FluentLocalization):
@@ -72,7 +71,7 @@ async def process_inventory_list(message: Message, state: FSMContext, l10n: Flue
         successful_result = await steam_urls_parse(lines)
         await message.delete()
         await set_steamid64_for_user(message.from_user.id, successful_result) 
-        await add_new_accounts(successful_result, semaphore)
+        await add_new_accounts(successful_result)
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_inventory_settings_kb(), caption=f"Добавлено {len(successful_result)} аккаунт\nнажмите кнопку назад")
         await state.clear()
         proxies = configJson.get_config_value('proxies')

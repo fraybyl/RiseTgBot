@@ -6,7 +6,7 @@ from loader import logging, redis_cache, configJson
 async def fetch(url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
-            logging.info("запрос")
+            logging.info("запрос на обновление price_drop")
             if response.status != 200:
                 logging.error(f"Запрос не удался, статус код: {response.status}")
                 return None

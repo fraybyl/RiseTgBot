@@ -107,8 +107,8 @@ async def get_player_bans(steam_ids: list[int], update = True, max_concurrent_re
 
     return temp_and_final_keys
 
-async def add_new_accounts(steam_ids: list[int], semaphore: asyncio.Semaphore):
-    async with semaphore:
+async def add_new_accounts(steam_ids: list[int]):
+    async with asyncio.Lock():
         steam_ids_set = set(steam_ids)
         cursor = '0'
         try:
