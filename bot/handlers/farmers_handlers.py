@@ -10,6 +10,7 @@ router = Router()
 @router.callback_query(lambda query: query.data == "farmers")
 async def handle_farmers(query: CallbackQuery):
     await utils.edit_message_media(query, 'RISE_FOR_FARMERS', get_farmers_kb())
+    await query.answer()
     
     
         
@@ -18,3 +19,5 @@ async def handle_farmers(query: CallbackQuery):
 async def handle_back_farmers(query: CallbackQuery, state: FSMContext):
     await state.clear()
     await utils.edit_message_media(query, 'RISE_FOR_FARMERS', get_farmers_kb())
+    await query.answer()
+    

@@ -30,6 +30,8 @@ async def handle_buy_product(query: CallbackQuery, state: FSMContext, l10n: Flue
     await state.update_data(user=user)
     await state.update_data(minimal_price=minimal_price)
     await state.update_data(message_id=message.message_id)
+    await query.answer()
+
     
 @router.message(OrderStates.WAITING_PRODUCT_QUANTITY, lambda message: message.text.isdigit() and int(message.text) > 0)
 async def process_product_quantity(message: Message, state: FSMContext, l10n: FluentLocalization):
@@ -65,6 +67,7 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext):
         await state.set_state(OrderStates.WAITING_BONUS_QUANTITY)
     else:
         await query.message.edit_caption(caption=f"У вас нет бонусов для использования", reply_markup=get_payment_settings_kb())
+    await query.answer()
     
     
 @router.message(OrderStates.WAITING_BONUS_QUANTITY, lambda message: message.text.isdigit() and int(message.text) >= 0)
@@ -94,6 +97,7 @@ async def handle_payment_product(query: CallbackQuery, state: FSMContext):
     quantity_bonus = data.get('quantity_bonus')
     await query.message.edit_caption(caption=f"Продукта {quantity_product}\n Бонусов: {quantity_bonus or 0}", reply_markup=get_payment_settings_kb())
     await state.set_state(OrderStates.WAITING_PAYMENT)
+    await query.answer()
 
 @router.message(CorrectNumberFilter(OrderStates.WAITING_BONUS_QUANTITY, OrderStates.WAITING_PRODUCT_QUANTITY))
 async def handle_non_digit_message(message: Message, state: FSMContext):
@@ -104,6 +108,7 @@ async def handle_back_payment(query: CallbackQuery, state: FSMContext, l10n: Flu
     data = await state.get_data()
     current_state = await state.get_state() 
     
+    await query.answer()
     if current_state is None:
         product = data.get('product')
         min_quantity = data.get('min_quantity')

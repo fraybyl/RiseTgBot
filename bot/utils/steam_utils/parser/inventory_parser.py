@@ -109,8 +109,6 @@ class SteamParser:
         if not item_names_with_count:
             logging.info("No marketable items found.")
         
-        await redis_db.set(cache_key, orjson.dumps(item_names_with_count))
-
         return item_names_with_count
     
     async def process_inventory_price(self, steam_id: int, proxies: list[str]) -> tuple[int, list[tuple[str, int, float]]]:
@@ -179,6 +177,7 @@ class SteamParser:
             results_batch = await asyncio.gather(*tasks)
             for steam_id, result in results_batch:
                 if result:
+                    print(orjson.dumps(result))
                     await redis_db.set(f"inventory::{steam_id}", orjson.dumps(result))
             results.extend(results_batch)
 

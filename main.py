@@ -1,6 +1,6 @@
 import asyncio
 from aiogram import Dispatcher
-from loader import bot, dp, redis_db, redis_cache, pool_db, pool_cache 
+from loader import bot, dp, redis_db, redis_cache, pool_db, pool_cache , logging
 from bot.middlewares.localization import L10nMiddleware
 from bot.handlers import start_handlers, shop_handlers, personal_handlers, farmers_handlers, strategy_handlers, product_handlers, buy_handlers, inventory_handlers
 from bot.database.models import start_db_postegre
@@ -48,4 +48,7 @@ async def main() -> None:
    
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logging.info('Exit bot')

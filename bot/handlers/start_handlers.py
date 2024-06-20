@@ -29,5 +29,6 @@ async def command_start_handler(message: Message, command: CommandObject, l10n: 
             logging.error("файл не найден. starthandlers")
             
 @router.callback_query(lambda query: query.data == "back_start")
-async def handle_back_shop(query: CallbackQuery):
+async def handle_back_start(query: CallbackQuery):
     await utils.edit_message_media(query, 'RISE_BACKGROUND', get_start_kb())
+    await query.answer()

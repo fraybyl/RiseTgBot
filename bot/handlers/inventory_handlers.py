@@ -25,6 +25,7 @@ async def handle_inventory(query: CallbackQuery, l10n: FluentLocalization):
         await utils.edit_message_media(query, 'RISE_FOR_FARMERS', get_inventory_kb(), caption=statistic)
     else:
         await utils.edit_message_media(query, 'RISE_FOR_FARMERS', get_inventory_kb(), caption='У вас нет добавленных аккаунтов. Нажмите кнопку "Добавить аккаунты"')
+    await query.answer()
     
     
 @router.callback_query(lambda query: query.data == 'add_accounts')
@@ -32,17 +33,20 @@ async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
     message_id = await query.message.edit_caption(caption='Введите пажэ список инвентарей.\nСписок можно передать в формате steamid64 или ссылками на профиль. Если отправляете сообщением, то не больше 90 строк.', reply_markup=get_inventory_settings_kb())
     await state.set_state(InventoryStates.WAITING_INVENTORY_LIST)
     await state.update_data(message_id=message_id.message_id)
+    await query.answer()
 
 @router.callback_query(lambda query: query.data == 'accounts_statistics')
 async def handle_accounts_statistics(query: CallbackQuery, l10n: FluentLocalization):
     statistic = await get_general_statistics(l10n)
     await query.message.edit_caption(caption=statistic, reply_markup=get_inventory_settings_kb())
+    await query.answer()
     
 
 @router.callback_query(lambda query: query.data == 'back_inventory')
 async def handle_back_inventory(query:CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     await state.clear()
     await handle_inventory(query, l10n)    
+    await query.answer()
         
 @router.message(InventoryStates.WAITING_INVENTORY_LIST)
 async def process_inventory_list(message: Message, state: FSMContext, l10n: FluentLocalization):

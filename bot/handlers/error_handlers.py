@@ -12,4 +12,5 @@ async def handle_error_back(query: CallbackQuery, state: FSMContext):
                 await state.clear()
                 
         await utils.edit_message_media(query, "RISE_BACKGROUND", get_start_kb())
+        await query.answer()
         

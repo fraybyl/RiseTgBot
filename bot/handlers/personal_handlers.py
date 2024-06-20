@@ -16,3 +16,5 @@ async def handle_personal_callback(query: CallbackQuery, l10n: FluentLocalizatio
     
     await utils.edit_message_media(query, 'RISE_PERSONAL', reply_markup=get_personal_kb(),
                              caption=l10n.format_value('personal-info', {'discountPercentage': user.discount_percentage, 'bonusPoints': user.bonus_points, 'link': link}))
+    await query.answer()
+    

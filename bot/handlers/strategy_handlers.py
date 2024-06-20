@@ -17,6 +17,7 @@ router = Router()
 @router.callback_query(lambda query: query.data == "strategy")
 async def handle_shop(query: CallbackQuery):
     await utils.edit_message_media(query, 'RISE_STRATEGY', get_strategy_kb())
+    await query.answer()
     
 @router.callback_query(lambda query: query.data in ['aggressive_strategy', 'moderate_strategy', 'conservative_strategy'])
 async def handle_strategy_choice(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
@@ -37,6 +38,7 @@ async def handle_strategy_choice(query: CallbackQuery, state: FSMContext, l10n: 
     
     await state.update_data(current_strategy=query.data, media_type=media_type, text_strategy=text_strategy, float_strategy=float_strategy, message_id=message_id)
     await push_state(state, StrategyStates.INITIAL_ACCOUNTS)
+    await query.answer()
 
 @router.message(StrategyStates.INITIAL_ACCOUNTS, lambda message: message.text.isdigit() and int(message.text) > 0)
 async def process_initial_accounts(message: Message, state: FSMContext, l10n: FluentLocalization):
@@ -95,7 +97,7 @@ async def handle_back_strategy(query: CallbackQuery, state: FSMContext, l10n: Fl
     initial_accounts = data.get('initial_accounts')
     
     await state.set_state(previous_state)
-    
+    await query.answer()
     if previous_state is None:
         await state.clear()
         await utils.edit_message_media(query, 'RISE_STRATEGY', get_strategy_kb()) 

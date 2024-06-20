@@ -1,6 +1,5 @@
 from datetime import datetime
 import orjson
-from requests import request
 import requests
 import ua_generator
 import aiohttp
