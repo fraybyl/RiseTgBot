@@ -177,7 +177,6 @@ class SteamParser:
             results_batch = await asyncio.gather(*tasks)
             for steam_id, result in results_batch:
                 if result:
-                    print(orjson.dumps(result))
                     await redis_db.set(f"inventory::{steam_id}", orjson.dumps(result))
             results.extend(results_batch)
 

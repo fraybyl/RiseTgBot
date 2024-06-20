@@ -1,15 +1,8 @@
 import aiohttp
-import asyncio
 from bs4 import BeautifulSoup
 import re
-from aiocache import Cache
-from aiocache.decorators import cached
-import time 
-from loader import logging
+from loader import logging, redis_cache, configJson
 
-cache = Cache(Cache.MEMORY)
-
-@cached(ttl=3600)
 async def fetch(url):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -38,14 +31,16 @@ async def parse(html):
     return None
 
 async def get_avg_drop():
-    avg_drop = await cache.get("avg_drop")
-    if avg_drop is None:
-        await cache.delete("avg_drop")
+    avg_drop = await redis_cache.get("avg_drop")
+    if avg_drop:
+        return avg_drop.decode('utf-8')
+    
     url = 'https://21level.ru/ru'
     html = await fetch(url)
+    TTL = configJson.get_config_value('avg_drop_ttl')
     if html:
         cost_value = await parse(html)
         if cost_value:
-            await cache.set("avg_drop", cost_value)
+            await redis_cache.setex("avg_drop", TTL, cost_value)
             return cost_value
     return 0.0
