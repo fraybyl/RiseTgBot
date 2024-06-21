@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "risetgbot"
+version = "0.1.0"
+description = ""
+authors = ["Aleksey <74198682+fraybyl@users.noreply.github.com>", "kolkadima"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+aiogram = "^3.8.0"
+sqlalchemy = "^2.0.31"
+pydantic-settings = "^2.3.3"
+redis = {extras = ["hiredis"], version = "^5.0.6"}
+aiohttp = {extras = ["speedups"], version = "^3.9.5"}
+loguru = "^0.7.2"
+asyncpg = "^0.29.0"
+fluent-runtime = "^0.4.0"
+orjson = "^3.10.5"
+aiofile = "^3.8.8"
+bs4 = "^0.0.2"
+requests = "^2.32.3"
+ua-generator = "^0.5.0"
+aiolimiter = "^1.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

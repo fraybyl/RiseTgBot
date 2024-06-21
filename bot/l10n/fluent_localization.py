@@ -1,6 +1,7 @@
 from fluent.runtime import FluentLocalization, FluentResourceLoader
 from pathlib import Path
 
+
 def get_fluent_localization() -> FluentLocalization:
     """
     Загрузка файла с локалями 'locale.ftl' из каталога 'l10n' в текущем расположении

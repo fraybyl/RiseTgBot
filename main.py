@@ -1,43 +1,45 @@
 import asyncio
-from aiogram import Dispatcher
-from loader import bot, dp, redis_db, redis_cache, pool_db, pool_cache , logging
-from bot.middlewares.localization import L10nMiddleware
-from bot.database.models import start_db_postegre
-from bot.l10n.fluent_localization import get_fluent_localization
-from bot.scheduled.ban_stat import ban_stat_schedule
-from bot.scheduled.market_parse import market_schedule
-from bot.handlers import router as main_router
+import bot.utils.logging
+from loguru import logger
 
-async def on_startup():
-    await start_db_postegre()
-    await redis_db.ping()
-    await redis_cache.ping()
+from bot.core.loader import bot, dp, redis_db, redis_cache
+from bot.database.database import start_db_postgres, close_db_postgres, engine
+from bot.handlers import router as main_router
+from bot.l10n.fluent_localization import get_fluent_localization
+from bot.middlewares.l10n import L10nMiddleware
+
+
+async def on_startup() -> None:
+    logger.info('Bot starting...')
+    await start_db_postgres()
     locale = get_fluent_localization()
-    dp.message.outer_middleware(L10nMiddleware(locale)) 
+
+    dp.message.outer_middleware(L10nMiddleware(locale))
     dp.callback_query.outer_middleware(L10nMiddleware(locale))
     dp.pre_checkout_query.outer_middleware(L10nMiddleware(locale))
 
-    #asyncio.create_task(ban_stat_schedule())
-    #asyncio.create_task(market_schedule())
-    
-async def on_shutdown():
+    dp.include_router(main_router)
+
+
+async def on_shutdown() -> None:
+    logger.info('Bot shutdown...')
+    await dp.storage.close()
+    await dp.fsm.storage.close()
     await redis_db.aclose()
     await redis_cache.aclose()
-    await pool_db.disconnect()
-    await pool_cache.disconnect()
+    await close_db_postgres(engine)
+
 
 async def main() -> None:
-    dp.include_router(main_router)
-    
     dp.startup.register(on_startup)
     dp.shutdown.register(on_shutdown)
 
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
-   
+    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+
 
 if __name__ == "__main__":
     try:
         asyncio.run(main())
     except KeyboardInterrupt:
-        logging.info('Exit bot')
+        logger.info('Exit bot')
+

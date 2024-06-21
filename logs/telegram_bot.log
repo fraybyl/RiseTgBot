@@ -1,0 +1,17 @@
+2024-06-21T18:29:00.450204+0300 | INFO | dispatcher:feed_update:172 | Update id=603727242 is handled. Duration 203 ms by bot id=6857433423
+2024-06-21T18:29:10.781341+0300 | INFO | dispatcher:feed_update:172 | Update id=603727243 is handled. Duration 296 ms by bot id=6857433423
+2024-06-21T18:29:11.453999+0300 | INFO | dispatcher:feed_update:172 | Update id=603727244 is handled. Duration 281 ms by bot id=6857433423
+2024-06-21T18:36:12.260724+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T18:36:12.261724+0300 | INFO | main:on_shutdown:25 | Bot shutdown...
+2024-06-21T18:36:12.519279+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T18:36:12.520280+0300 | INFO | main:<module>:44 | Exit bot
+2024-06-21T18:42:51.131034+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T18:42:51.135068+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T18:42:51.497287+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T18:42:51.497287+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T18:42:51.576131+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T18:42:51.743369+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T18:42:52.135734+0300 | INFO | dispatcher:feed_update:172 | Update id=603727245 is handled. Duration 281 ms by bot id=6857433423
+2024-06-21T18:42:55.692955+0300 | INFO | dispatcher:feed_update:172 | Update id=603727246 is handled. Duration 593 ms by bot id=6857433423
+2024-06-21T18:42:56.612697+0300 | INFO | dispatcher:feed_update:172 | Update id=603727247 is handled. Duration 186 ms by bot id=6857433423
+2024-06-21T18:42:57.128207+0300 | INFO | dispatcher:feed_update:172 | Update id=603727248 is handled. Duration 235 ms by bot id=6857433423

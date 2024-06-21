@@ -47,7 +47,7 @@ general-accounts-info =
     Всего забанено: <b>{$total_bans}</b>
     VAC баны: <b>{$total_vac}</b>
     Community баны: <b>{$total_community}</b>
-    Game баны: <b>{$total_gameban}</b>
+    Game баны: <b>{$total_game_ban}</b>
     Банов за последние 7 дней: <b>{$bans_in_last_week}</b>
     
     <b>Общая статистика инвентарей</b>
@@ -63,7 +63,7 @@ personal-accounts-info =
     Всего забанено: <b>{$total_bans}</b>
     VAC баны: <b>{$total_vac}</b>
     Community баны: <b>{$total_community}</b>
-    Game баны: <b>{$total_gameban}</b>
+    Game баны: <b>{$total_game_ban}</b>
     Банов за последние 7 дней: <b>{$bans_in_last_week}</b>
     
     <b>Личная статистика инвентарей</b>
