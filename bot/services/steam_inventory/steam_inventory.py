@@ -9,6 +9,12 @@ import urllib.parse
 
 from bot.core.loader import redis_db
 
+"""
+rate_period
+redis_db
+proxies 
+-> inventory - dict[tuple[str, int, int]]
+"""
 
 class SteamParser:
     def __init__(self, proxies: list[str], currency: int = 5, rate_limit_seconds: int = 5):

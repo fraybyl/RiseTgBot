@@ -7,6 +7,8 @@ from loguru import logger
 
 from bot.core.loader import redis_db, config_json
 
+lock = asyncio.Lock()
+
 
 async def fetch_get_player_bans(session, url, semaphore, update=True):
     def generate_cache_key(url, temp=False):
@@ -34,28 +36,29 @@ async def fetch_get_player_bans(session, url, semaphore, update=True):
 
 
 async def get_player_bans(steam_ids: list[int], update=True, max_concurrent_requests=3):
-    api_key = await config_json.get_config_value('steam_web_api_key')
-    semaphore = asyncio.Semaphore(max_concurrent_requests)
-    tasks = []
+    async with lock:
+        api_key = await config_json.get_config_value('steam_web_api_key')
+        semaphore = asyncio.Semaphore(max_concurrent_requests)
+        tasks = []
 
-    async with aiohttp.ClientSession() as session:
-        for i in range(0, len(steam_ids), 100):
-            steam_ids_chunk = steam_ids[i:i + 100]
-            url = (
-                f'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/'
-                f'?key={api_key}&steamids={",".join(map(str, steam_ids_chunk))}'
-            )
+        async with aiohttp.ClientSession() as session:
+            for i in range(0, len(steam_ids), 100):
+                steam_ids_chunk = steam_ids[i:i + 100]
+                url = (
+                    f'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/'
+                    f'?key={api_key}&steamids={",".join(map(str, steam_ids_chunk))}'
+                )
 
-            task = fetch_get_player_bans(session, url, semaphore, update)
-            tasks.append(task)
+                task = fetch_get_player_bans(session, url, semaphore, update)
+                tasks.append(task)
 
-        temp_and_final_keys = await asyncio.gather(*tasks, return_exceptions=True)
+            temp_and_final_keys = await asyncio.gather(*tasks, return_exceptions=True)
 
-    return temp_and_final_keys
+        return temp_and_final_keys
 
 
 async def add_new_accounts(steam_ids: list[int]):
-    async with asyncio.Lock():
+    async with lock:
         steam_ids_set = set(steam_ids)
         cursor = '0'
         try:

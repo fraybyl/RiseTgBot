@@ -7,6 +7,7 @@ from bot.database.database import start_db_postgres, close_db_postgres, engine
 from bot.handlers import router as main_router
 from bot.l10n.fluent_localization import get_fluent_localization
 from bot.middlewares.l10n import L10nMiddleware
+from bot.schedulers.schedule import start_schedulers
 
 
 async def on_startup() -> None:
@@ -19,6 +20,8 @@ async def on_startup() -> None:
     dp.pre_checkout_query.outer_middleware(L10nMiddleware(locale))
 
     dp.include_router(main_router)
+
+    start_schedulers()
 
 
 async def redis_shutdown() -> None:
