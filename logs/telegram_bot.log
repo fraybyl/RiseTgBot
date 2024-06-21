@@ -15,3 +15,516 @@
 2024-06-21T18:42:55.692955+0300 | INFO | dispatcher:feed_update:172 | Update id=603727246 is handled. Duration 593 ms by bot id=6857433423
 2024-06-21T18:42:56.612697+0300 | INFO | dispatcher:feed_update:172 | Update id=603727247 is handled. Duration 186 ms by bot id=6857433423
 2024-06-21T18:42:57.128207+0300 | INFO | dispatcher:feed_update:172 | Update id=603727248 is handled. Duration 235 ms by bot id=6857433423
+2024-06-21T18:44:36.788188+0300 | INFO | dispatcher:feed_update:172 | Update id=603727249 is handled. Duration 265 ms by bot id=6857433423
+2024-06-21T18:44:37.182036+0300 | INFO | dispatcher:feed_update:172 | Update id=603727250 is handled. Duration 235 ms by bot id=6857433423
+2024-06-21T18:44:37.572505+0300 | INFO | dispatcher:feed_update:172 | Update id=603727251 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T18:44:38.009184+0300 | INFO | dispatcher:feed_update:172 | Update id=603727252 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T18:44:39.132091+0300 | INFO | dispatcher:feed_update:172 | Update id=603727253 is handled. Duration 296 ms by bot id=6857433423
+2024-06-21T18:44:42.837445+0300 | INFO | dispatcher:feed_update:172 | Update id=603727254 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T18:47:24.967459+0300 | INFO | dispatcher:feed_update:172 | Update id=603727255 is handled. Duration 266 ms by bot id=6857433423
+2024-06-21T18:47:26.278354+0300 | INFO | dispatcher:feed_update:172 | Update id=603727256 is handled. Duration 203 ms by bot id=6857433423
+2024-06-21T18:47:27.194536+0300 | INFO | dispatcher:feed_update:172 | Update id=603727257 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T18:47:28.141373+0300 | INFO | dispatcher:feed_update:172 | Update id=603727258 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T18:47:29.075974+0300 | INFO | dispatcher:feed_update:172 | Update id=603727259 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T18:47:30.138693+0300 | INFO | dispatcher:feed_update:172 | Update id=603727260 is handled. Duration 171 ms by bot id=6857433423
+2024-06-21T18:47:38.401747+0300 | INFO | dispatcher:feed_update:172 | Update id=603727261 is handled. Duration 139 ms by bot id=6857433423
+2024-06-21T18:47:40.968142+0300 | INFO | dispatcher:feed_update:172 | Update id=603727262 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T18:47:42.544466+0300 | INFO | dispatcher:feed_update:172 | Update id=603727263 is handled. Duration 140 ms by bot id=6857433423
+2024-06-21T18:47:44.658232+0300 | INFO | dispatcher:feed_update:172 | Update id=603727264 is handled. Duration 202 ms by bot id=6857433423
+2024-06-21T18:47:45.589733+0300 | INFO | dispatcher:feed_update:172 | Update id=603727265 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T18:47:46.342474+0300 | INFO | dispatcher:feed_update:172 | Update id=603727266 is handled. Duration 235 ms by bot id=6857433423
+2024-06-21T18:47:47.398420+0300 | INFO | dispatcher:feed_update:172 | Update id=603727267 is handled. Duration 375 ms by bot id=6857433423
+2024-06-21T18:47:48.269220+0300 | INFO | dispatcher:feed_update:172 | Update id=603727268 is handled. Duration 186 ms by bot id=6857433423
+2024-06-21T18:47:50.699347+0300 | INFO | dispatcher:feed_update:172 | Update id=603727269 is handled. Duration 375 ms by bot id=6857433423
+2024-06-21T18:47:51.686696+0300 | INFO | dispatcher:feed_update:172 | Update id=603727270 is handled. Duration 203 ms by bot id=6857433423
+2024-06-21T18:47:52.517236+0300 | INFO | dispatcher:feed_update:172 | Update id=603727271 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T18:47:53.466710+0300 | INFO | dispatcher:feed_update:172 | Update id=603727272 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T18:47:54.304223+0300 | INFO | dispatcher:feed_update:172 | Update id=603727273 is handled. Duration 250 ms by bot id=6857433423
+2024-06-21T18:47:57.863413+0300 | INFO | dispatcher:feed_update:172 | Update id=603727274 is handled. Duration 265 ms by bot id=6857433423
+2024-06-21T18:48:00.405244+0300 | INFO | dispatcher:feed_update:172 | Update id=603727275 is handled. Duration 139 ms by bot id=6857433423
+2024-06-21T18:48:01.436128+0300 | INFO | dispatcher:feed_update:172 | Update id=603727276 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T18:48:03.972478+0300 | INFO | dispatcher:feed_update:172 | Update id=603727277 is handled. Duration 312 ms by bot id=6857433423
+2024-06-21T18:48:07.377646+0300 | INFO | avg_drop_price:fetch:11 | запрос на обновление price_drop
+2024-06-21T18:48:07.519802+0300 | INFO | dispatcher:feed_update:172 | Update id=603727278 is handled. Duration 218 ms by bot id=6857433423
+2024-06-21T18:48:11.292657+0300 | INFO | dispatcher:feed_update:172 | Update id=603727279 is handled. Duration 202 ms by bot id=6857433423
+2024-06-21T18:48:12.447065+0300 | INFO | dispatcher:feed_update:172 | Update id=603727280 is handled. Duration 203 ms by bot id=6857433423
+2024-06-21T18:48:19.009682+0300 | INFO | dispatcher:feed_update:172 | Update id=603727281 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T18:48:31.176295+0300 | INFO | dispatcher:feed_update:172 | Update id=603727282 is handled. Duration 281 ms by bot id=6857433423
+2024-06-21T18:48:32.411734+0300 | INFO | dispatcher:feed_update:172 | Update id=603727283 is handled. Duration 140 ms by bot id=6857433423
+2024-06-21T18:48:33.797253+0300 | INFO | dispatcher:feed_update:172 | Update id=603727284 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T18:48:34.789970+0300 | INFO | dispatcher:feed_update:172 | Update id=603727285 is handled. Duration 155 ms by bot id=6857433423
+2024-06-21T18:48:36.058732+0300 | INFO | dispatcher:feed_update:172 | Update id=603727286 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T18:48:37.613471+0300 | INFO | dispatcher:feed_update:172 | Update id=603727287 is handled. Duration 233 ms by bot id=6857433423
+2024-06-21T18:48:38.332439+0300 | INFO | dispatcher:feed_update:172 | Update id=603727288 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T18:48:39.623440+0300 | INFO | dispatcher:feed_update:172 | Update id=603727289 is handled. Duration 311 ms by bot id=6857433423
+2024-06-21T18:48:40.525301+0300 | INFO | dispatcher:feed_update:172 | Update id=603727290 is handled. Duration 311 ms by bot id=6857433423
+2024-06-21T18:48:41.315308+0300 | INFO | dispatcher:feed_update:172 | Update id=603727291 is handled. Duration 296 ms by bot id=6857433423
+2024-06-21T18:48:42.665197+0300 | INFO | dispatcher:feed_update:172 | Update id=603727292 is handled. Duration 140 ms by bot id=6857433423
+2024-06-21T18:48:44.493166+0300 | INFO | dispatcher:feed_update:172 | Update id=603727293 is handled. Duration 218 ms by bot id=6857433423
+2024-06-21T18:48:45.396878+0300 | INFO | dispatcher:feed_update:172 | Update id=603727294 is handled. Duration 171 ms by bot id=6857433423
+2024-06-21T18:48:46.128332+0300 | INFO | dispatcher:feed_update:172 | Update id=603727295 is handled. Duration 171 ms by bot id=6857433423
+2024-06-21T18:48:49.259298+0300 | INFO | dispatcher:feed_update:172 | Update id=603727296 is handled. Duration 171 ms by bot id=6857433423
+2024-06-21T18:48:51.278984+0300 | INFO | dispatcher:feed_update:172 | Update id=603727297 is handled. Duration 406 ms by bot id=6857433423
+2024-06-21T18:48:52.187535+0300 | INFO | dispatcher:feed_update:172 | Update id=603727298 is handled. Duration 235 ms by bot id=6857433423
+2024-06-21T18:48:53.283281+0300 | INFO | dispatcher:feed_update:172 | Update id=603727299 is handled. Duration 233 ms by bot id=6857433423
+2024-06-21T18:48:54.465453+0300 | INFO | dispatcher:feed_update:172 | Update id=603727300 is handled. Duration 297 ms by bot id=6857433423
+2024-06-21T19:02:29.164639+0300 | INFO | dispatcher:feed_update:172 | Update id=603727301 is handled. Duration 390 ms by bot id=6857433423
+2024-06-21T19:02:30.333774+0300 | INFO | dispatcher:feed_update:172 | Update id=603727302 is handled. Duration 344 ms by bot id=6857433423
+2024-06-21T19:02:32.457706+0300 | INFO | dispatcher:feed_update:172 | Update id=603727303 is handled. Duration 406 ms by bot id=6857433423
+2024-06-21T19:02:33.338807+0300 | INFO | dispatcher:feed_update:172 | Update id=603727304 is handled. Duration 219 ms by bot id=6857433423
+2024-06-21T19:02:34.435731+0300 | INFO | dispatcher:feed_update:172 | Update id=603727305 is handled. Duration 218 ms by bot id=6857433423
+2024-06-21T19:02:35.390987+0300 | INFO | dispatcher:feed_update:172 | Update id=603727306 is handled. Duration 281 ms by bot id=6857433423
+2024-06-21T19:02:37.290638+0300 | INFO | dispatcher:feed_update:172 | Update id=603727307 is handled. Duration 343 ms by bot id=6857433423
+2024-06-21T19:02:38.706908+0300 | INFO | dispatcher:feed_update:172 | Update id=603727308 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T19:02:39.563353+0300 | INFO | dispatcher:feed_update:172 | Update id=603727309 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T19:02:40.445927+0300 | INFO | dispatcher:feed_update:172 | Update id=603727310 is handled. Duration 186 ms by bot id=6857433423
+2024-06-21T19:02:41.454263+0300 | INFO | dispatcher:feed_update:172 | Update id=603727311 is handled. Duration 171 ms by bot id=6857433423
+2024-06-21T19:02:43.008763+0300 | INFO | dispatcher:feed_update:172 | Update id=603727312 is handled. Duration 203 ms by bot id=6857433423
+2024-06-21T19:02:44.455425+0300 | INFO | dispatcher:feed_update:172 | Update id=603727313 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T19:02:50.117696+0300 | INFO | dispatcher:feed_update:172 | Update id=603727314 is handled. Duration 483 ms by bot id=6857433423
+2024-06-21T19:02:50.901660+0300 | INFO | dispatcher:feed_update:172 | Update id=603727315 is handled. Duration 186 ms by bot id=6857433423
+2024-06-21T19:02:54.110293+0300 | INFO | dispatcher:feed_update:172 | Update id=603727316 is handled. Duration 250 ms by bot id=6857433423
+2024-06-21T19:02:55.464593+0300 | INFO | dispatcher:feed_update:172 | Update id=603727317 is handled. Duration 360 ms by bot id=6857433423
+2024-06-21T22:10:31.002031+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:10:31.003029+0300 | INFO | main:on_shutdown:25 | Bot shutdown...
+2024-06-21T22:10:31.269071+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:10:31.270078+0300 | INFO | main:<module>:44 | Exit bot
+2024-06-21T22:13:56.516963+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:13:56.521473+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:13:58.503198+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:13:58.504173+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:13:58.582475+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:13:58.731737+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:13:59.036092+0300 | INFO | dispatcher:feed_update:172 | Update id=603727318 is handled. Duration 233 ms by bot id=6857433423
+2024-06-21T22:13:59.064942+0300 | INFO | dispatcher:feed_update:172 | Update id=603727319 is handled. Duration 264 ms by bot id=6857433423
+2024-06-21T22:14:00.966424+0300 | INFO | dispatcher:feed_update:172 | Update id=603727320 is handled. Duration 172 ms by bot id=6857433423
+2024-06-21T22:14:01.802379+0300 | INFO | dispatcher:feed_update:172 | Update id=603727321 is handled. Duration 218 ms by bot id=6857433423
+2024-06-21T22:14:02.348158+0300 | INFO | dispatcher:feed_update:172 | Update id=603727322 is handled. Duration 187 ms by bot id=6857433423
+2024-06-21T22:14:03.385353+0300 | INFO | dispatcher:feed_update:172 | Update id=603727323 is handled. Duration 281 ms by bot id=6857433423
+2024-06-21T22:14:04.267269+0300 | INFO | dispatcher:feed_update:172 | Update id=603727324 is handled. Duration 140 ms by bot id=6857433423
+2024-06-21T22:15:52.620017+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:15:52.621016+0300 | INFO | main:on_shutdown:25 | Bot shutdown...
+2024-06-21T22:15:52.881143+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:15:52.882144+0300 | INFO | main:<module>:44 | Exit bot
+2024-06-21T22:15:59.500381+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:15:59.504380+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:15:59.845736+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:15:59.845736+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:15:59.923923+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:16:00.112754+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:16:01.073250+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:16:01.073250+0300 | INFO | main:on_shutdown:25 | Bot shutdown...
+2024-06-21T22:16:01.330374+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:16:01.331350+0300 | INFO | main:<module>:44 | Exit bot
+2024-06-21T22:16:16.115402+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:16:16.117953+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:16:16.451863+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:16:16.452862+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:16:16.530023+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:16:16.681031+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:16:21.460633+0300 | INFO | dispatcher:feed_update:172 | Update id=603727325 is handled. Duration 266 ms by bot id=6857433423
+2024-06-21T22:16:23.483968+0300 | INFO | dispatcher:feed_update:172 | Update id=603727326 is handled. Duration 1218 ms by bot id=6857433423
+2024-06-21T22:16:24.144603+0300 | INFO | dispatcher:feed_update:172 | Update id=603727327 is handled. Duration 1250 ms by bot id=6857433423
+2024-06-21T22:16:26.218043+0300 | INFO | dispatcher:feed_update:172 | Update id=603727328 is handled. Duration 375 ms by bot id=6857433423
+2024-06-21T22:16:27.207952+0300 | INFO | dispatcher:feed_update:172 | Update id=603727329 is handled. Duration 297 ms by bot id=6857433423
+2024-06-21T22:16:27.759113+0300 | INFO | dispatcher:feed_update:172 | Update id=603727330 is handled. Duration 171 ms by bot id=6857433423
+2024-06-21T22:16:28.871679+0300 | INFO | dispatcher:feed_update:172 | Update id=603727331 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:16:29.758037+0300 | INFO | dispatcher:feed_update:172 | Update id=603727332 is handled. Duration 140 ms by bot id=6857433423
+2024-06-21T22:16:30.390516+0300 | INFO | dispatcher:feed_update:172 | Update id=603727333 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:16:31.008924+0300 | INFO | dispatcher:feed_update:172 | Update id=603727334 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T22:16:33.695802+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:16:33.695802+0300 | INFO | main:on_shutdown:25 | Bot shutdown...
+2024-06-21T22:16:33.960181+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:16:33.961181+0300 | INFO | main:<module>:44 | Exit bot
+2024-06-21T22:16:38.489524+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:16:38.492525+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:16:38.846537+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:16:38.846537+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:16:38.927674+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:16:39.092142+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:16:39.492155+0300 | INFO | dispatcher:feed_update:172 | Update id=603727335 is handled. Duration 328 ms by bot id=6857433423
+2024-06-21T22:16:41.686915+0300 | INFO | dispatcher:feed_update:172 | Update id=603727336 is handled. Duration 203 ms by bot id=6857433423
+2024-06-21T22:16:42.360181+0300 | INFO | dispatcher:feed_update:172 | Update id=603727337 is handled. Duration 218 ms by bot id=6857433423
+2024-06-21T22:16:43.079709+0300 | INFO | dispatcher:feed_update:172 | Update id=603727338 is handled. Duration 297 ms by bot id=6857433423
+2024-06-21T22:16:43.775790+0300 | INFO | dispatcher:feed_update:172 | Update id=603727339 is handled. Duration 296 ms by bot id=6857433423
+2024-06-21T22:16:45.020131+0300 | INFO | dispatcher:feed_update:172 | Update id=603727340 is handled. Duration 186 ms by bot id=6857433423
+2024-06-21T22:16:48.803889+0300 | INFO | dispatcher:feed_update:172 | Update id=603727341 is handled. Duration 172 ms by bot id=6857433423
+2024-06-21T22:16:50.912091+0300 | INFO | dispatcher:feed_update:172 | Update id=603727342 is handled. Duration 250 ms by bot id=6857433423
+2024-06-21T22:16:51.612845+0300 | INFO | dispatcher:feed_update:172 | Update id=603727343 is handled. Duration 219 ms by bot id=6857433423
+2024-06-21T22:16:52.619681+0300 | INFO | dispatcher:feed_update:172 | Update id=603727344 is handled. Duration 172 ms by bot id=6857433423
+2024-06-21T22:16:53.514492+0300 | INFO | dispatcher:feed_update:172 | Update id=603727345 is handled. Duration 250 ms by bot id=6857433423
+2024-06-21T22:16:54.557725+0300 | INFO | dispatcher:feed_update:172 | Update id=603727346 is handled. Duration 593 ms by bot id=6857433423
+2024-06-21T22:16:54.966428+0300 | INFO | dispatcher:feed_update:172 | Update id=603727347 is handled. Duration 188 ms by bot id=6857433423
+2024-06-21T22:16:55.692010+0300 | INFO | dispatcher:feed_update:172 | Update id=603727348 is handled. Duration 250 ms by bot id=6857433423
+2024-06-21T22:16:56.160021+0300 | INFO | dispatcher:feed_update:172 | Update id=603727349 is handled. Duration 187 ms by bot id=6857433423
+2024-06-21T22:16:57.523778+0300 | INFO | dispatcher:feed_update:172 | Update id=603727350 is handled. Duration 139 ms by bot id=6857433423
+2024-06-21T22:17:01.440151+0300 | INFO | dispatcher:feed_update:172 | Update id=603727351 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T22:17:03.064731+0300 | INFO | dispatcher:feed_update:172 | Update id=603727352 is handled. Duration 514 ms by bot id=6857433423
+2024-06-21T22:17:04.000582+0300 | INFO | dispatcher:feed_update:172 | Update id=603727353 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:17:04.951661+0300 | INFO | dispatcher:feed_update:172 | Update id=603727354 is handled. Duration 202 ms by bot id=6857433423
+2024-06-21T22:17:07.058901+0300 | INFO | dispatcher:feed_update:172 | Update id=603727355 is handled. Duration 157 ms by bot id=6857433423
+2024-06-21T22:17:08.036449+0300 | INFO | dispatcher:feed_update:172 | Update id=603727356 is handled. Duration 250 ms by bot id=6857433423
+2024-06-21T22:17:09.627627+0300 | INFO | dispatcher:feed_update:172 | Update id=603727357 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T22:17:10.458307+0300 | INFO | dispatcher:feed_update:172 | Update id=603727358 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:17:11.627732+0300 | INFO | dispatcher:feed_update:172 | Update id=603727359 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T22:17:12.454867+0300 | INFO | dispatcher:feed_update:172 | Update id=603727360 is handled. Duration 139 ms by bot id=6857433423
+2024-06-21T22:17:13.318560+0300 | INFO | dispatcher:feed_update:172 | Update id=603727361 is handled. Duration 281 ms by bot id=6857433423
+2024-06-21T22:17:14.129879+0300 | INFO | dispatcher:feed_update:172 | Update id=603727362 is handled. Duration 281 ms by bot id=6857433423
+2024-06-21T22:17:15.535018+0300 | INFO | dispatcher:feed_update:172 | Update id=603727363 is handled. Duration 266 ms by bot id=6857433423
+2024-06-21T22:17:16.311792+0300 | INFO | dispatcher:feed_update:172 | Update id=603727364 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:17:17.775686+0300 | INFO | dispatcher:feed_update:172 | Update id=603727365 is handled. Duration 155 ms by bot id=6857433423
+2024-06-21T22:17:18.624242+0300 | INFO | dispatcher:feed_update:172 | Update id=603727366 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:17:19.206606+0300 | INFO | dispatcher:feed_update:172 | Update id=603727367 is handled. Duration 172 ms by bot id=6857433423
+2024-06-21T22:17:19.889668+0300 | INFO | dispatcher:feed_update:172 | Update id=603727368 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:17:20.492503+0300 | INFO | dispatcher:feed_update:172 | Update id=603727369 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T22:17:29.326859+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:17:29.326859+0300 | INFO | main:on_shutdown:25 | Bot shutdown...
+2024-06-21T22:17:29.573589+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:17:29.574566+0300 | INFO | main:<module>:44 | Exit bot
+2024-06-21T22:19:26.507879+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:19:26.510910+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:19:26.849130+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:19:26.849130+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:19:26.926448+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:19:27.088940+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:19:28.867384+0300 | INFO | main:<module>:46 | bot interrupt
+2024-06-21T22:19:28.867384+0300 | ERROR | base_events:default_exception_handler:1821 | an error occurred during closing of asynchronous generator <async_generator object Dispatcher._listen_updates at 0x0000016EEE35F600>
+asyncgen: <async_generator object Dispatcher._listen_updates at 0x0000016EEE35F600>
+RuntimeError: aclose(): asynchronous generator is already running
+2024-06-21T22:23:51.169210+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:23:51.173208+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:23:51.529871+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:23:51.529871+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:23:51.614711+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:23:51.780295+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:23:53.426310+0300 | INFO | dispatcher:feed_update:172 | Update id=603727370 is handled. Duration 266 ms by bot id=6857433423
+2024-06-21T22:23:54.345039+0300 | INFO | dispatcher:feed_update:172 | Update id=603727371 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:23:55.148711+0300 | INFO | dispatcher:feed_update:172 | Update id=603727372 is handled. Duration 139 ms by bot id=6857433423
+2024-06-21T22:23:55.823849+0300 | INFO | dispatcher:feed_update:172 | Update id=603727373 is handled. Duration 139 ms by bot id=6857433423
+2024-06-21T22:23:56.622711+0300 | INFO | dispatcher:feed_update:172 | Update id=603727374 is handled. Duration 234 ms by bot id=6857433423
+2024-06-21T22:23:57.407453+0300 | INFO | dispatcher:feed_update:172 | Update id=603727375 is handled. Duration 155 ms by bot id=6857433423
+2024-06-21T22:23:58.553505+0300 | INFO | dispatcher:feed_update:172 | Update id=603727376 is handled. Duration 157 ms by bot id=6857433423
+2024-06-21T22:23:59.260275+0300 | INFO | dispatcher:feed_update:172 | Update id=603727377 is handled. Duration 62 ms by bot id=6857433423
+2024-06-21T22:24:00.037009+0300 | INFO | dispatcher:feed_update:172 | Update id=603727378 is handled. Duration 202 ms by bot id=6857433423
+2024-06-21T22:24:00.887502+0300 | INFO | dispatcher:feed_update:172 | Update id=603727379 is handled. Duration 187 ms by bot id=6857433423
+2024-06-21T22:24:01.434436+0300 | INFO | dispatcher:feed_update:172 | Update id=603727380 is handled. Duration 203 ms by bot id=6857433423
+2024-06-21T22:24:01.948372+0300 | INFO | dispatcher:feed_update:172 | Update id=603727381 is handled. Duration 187 ms by bot id=6857433423
+2024-06-21T22:24:02.468464+0300 | INFO | dispatcher:feed_update:172 | Update id=603727382 is handled. Duration 250 ms by bot id=6857433423
+2024-06-21T22:24:05.974564+0300 | INFO | dispatcher:feed_update:172 | Update id=603727383 is handled. Duration 139 ms by bot id=6857433423
+2024-06-21T22:24:06.487220+0300 | INFO | dispatcher:feed_update:172 | Update id=603727384 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:24:07.789278+0300 | INFO | dispatcher:feed_update:172 | Update id=603727385 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:24:08.816230+0300 | INFO | dispatcher:feed_update:172 | Update id=603727386 is handled. Duration 218 ms by bot id=6857433423
+2024-06-21T22:24:09.765413+0300 | INFO | dispatcher:feed_update:172 | Update id=603727387 is handled. Duration 375 ms by bot id=6857433423
+2024-06-21T22:24:13.280291+0300 | INFO | dispatcher:feed_update:172 | Update id=603727388 is handled. Duration 139 ms by bot id=6857433423
+2024-06-21T22:24:14.135461+0300 | INFO | dispatcher:feed_update:172 | Update id=603727389 is handled. Duration 140 ms by bot id=6857433423
+2024-06-21T22:24:15.039105+0300 | INFO | dispatcher:feed_update:172 | Update id=603727390 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:24:16.075781+0300 | INFO | dispatcher:feed_update:172 | Update id=603727391 is handled. Duration 202 ms by bot id=6857433423
+2024-06-21T22:24:16.913825+0300 | INFO | dispatcher:feed_update:172 | Update id=603727392 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:24:19.034389+0300 | INFO | main:<module>:46 | bot interrupt
+2024-06-21T22:24:19.034389+0300 | ERROR | base_events:default_exception_handler:1821 | an error occurred during closing of asynchronous generator <async_generator object Dispatcher._listen_updates at 0x000001B8F0A73600>
+asyncgen: <async_generator object Dispatcher._listen_updates at 0x000001B8F0A73600>
+RuntimeError: aclose(): asynchronous generator is already running
+2024-06-21T22:25:18.467143+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:25:18.471119+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:25:18.817103+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:25:18.817103+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:25:18.898154+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:25:19.040968+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:25:19.848360+0300 | INFO | dispatcher:feed_update:172 | Update id=603727393 is not handled. Duration 750 ms by bot id=6857433423
+2024-06-21T22:25:19.848360+0300 | ERROR | __init__:exception:1574 | Cause exception while process update id=603727393 by bot id=6857433423
+TelegramBadRequest: Telegram server says - Bad Request: query is too old and response timeout expired or query ID is invalid
+Traceback (most recent call last):
+
+  File "C:\Users\Администратор\PycharmProjects\RiseTgBot\main.py", line 48, in <module>
+    asyncio.run(main())
+    │       │   └ <function main at 0x00000263370A07C0>
+    │       └ <function run at 0x000002632D7A0400>
+    └ <module 'asyncio' from 'C:\\Program Files\\Python312\\Lib\\asyncio\\__init__.py'>
+
+  File "C:\Program Files\Python312\Lib\asyncio\runners.py", line 194, in run
+    return runner.run(main)
+           │      │   └ <coroutine object main at 0x0000026336FC6E90>
+           │      └ <function Runner.run at 0x000002632D7AF6A0>
+           └ <asyncio.runners.Runner object at 0x0000026337040710>
+  File "C:\Program Files\Python312\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-7' coro=<main() running at C:\Users\Администратор\PycharmProjects\RiseTgBot\main.py:43> wait_for=<Fu...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x000002632D7AD300>
+           │    └ <ProactorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x0000026337040710>
+  File "C:\Program Files\Python312\Lib\asyncio\base_events.py", line 674, in run_until_complete
+    self.run_forever()
+    │    └ <function ProactorEventLoop.run_forever at 0x000002632D8809A0>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Program Files\Python312\Lib\asyncio\windows_events.py", line 322, in run_forever
+    super().run_forever()
+  File "C:\Program Files\Python312\Lib\asyncio\base_events.py", line 641, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000002632D7AF060>
+    └ <ProactorEventLoop running=True closed=False debug=False>
+  File "C:\Program Files\Python312\Lib\asyncio\base_events.py", line 1987, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x000002632D6F9620>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+  File "C:\Program Files\Python312\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=None>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=None>)>
+> File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 309, in _process_update
+    response = await self.feed_update(bot, update, **kwargs)
+                     │    │           │    │         └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,)}
+                     │    │           │    └ Update(update_id=603727393, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                     │    │           └ <aiogram.client.bot.Bot object at 0x000002632DEB1940>
+                     │    └ <function Dispatcher.feed_update at 0x0000026334BDF6A0>
+                     └ <Dispatcher '0x26335178860'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 158, in feed_update
+    response = await self.update.wrap_outer_middleware(
+                     │    │      └ <function TelegramEventObserver.wrap_outer_middleware at 0x0000026334BDE200>
+                     │    └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x000002632FF4B530>
+                     └ <Dispatcher '0x26335178860'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\middlewares\error.py", line 25, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │       └ Update(update_id=603727393, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                 └ functools.partial(<aiogram.dispatcher.middlewares.user_context.UserContextMiddleware object at 0x000002632FF4B680>, functools...
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\middlewares\user_context.py", line 49, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │       └ Update(update_id=603727393, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                 └ functools.partial(<aiogram.fsm.middleware.FSMContextMiddleware object at 0x000002632FF4B650>, <function TelegramEventObserver...
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\fsm\middleware.py", line 42, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │       └ Update(update_id=603727393, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                 └ <function TelegramEventObserver.trigger at 0x00000263370A3A60>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │             └ Update(update_id=603727393, message=None, edited_message=None, channel_post=None, edited_channel_post=None, business_connecti...
+                 └ <function CallableObject.call at 0x00000263370A4680>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<bound method Dispatcher._listen_update of <Dispatcher '0x26335178860'>>, Update(update_id=603727393, messa...
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\dispatcher.py", line 276, in _listen_update
+    return await self.propagate_event(update_type=update_type, event=event, **kwargs)
+                 │    │                           │                  │        └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │    │                           │                  └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                 │    │                           └ 'callback_query'
+                 │    └ <function Router.propagate_event at 0x0000026334BDECA0>
+                 └ <Dispatcher '0x26335178860'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 142, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │        │                     │               └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x00000263370A4E00>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x0000026334BDE200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x000002632FF48650>
+
+  File "C:\Users\Администратор\PycharmProjects\RiseTgBot\bot\middlewares\l10n.py", line 22, in __call__
+    return await handler(event, data)
+                 │       │      └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │       └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                 └ <function Router.propagate_event.<locals>._wrapped at 0x00000263370A4F40>
+
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 137, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x0000026334BDED40>
+                 └ <Dispatcher '0x26335178860'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 170, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+                     │      │                           │                  │        └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                     │      │                           │                  └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                     │      │                           └ 'callback_query'
+                     │      └ <function Router.propagate_event at 0x0000026334BDECA0>
+                     └ <Router 'bot.handlers'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 142, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │        │                     │               └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x00000263370A4FE0>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x0000026334BDE200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x0000026337095340>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 137, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x0000026334BDED40>
+                 └ <Router 'bot.handlers'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 170, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+                     │      │                           │                  │        └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                     │      │                           │                  └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                     │      │                           └ 'callback_query'
+                     │      └ <function Router.propagate_event at 0x0000026334BDECA0>
+                     └ <Router 'bot.handlers.farmers'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 142, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │        │                     │               └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x00000263370A5080>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x0000026334BDE200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x0000026337094230>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 137, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x0000026334BDED40>
+                 └ <Router 'bot.handlers.farmers'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 170, in _propagate_event
+    response = await router.propagate_event(update_type=update_type, event=event, **kwargs)
+                     │      │                           │                  │        └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                     │      │                           │                  └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                     │      │                           └ 'callback_query'
+                     │      └ <function Router.propagate_event at 0x0000026334BDECA0>
+                     └ <Router 'bot.handlers.farmers.inventory_handlers'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 142, in propagate_event
+    return await observer.wrap_outer_middleware(_wrapped, event=event, data=kwargs)
+                 │        │                     │               │           └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │        │                     │               └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                 │        │                     └ <function Router.propagate_event.<locals>._wrapped at 0x00000263370A51C0>
+                 │        └ <function TelegramEventObserver.wrap_outer_middleware at 0x0000026334BDE200>
+                 └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x0000026337042F60>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 137, in _wrapped
+    return await self._propagate_event(
+                 │    └ <function Router._propagate_event at 0x0000026334BDED40>
+                 └ <Router 'bot.handlers.farmers.inventory_handlers'>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\router.py", line 162, in _propagate_event
+    response = await observer.trigger(event, **kwargs)
+                     │        │       │        └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                     │        │       └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                     │        └ <function TelegramEventObserver.trigger at 0x0000026334BDE340>
+                     └ <aiogram.dispatcher.event.telegram.TelegramEventObserver object at 0x0000026337042F60>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\event\telegram.py", line 121, in trigger
+    return await wrapped_inner(event, kwargs)
+                 │             │      └ {'dispatcher': <Dispatcher '0x26335178860'>, 'bots': (<aiogram.client.bot.Bot object at 0x000002632DEB1940>,), 'bot': <aiogra...
+                 │             └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+                 └ <function CallableObject.call at 0x00000263370A5440>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\dispatcher\event\handler.py", line 43, in call
+    return await wrapped()
+                 └ functools.partial(<function handle_back_inventory at 0x00000263370CEAC0>, CallbackQuery(id='1394406499897989829', from_user=U...
+
+  File "C:\Users\Администратор\PycharmProjects\RiseTgBot\bot\handlers\farmers\inventory_handlers.py", line 38, in handle_back_inventory
+    await handle_inventory(query, l10n)
+          │                │      └ <fluent.runtime.fallback.FluentLocalization object at 0x0000026336EBBE90>
+          │                └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+          └ <function handle_inventory at 0x00000263370CE840>
+
+  File "C:\Users\Администратор\PycharmProjects\RiseTgBot\bot\handlers\farmers\inventory_handlers.py", line 25, in handle_inventory
+    await query.answer()
+          │     └ <function CallbackQuery.answer at 0x000002632ECCB560>
+          └ CallbackQuery(id='1394406499897989829', from_user=User(id=324660562, is_bot=False, first_name='Avaritia', last_name=None, use...
+
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\methods\base.py", line 84, in emit
+    return await bot(self)
+                 │   └ AnswerCallbackQuery(callback_query_id='1394406499897989829', text=None, show_alert=None, url=None, cache_time=None)
+                 └ <aiogram.client.bot.Bot object at 0x000002632DEB1940>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\client\bot.py", line 482, in __call__
+    return await self.session(self, method, timeout=request_timeout)
+                 │    │       │     │               └ None
+                 │    │       │     └ AnswerCallbackQuery(callback_query_id='1394406499897989829', text=None, show_alert=None, url=None, cache_time=None)
+                 │    │       └ <aiogram.client.bot.Bot object at 0x000002632DEB1940>
+                 │    └ <aiogram.client.session.aiohttp.AiohttpSession object at 0x000002632DEB1B20>
+                 └ <aiogram.client.bot.Bot object at 0x000002632DEB1940>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\client\session\base.py", line 254, in __call__
+    return cast(TelegramType, await middleware(bot, method))
+           │    │                   │          │    └ AnswerCallbackQuery(callback_query_id='1394406499897989829', text=None, show_alert=None, url=None, cache_time=None)
+           │    │                   │          └ <aiogram.client.bot.Bot object at 0x000002632DEB1940>
+           │    │                   └ functools.partial(<bound method AiohttpSession.make_request of <aiogram.client.session.aiohttp.AiohttpSession object at 0x000...
+           │    └ ~TelegramType
+           └ <function cast at 0x000002632D77ED40>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\client\session\aiohttp.py", line 189, in make_request
+    response = self.check_response(
+               │    └ <function BaseSession.check_response at 0x0000026334B432E0>
+               └ <aiogram.client.session.aiohttp.AiohttpSession object at 0x000002632DEB1B20>
+  File "C:\Users\Администратор\AppData\Local\pypoetry\Cache\virtualenvs\risetgbot-tWtPj_Ae-py3.12\Lib\site-packages\aiogram\client\session\base.py", line 120, in check_response
+    raise TelegramBadRequest(method=method, message=description)
+          │                         │               └ 'Bad Request: query is too old and response timeout expired or query ID is invalid'
+          │                         └ AnswerCallbackQuery(callback_query_id='1394406499897989829', text=None, show_alert=None, url=None, cache_time=None)
+          └ <class 'aiogram.exceptions.TelegramBadRequest'>
+
+aiogram.exceptions.TelegramBadRequest: Telegram server says - Bad Request: query is too old and response timeout expired or query ID is invalid
+2024-06-21T22:25:37.108967+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:25:37.109975+0300 | INFO | main:on_shutdown:32 | Bot shutdown...
+2024-06-21T22:25:37.373143+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:25:37.374113+0300 | INFO | main:<module>:50 | Exit bot
+2024-06-21T22:25:40.199280+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:25:40.202281+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:25:40.528747+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:25:40.528747+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:25:40.606062+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:25:40.762395+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:25:43.354087+0300 | INFO | dispatcher:feed_update:172 | Update id=603727394 is handled. Duration 358 ms by bot id=6857433423
+2024-06-21T22:25:44.425253+0300 | INFO | dispatcher:feed_update:172 | Update id=603727395 is handled. Duration 578 ms by bot id=6857433423
+2024-06-21T22:25:45.038196+0300 | INFO | dispatcher:feed_update:172 | Update id=603727396 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:25:46.101307+0300 | INFO | dispatcher:feed_update:172 | Update id=603727397 is handled. Duration 218 ms by bot id=6857433423
+2024-06-21T22:25:46.909702+0300 | INFO | dispatcher:feed_update:172 | Update id=603727398 is handled. Duration 141 ms by bot id=6857433423
+2024-06-21T22:25:50.855234+0300 | INFO | dispatcher:feed_update:172 | Update id=603727399 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:25:51.738544+0300 | INFO | dispatcher:feed_update:172 | Update id=603727400 is handled. Duration 156 ms by bot id=6857433423
+2024-06-21T22:25:53.260099+0300 | INFO | dispatcher:feed_update:172 | Update id=603727401 is handled. Duration 187 ms by bot id=6857433423
+2024-06-21T22:25:53.748153+0300 | INFO | avg_drop_price:fetch:11 | запрос на обновление price_drop
+2024-06-21T22:25:53.888907+0300 | INFO | dispatcher:feed_update:172 | Update id=603727402 is handled. Duration 202 ms by bot id=6857433423
+2024-06-21T22:25:54.923170+0300 | INFO | dispatcher:feed_update:172 | Update id=603727403 is handled. Duration 296 ms by bot id=6857433423
+2024-06-21T22:25:55.734290+0300 | INFO | dispatcher:feed_update:172 | Update id=603727404 is handled. Duration 250 ms by bot id=6857433423
+2024-06-21T22:25:57.222301+0300 | INFO | dispatcher:feed_update:172 | Update id=603727405 is handled. Duration 187 ms by bot id=6857433423
+2024-06-21T22:25:57.803991+0300 | INFO | dispatcher:feed_update:172 | Update id=603727406 is handled. Duration 172 ms by bot id=6857433423
+2024-06-21T22:25:58.610087+0300 | INFO | dispatcher:feed_update:172 | Update id=603727407 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:25:59.423125+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:25:59.423125+0300 | INFO | main:on_shutdown:32 | Bot shutdown...
+2024-06-21T22:25:59.689370+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:25:59.690373+0300 | INFO | main:<module>:50 | Exit bot
+2024-06-21T22:29:34.735384+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:29:34.738313+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:29:35.100526+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:29:35.100526+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:29:35.189231+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:29:35.343266+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:29:35.750360+0300 | INFO | dispatcher:feed_update:172 | Update id=603727409 is handled. Duration 328 ms by bot id=6857433423
+2024-06-21T22:29:35.883574+0300 | INFO | dispatcher:feed_update:172 | Update id=603727408 is handled. Duration 468 ms by bot id=6857433423
+2024-06-21T22:29:37.589620+0300 | INFO | dispatcher:feed_update:172 | Update id=603727410 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:29:38.449856+0300 | INFO | dispatcher:feed_update:172 | Update id=603727411 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:29:39.442954+0300 | INFO | dispatcher:feed_update:172 | Update id=603727412 is handled. Duration 375 ms by bot id=6857433423
+2024-06-21T22:29:40.339984+0300 | INFO | dispatcher:feed_update:172 | Update id=603727413 is handled. Duration 125 ms by bot id=6857433423
+2024-06-21T22:29:42.598458+0300 | INFO | dispatcher:feed_update:172 | Update id=603727414 is handled. Duration 187 ms by bot id=6857433423
+2024-06-21T22:30:18.444997+0300 | INFO | dispatcher:feed_update:172 | Update id=603727415 is handled. Duration 500 ms by bot id=6857433423
+2024-06-21T22:30:20.205115+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:30:20.206119+0300 | INFO | main:on_shutdown:32 | Bot shutdown...
+2024-06-21T22:30:20.464345+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:30:20.465346+0300 | INFO | main:<module>:50 | Exit bot
+2024-06-21T22:30:23.419456+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:30:23.422455+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:30:23.763814+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:30:23.765319+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:30:23.845306+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:30:23.993209+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:30:25.120466+0300 | INFO | dispatcher:feed_update:172 | Update id=603727416 is handled. Duration 266 ms by bot id=6857433423
+2024-06-21T22:30:26.702084+0300 | INFO | dispatcher:feed_update:172 | Update id=603727417 is handled. Duration 172 ms by bot id=6857433423
+2024-06-21T22:30:28.635075+0300 | INFO | dispatcher:feed_update:172 | Update id=603727418 is handled. Duration 140 ms by bot id=6857433423
+2024-06-21T22:30:29.351067+0300 | INFO | dispatcher:feed_update:172 | Update id=603727419 is handled. Duration 218 ms by bot id=6857433423
+2024-06-21T22:31:49.491969+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:31:49.492972+0300 | INFO | main:on_shutdown:32 | Bot shutdown...
+2024-06-21T22:31:49.582560+0300 | ERROR | dispatcher:_listen_updates:219 | Failed to fetch updates - TelegramNetworkError: HTTP Client says - ClientOSError: [Errno 1] [SSL: APPLICATION_DATA_AFTER_CLOSE_NOTIFY] application data after close notify (_ssl.c:2685)
+2024-06-21T22:31:49.583560+0300 | WARNING | dispatcher:_listen_updates:221 | Sleep for 1.000000 seconds and try again... (tryings = 0, bot id = 6857433423)
+2024-06-21T22:31:49.743307+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:31:49.743307+0300 | INFO | main:<module>:50 | Exit bot
+2024-06-21T22:31:52.926397+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:31:52.930400+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:31:53.292766+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T22:31:53.293792+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T22:31:53.376527+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T22:31:53.527440+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:31:54.944813+0300 | INFO | dispatcher:feed_update:172 | Update id=603727420 is handled. Duration 327 ms by bot id=6857433423
+2024-06-21T22:31:56.483423+0300 | INFO | dispatcher:feed_update:172 | Update id=603727421 is handled. Duration 296 ms by bot id=6857433423
+2024-06-21T22:33:54.989735+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T22:33:54.989735+0300 | INFO | main:on_shutdown:32 | Bot shutdown...
+2024-06-21T22:33:55.257729+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T22:33:55.258731+0300 | INFO | main:<module>:50 | Exit bot
+2024-06-21T23:15:19.496979+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T23:15:19.501045+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T23:15:19.850766+0300 | DEBUG | proactor_events:__init__:634 | Using proactor: IocpProactor
+2024-06-21T23:15:19.851765+0300 | INFO | main:on_startup:13 | Bot starting...
+2024-06-21T23:15:19.930753+0300 | INFO | dispatcher:start_polling:527 | Start polling
+2024-06-21T23:15:20.088701+0300 | INFO | dispatcher:_polling:341 | Run polling for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T23:15:22.212901+0300 | INFO | dispatcher:start_polling:554 | Polling stopped
+2024-06-21T23:15:22.212901+0300 | INFO | main:on_shutdown:32 | Bot shutdown...
+2024-06-21T23:15:22.473167+0300 | INFO | dispatcher:_polling:359 | Polling stopped for bot @risemarket_bot id=6857433423 - 'Rise Market'
+2024-06-21T23:15:22.474167+0300 | INFO | main:<module>:50 | Exit bot

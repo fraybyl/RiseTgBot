@@ -17,6 +17,7 @@ total_weeks_router = Router(name=__name__)
                             lambda message: message.text.isdigit() and int(message.text) > 0)
 async def process_total_weeks(message: Message, state: FSMContext, l10n: FluentLocalization):
     try:
+        await bot.send_chat_action(message.chat.id, 'typing')
         data = await state.get_data()
         message_id = data.get('message_id')
         initial_accounts = data.get('initial_accounts')

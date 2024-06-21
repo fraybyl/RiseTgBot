@@ -21,12 +21,18 @@ async def on_startup() -> None:
     dp.include_router(main_router)
 
 
+async def redis_shutdown() -> None:
+    await redis_db.connection_pool.aclose()
+    await redis_cache.connection_pool.aclose()
+    await redis_db.aclose()
+    await redis_cache.aclose()
+
+
 async def on_shutdown() -> None:
     logger.info('Bot shutdown...')
     await dp.storage.close()
     await dp.fsm.storage.close()
-    await redis_db.aclose()
-    await redis_cache.aclose()
+    await redis_shutdown()
     await close_db_postgres(engine)
 
 
@@ -42,4 +48,3 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         logger.info('Exit bot')
-

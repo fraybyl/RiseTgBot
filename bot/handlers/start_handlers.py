@@ -18,7 +18,7 @@ async def command_start_handler(message: Message, command: CommandObject) -> Non
     payload = decode_payload(args) if args else None
     await db_requests.set_user(message.from_user.id, message.from_user.username, payload)
 
-    if config_json.has_file_id("RISE_BACKGROUND"):
+    if await config_json.has_file_id("RISE_BACKGROUND"):
         await message.answer_photo(photo=await config_json.get_file_id("RISE_BACKGROUND"), reply_markup=get_start_kb())
     else:
         file = await config_json.get_file_path("RISE_BACKGROUND")
