@@ -23,7 +23,6 @@ async def fetch_get_player_bans(session, url, semaphore, update=True):
             async with session.get(url) as response:
                 response.raise_for_status()
                 data = await response.json()
-
                 try:
                     await redis_db.set(cache_key_temp, orjson.dumps(data.get('players')))
                 except Exception as e:
@@ -58,44 +57,43 @@ async def get_player_bans(steam_ids: list[int], update=True, max_concurrent_requ
 
 
 async def add_new_accounts(steam_ids: list[int]):
-    async with lock:
-        steam_ids_set = set(steam_ids)
-        cursor = '0'
-        try:
-            while cursor != 0:
-                cursor, keys = await redis_db.scan(cursor=cursor, count=30000, match='ban_stat::*')
-                if keys:
-                    pipeline = redis_db.pipeline()
-                    pipeline.mget(*keys)
-                    results = await pipeline.execute()
+    steam_ids_set = set(steam_ids)
+    cursor = '0'
+    try:
+        while cursor != 0:
+            cursor, keys = await redis_db.scan(cursor=cursor, count=30000, match='ban_stat::*')
+            if keys:
+                pipeline = redis_db.pipeline()
+                pipeline.mget(*keys)
+                results = await pipeline.execute()
 
-                    for result in results:
-                        if result:
-                            try:
-                                for bytes in result:
-                                    data_str = bytes.decode('utf-8')
-                                    data_list = orjson.loads(data_str)
+                for result in results:
+                    if result:
+                        try:
+                            for bytes in result:
+                                data_str = bytes.decode('utf-8')
+                                data_list = orjson.loads(data_str)
 
-                                    for data_dict in data_list:
-                                        steam_id = int(data_dict.get('SteamId', 0))
-                                        if steam_id in steam_ids_set:
-                                            steam_ids_set.discard(steam_id)
+                                for data_dict in data_list:
+                                    steam_id = int(data_dict.get('SteamId', 0))
+                                    if steam_id in steam_ids_set:
+                                        steam_ids_set.discard(steam_id)
 
-                            except orjson.JSONDecodeError as e:
-                                print(f"JSON decode error: {e}")
-                            except Exception as e:
-                                print(f"Unexpected error: {e}")
+                        except orjson.JSONDecodeError as e:
+                            print(f"JSON decode error: {e}")
+                        except Exception as e:
+                            print(f"Unexpected error: {e}")
 
-        except Exception as e:
-            print(f"Error during Redis scan or key fetching: {e}")
-        if steam_ids_set:
-            temp_and_final_keys = await get_player_bans(list(steam_ids_set), True)
-            temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
-            final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
+    except Exception as e:
+        print(f"Error during Redis scan or key fetching: {e}")
+    if steam_ids_set:
+        temp_and_final_keys = await get_player_bans(list(steam_ids_set), True)
+        temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
+        final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
 
-            pipeline = await redis_db.pipeline()
-            await switch_keys(temp_keys, final_keys, pipeline)
-            await pipeline.execute()
+        pipeline = await redis_db.pipeline()
+        await switch_keys(temp_keys, final_keys, pipeline)
+        await pipeline.execute()
 
 
 async def switch_keys(temp_keys, final_keys, pipe):

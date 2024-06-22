@@ -146,33 +146,26 @@ async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> bool:
     """Sets Steam URLs for a user, avoiding duplicates."""
     async with async_session() as session:
         try:
-            # Выполнение запроса на получение steamid64 для указанного user_id
             existing_accounts_result = await session.execute(
                 select(SteamAccount.steamid64).where(user_id == SteamAccount.user_id)
             )
 
-            # Преобразование результатов в набор steamid64
             existing_steam_urls = set(row[0] for row in existing_accounts_result.all())
 
-            # Отфильтровать новые аккаунты, которые уже существуют в базе данных
             new_steam_accounts = [acc for acc in steamid64 if acc not in existing_steam_urls]
 
-            # Если нет новых аккаунтов для добавления, возвращаем True
             if not new_steam_accounts:
-                return True
+                return False
 
-            # Создание объектов SteamAccount для новых аккаунтов
             new_steam_account_objects = [
                 SteamAccount(steamid64=steamid64, user_id=user_id) for steamid64 in new_steam_accounts
             ]
             session.add_all(new_steam_account_objects)
 
-            # Коммит транзакции
             await session.commit()
             await redis_cache.delete(f"steamid64::{user_id}")
             return True
         except Exception as e:
-            # Логирование ошибки и откат транзакции в случае исключения
             logger.error(f"Error in set_steamid64_for_user: {e}")
             await session.rollback()
             raise
