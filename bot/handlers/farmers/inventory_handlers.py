@@ -2,12 +2,15 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from fluent.runtime import FluentLocalization
+from loguru import logger
 
 from bot.database.db_requests import get_steamid64_by_userid
-from bot.keyboards.farmers_keyboards import get_inventory_kb, get_inventory_settings_kb
+from bot.keyboards.farmers_keyboards import get_inventory_kb, get_inventory_settings_kb, get_accounts_settings_kb
 from bot.utils.edit_media import edit_message_media
 from bot.utils.statistics import get_personal_statistics, get_general_statistics
 from .add_accounts_handlers import add_accounts_router
+from ...core.loader import bot
+from ...states.inventory_states import InventoryStates
 
 router = Router(name=__name__)
 router.include_router(add_accounts_router)
@@ -34,6 +37,20 @@ async def handle_accounts_statistics(query: CallbackQuery, l10n: FluentLocalizat
 
 @router.callback_query(lambda query: query.data == 'back_inventory')
 async def handle_back_inventory(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
+    current_state = await state.get_state()
+    if current_state == InventoryStates.GET_DUMP_FILE:
+        data = await state.get_data()
+        document = data.get('document_id')
+        try:
+            await bot.delete_message(query.message.chat.id, document)
+        except:
+            logger.error('Не удалось удалить файл dump inventory')
+        await handle_inventory(query, l10n)
+
+    elif current_state == InventoryStates.WAITING_INVENTORY_REMOVE:
+        await query.message.edit_caption(caption='удаляй нахуй давай удаляй', reply_markup=get_accounts_settings_kb())
+    else:
+        await handle_inventory(query, l10n)
+
     await state.clear()
-    await handle_inventory(query, l10n)
     await query.answer()

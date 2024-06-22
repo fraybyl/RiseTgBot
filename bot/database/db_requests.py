@@ -176,3 +176,31 @@ async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> bool:
             logger.error(f"Error in set_steamid64_for_user: {e}")
             await session.rollback()
             raise
+
+
+async def remove_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[int] | None:
+    """Удаляет указанные Steam ID для пользователя."""
+    async with async_session() as session:
+        try:
+            # Получаем все аккаунты Steam для указанного пользователя
+            existing_accounts_result = await session.execute(
+                select(SteamAccount).where(user_id == SteamAccount.user_id)
+            )
+
+            existing_steam_accounts = existing_accounts_result.scalars().all()
+
+            accounts_to_remove = [acc for acc in existing_steam_accounts if acc.steamid64 in steamid64]
+
+            if not accounts_to_remove:
+                return None
+
+            for account in accounts_to_remove:
+                await session.delete(account)
+
+            await session.commit()
+            await redis_cache.delete(f"steamid64::{user_id}")
+            return accounts_to_remove
+        except Exception as e:
+            logger.error(f"Error in remove_steamid64_for_user: {e}")
+            await session.rollback()
+            raise

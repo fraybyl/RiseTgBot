@@ -42,6 +42,9 @@ async def process_inventory_list(message: Message, state: FSMContext, l10n: Flue
     elif message.content_type == ContentType.TEXT:
         text = message.text
         lines = text.splitlines()
+    else:
+        await message.delete()
+        return
 
     data = await state.get_data()
     message_id = data.get('message_id')
@@ -55,14 +58,14 @@ async def process_inventory_list(message: Message, state: FSMContext, l10n: Flue
         successful_result = await steam_urls_parse(lines)
         await message.delete()
         await set_steamid64_for_user(message.from_user.id, successful_result)
-        await add_new_accounts(successful_result)
+        #await add_new_accounts(successful_result)
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
                                        reply_markup=get_inventory_settings_kb(),
                                        caption=f"Добавлено {len(successful_result)} аккаунт\nнажмите кнопку назад")
         await state.clear()
-        proxies = await config_json.get_config_value('proxies')
-        steam_parser = SteamParser(proxies)
-        await steam_parser.process_inventories(successful_result)
+        #proxies = await config_json.get_config_value('proxies')
+        #steam_parser = SteamParser(proxies)
+        #await steam_parser.process_inventories(successful_result)
     except Exception as e:
         print(f"Error processing inventory list: {e}")
         await message.reply("There was an error processing your file.")

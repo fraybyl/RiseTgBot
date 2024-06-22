@@ -12,7 +12,7 @@ logging.basicConfig(handlers=[InterceptHandler()], level=0)
 logger.add(
     "logs/telegram_bot.log",
     level="DEBUG",
-    format="{time} | {level} | {module}:{function}:{line} | {message}",
+    format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {module}:{function}:{line} | {message}",
     rotation="100 KB",
     compression="zip",
 )
