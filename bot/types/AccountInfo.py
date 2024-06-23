@@ -1,6 +1,6 @@
 class AccountInfo(dict):
     def __init__(self,
-                 steam_id: str,
+                 steam_id: int,
                  community_banned: bool,
                  vac_banned: bool,
                  number_of_vac_bans: int,
@@ -20,7 +20,7 @@ class AccountInfo(dict):
     @classmethod
     def from_dict(cls, data: dict[str, any]):
         return cls(
-            steam_id=data['SteamId'],
+            steam_id=data.get('SteamId', 0),
             community_banned=data.get('CommunityBanned', False),
             vac_banned=data.get('VACBanned', False),
             number_of_vac_bans=data.get('NumberOfVACBans', 0),
