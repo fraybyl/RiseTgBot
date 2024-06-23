@@ -1,3 +1,6 @@
+import time
+
+from sqlalchemy import delete as sql_delete
 from sqlalchemy.future import select
 from bot.database.models import User, Product, Category, SteamAccount
 from bot.database.database import async_session
@@ -110,7 +113,7 @@ async def get_product_by_id(product_id: int) -> Product:
 
 
 async def get_steamid64_by_userid(user_id: int) -> list[int]:
-    """Retrieves Steam URLs by user ID."""
+    """Возвращает Steam ID по user ID."""
     cached_result = await redis_cache.get(f"steamid64::{user_id}")
     if cached_result:
         return [int(steamid) for steamid in cached_result.decode().split(',')]
@@ -121,12 +124,11 @@ async def get_steamid64_by_userid(user_id: int) -> list[int]:
             steam_accounts = result.scalars().all()
             steamid64_list = [acc for acc in steam_accounts]
 
-            # Store in Redis for future use with 1-hour expiry (adjust as needed)
             await redis_cache.set(f"steamid64::{user_id}", ','.join(map(str, steamid64_list)))
 
             return steamid64_list
         except Exception as e:
-            logger.error(f"Error in get_steamid64_by_userid: {e}")
+            logger.error(f"Ошибка в get_steamid64_by_userid: {e}")
             raise
 
 
@@ -142,7 +144,23 @@ async def get_all_steamid64() -> list[int]:
             raise
 
 
-async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> bool:
+async def get_users_with_steam_accounts() -> list[int]:
+    """Возвращает telegram_id всех пользователей с не пустым steam_account."""
+    async with async_session() as session:
+        try:
+            result = await session.execute(
+                select(User.telegram_id)
+                .join(User.steam_accounts)
+                .distinct()
+            )
+            user_telegram_ids = result.scalars().all()
+            return user_telegram_ids
+        except Exception as e:
+            logger.error(f"Ошибка в get_users_with_steam_accounts: {e}")
+            raise
+
+
+async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[int]:
     """Sets Steam URLs for a user, avoiding duplicates."""
     async with async_session() as session:
         try:
@@ -155,7 +173,7 @@ async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> bool:
             new_steam_accounts = [acc for acc in steamid64 if acc not in existing_steam_urls]
 
             if not new_steam_accounts:
-                return False
+                return []
 
             new_steam_account_objects = [
                 SteamAccount(steamid64=steamid64, user_id=user_id) for steamid64 in new_steam_accounts
@@ -164,34 +182,49 @@ async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> bool:
 
             await session.commit()
             await redis_cache.delete(f"steamid64::{user_id}")
-            return True
+            return new_steam_accounts
         except Exception as e:
             logger.error(f"Error in set_steamid64_for_user: {e}")
             await session.rollback()
             raise
 
 
-async def remove_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[int] | None:
+async def remove_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[int]:
     """Удаляет указанные Steam ID для пользователя."""
     async with async_session() as session:
         try:
-            # Получаем все аккаунты Steam для указанного пользователя
-            existing_accounts_result = await session.execute(
-                select(SteamAccount).where(user_id == SteamAccount.user_id)
-            )
+            start = time.time()
+            accounts_to_remove = []
 
-            existing_steam_accounts = existing_accounts_result.scalars().all()
+            # Разбиваем steamid64 на группы по 32766 элементов postgres limit
+            chunk_size = 32766
+            steamid64_chunks = [steamid64[i:i + chunk_size] for i in range(0, len(steamid64), chunk_size)]
 
-            accounts_to_remove = [acc for acc in existing_steam_accounts if acc.steamid64 in steamid64]
+            for chunk in steamid64_chunks:
+                accounts_to_remove_result = await session.execute(
+                    select(SteamAccount.steamid64)
+                    .where(
+                        user_id == SteamAccount.user_id,
+                        SteamAccount.steamid64.in_(chunk)
+                    )
+                )
+                accounts_to_remove.extend(accounts_to_remove_result.scalars().all())
 
             if not accounts_to_remove:
-                return None
+                return []
 
-            for account in accounts_to_remove:
-                await session.delete(account)
+            for chunk in steamid64_chunks:
+                await session.execute(
+                    sql_delete(SteamAccount)
+                    .where(
+                        user_id == SteamAccount.user_id,
+                        SteamAccount.steamid64.in_(chunk)
+                    )
+                )
 
             await session.commit()
             await redis_cache.delete(f"steamid64::{user_id}")
+            print(time.time() - start)
             return accounts_to_remove
         except Exception as e:
             logger.error(f"Error in remove_steamid64_for_user: {e}")

@@ -1,40 +1,37 @@
 import asyncio
-import hashlib
+import itertools
 
 import aiohttp
 from orjson import orjson
 from loguru import logger
 
 from bot.core.loader import redis_db, config_json
+from bot.types.AccountInfo import AccountInfo
 
 lock = asyncio.Lock()
 
 
-async def fetch_get_player_bans(session, url, semaphore, update=True):
-    def generate_cache_key(url, temp=False):
-        prefix = "ban_stat_temp" if temp else "ban_stat"
-        return f"{prefix}::{hashlib.md5(url.encode()).hexdigest()}"
-
-    cache_key_temp = generate_cache_key(url, temp=update)
-    cache_key_final = generate_cache_key(url)
-
+async def fetch_get_player_bans(
+        session: aiohttp.ClientSession,
+        url: str,
+        semaphore: asyncio.Semaphore
+) -> list[AccountInfo]:
     async with semaphore:
         try:
-            async with session.get(url) as response:
+            async with session.get(url, timeout=10) as response:
                 response.raise_for_status()
                 data = await response.json()
-                try:
-                    await redis_db.set(cache_key_temp, orjson.dumps(data.get('players')))
-                except Exception as e:
-                    logger.error(f"Error setting temp cache for URL: {url}, {e}")
-
-                return cache_key_temp, cache_key_final
-        except aiohttp.ClientError as e:
-            logger.error(f"Error fetching URL: {url}, {e}")
-            return None, None
+                players = data.get('players', [])
+                return list(map(AccountInfo.from_dict, players))
+        except Exception as e:
+            logger.error(f"Ошибка фетча fetch_get players: {e}")
+            return []
 
 
-async def get_player_bans(steam_ids: list[int], update=True, max_concurrent_requests=3):
+async def add_player_bans(
+        steam_ids: list[int],
+        max_concurrent_requests: int = 2
+) -> list[AccountInfo]:
     async with lock:
         api_key = await config_json.get_config_value('steam_web_api_key')
         semaphore = asyncio.Semaphore(max_concurrent_requests)
@@ -47,56 +44,40 @@ async def get_player_bans(steam_ids: list[int], update=True, max_concurrent_requ
                     f'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/'
                     f'?key={api_key}&steamids={",".join(map(str, steam_ids_chunk))}'
                 )
+                tasks.append(fetch_get_player_bans(session, url, semaphore))
 
-                task = fetch_get_player_bans(session, url, semaphore, update)
-                tasks.append(task)
+            results = await asyncio.gather(*tasks, return_exceptions=True)
+            flat_results = list(itertools.chain.from_iterable(
+                result for result in results if isinstance(result, list)
+            ))
+        return flat_results
 
-            temp_and_final_keys = await asyncio.gather(*tasks, return_exceptions=True)
 
-        return temp_and_final_keys
+async def set_player_bans(steam_ids: list[int], user_id: int) -> None:
+    redis_key = f"telegram_user::{user_id}"
+    results = await add_player_bans(steam_ids)
+
+    current_data_json = await redis_db.hget(redis_key, 'ban_stat')
+    current_data = orjson.loads(current_data_json) if current_data_json else []
+
+    current_data.extend(results)
+
+    await redis_db.hset(redis_key, 'ban_stat', orjson.dumps(current_data))
 
 
-async def add_new_accounts(steam_ids: list[int]):
+async def remove_player_bans(steam_ids: list[int], user_id: int):
+    redis_key = f"telegram_user::{user_id}"
     steam_ids_set = set(steam_ids)
-    cursor = '0'
-    try:
-        while cursor != 0:
-            cursor, keys = await redis_db.scan(cursor=cursor, count=30000, match='ban_stat::*')
-            if keys:
-                pipeline = redis_db.pipeline()
-                pipeline.mget(*keys)
-                results = await pipeline.execute()
 
-                for result in results:
-                    if result:
-                        try:
-                            for bytes in result:
-                                data_str = bytes.decode('utf-8')
-                                data_list = orjson.loads(data_str)
+    ban_stat_bytes = await redis_db.hget(redis_key, 'ban_stat')
 
-                                for data_dict in data_list:
-                                    steam_id = int(data_dict.get('SteamId', 0))
-                                    if steam_id in steam_ids_set:
-                                        steam_ids_set.discard(steam_id)
+    if ban_stat_bytes is not None:
+        ban_stat_json = orjson.loads(ban_stat_bytes)
 
-                        except orjson.JSONDecodeError as e:
-                            print(f"JSON decode error: {e}")
-                        except Exception as e:
-                            print(f"Unexpected error: {e}")
+        ban_stat_json = [
+            ban_stat_dict for ban_stat_dict in ban_stat_json
+            if int(ban_stat_dict['SteamId']) not in steam_ids_set
+        ]
 
-    except Exception as e:
-        print(f"Error during Redis scan or key fetching: {e}")
-    if steam_ids_set:
-        temp_and_final_keys = await get_player_bans(list(steam_ids_set), True)
-        temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
-        final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
-
-        pipeline = await redis_db.pipeline()
-        await switch_keys(temp_keys, final_keys, pipeline)
-        await pipeline.execute()
-
-
-async def switch_keys(temp_keys, final_keys, pipe):
-    for temp_key, final_key in zip(temp_keys, final_keys):
-        if temp_key and final_key:
-            await pipe.rename(temp_key, final_key)
+        await redis_db.hset(redis_key, 'ban_stat', orjson.dumps(ban_stat_json))
+    return
