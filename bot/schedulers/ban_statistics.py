@@ -1,25 +1,21 @@
+import orjson
 from loguru import logger
 
 from bot.core.loader import redis_db
-from bot.database.db_requests import get_all_steamid64
-from bot.services.steam_ban.fetch_steam_ban import get_player_bans, switch_keys
+from bot.database.db_requests import get_users_with_steam_accounts, get_steamid64_by_userid
+from bot.services.steam_ban.fetch_steam_ban import add_player_bans
 
 
 async def ban_statistics_schedule() -> None:
-    logger.info('Обновление статистики банов...')
-    steam_accounts = await get_all_steamid64()
-    temp_and_final_keys = await get_player_bans(steam_accounts, True)
-    temp_keys = [pair[0] for pair in temp_and_final_keys if pair[0]]
-    final_keys = [pair[1] for pair in temp_and_final_keys if pair[1]]
-    async with redis_db.pipeline() as pipe:
-        try:
-            old_keys = await redis_db.keys('ban_stat::*')
-            if old_keys:
-                await pipe.delete(*old_keys)
-            await switch_keys(temp_keys, final_keys, pipe)
-            await pipe.execute()
+    logger.info('Обновление статистики банов начато...')
+    try:
+        all_users = await get_users_with_steam_accounts()
+        for user in all_users:
+            redis_key = f"telegram_user::{user}"
+            accounts = await get_steamid64_by_userid(user)
+            results = await add_player_bans(accounts, user)
+            await redis_db.hset(redis_key, 'ban_stat', orjson.dumps(results))
 
-        except Exception as e:
-            logger.error(f"Ошибка при атомарном обновление ban_stat ключей, {e}")
-
-    logger.info('Обновление статистики банов завершено')
+        logger.info('Обновление статистики банов завершено')
+    except Exception as e:
+        logger.error(f"Ошибка в ban_statistics_schedule: {e}")

@@ -16,6 +16,7 @@ proxies
 -> inventory - dict[tuple[str, int, int]]
 """
 
+
 class SteamParser:
     def __init__(self, proxies: list[str], currency: int = 5, rate_limit_seconds: int = 5):
         self.headers = self.generate_headers()
@@ -45,7 +46,9 @@ class SteamParser:
                     return None
 
     async def __fetch_hash_name_data(self, market_hash_name: str, proxy: str) -> dict | None:
-        price_url = f'https://steamcommunity.com/market/priceoverview/?country=RU&currency=5&appid=730&market_hash_name={market_hash_name}'
+        price_url = (f'https://steamcommunity.com/market/priceoverview/?'
+                     f'country=RU&currency=5&appid=730&'
+                     f'market_hash_name={market_hash_name}')
         if proxy not in self.proxy_limiters:
             self.proxy_limiters[proxy] = AsyncLimiter(max_rate=1, time_period=self.rate_limit_seconds)
 

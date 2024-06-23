@@ -1,5 +1,5 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import SecretStr, Field
+from pydantic import SecretStr
 from sqlalchemy.engine.url import URL
 
 

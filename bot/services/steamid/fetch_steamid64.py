@@ -23,11 +23,12 @@ async def fetch_page(session, url, http_timeout):
             if response.status == 200:
                 return await response.text()
             return None
-    except aiohttp.ClientError:
+    except aiohttp.ClientError as e:
+        logger.error('Ошибка в парсе steamid -> url %s' % e)
         return None
 
 
-async def steam64_from_url(session, url, http_timeout=30, semaphore=None):
+async def steam64_from_url(session, url, http_timeout=10, semaphore=None):
     if semaphore:
         async with semaphore:
             if is_valid_steamid64(url):
@@ -55,7 +56,7 @@ async def steam64_from_url(session, url, http_timeout=30, semaphore=None):
         return None
 
 
-async def steam_urls_parse(lines: list[str], concurrency_limit: int = 500) -> list[int]:
+async def steam_urls_parse(lines: list[str], concurrency_limit: int = 1000) -> list[int]:
     semaphore = asyncio.Semaphore(concurrency_limit)
     connector = aiohttp.TCPConnector(limit_per_host=concurrency_limit, limit=concurrency_limit * 2)
     async with aiohttp.ClientSession(connector=connector) as session:

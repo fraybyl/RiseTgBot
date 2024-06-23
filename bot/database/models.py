@@ -40,7 +40,7 @@ class SteamAccount(Base):
     __tablename__ = 'steam_accounts'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    steamid64: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    steamid64: Mapped[int] = mapped_column(BigInteger, index=True, nullable=False)
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.telegram_id'), nullable=False, index=True)
 
     user = relationship('User', back_populates='steam_accounts')

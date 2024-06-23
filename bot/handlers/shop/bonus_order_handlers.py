@@ -35,7 +35,9 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext):
     await query.answer()
 
 
-@bonus_router.message(OrderStates.WAITING_BONUS_QUANTITY, lambda message: message.text.isdigit() and int(message.text) >= 0)
+@bonus_router.message(
+    OrderStates.WAITING_BONUS_QUANTITY,
+    lambda message: message.text.isdigit() and int(message.text) >= 0)
 async def process_bonus_quantity(message: Message, state: FSMContext, l10n: FluentLocalization):
     data = await state.get_data()
     quantity_msg = int(message.text)

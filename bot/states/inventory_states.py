@@ -4,4 +4,4 @@ from aiogram.fsm.state import StatesGroup, State
 class InventoryStates(StatesGroup):
     WAITING_ADD_ACCOUNTS = State()
     WAITING_REMOVE_ACCOUNTS = State()
-    WAITING_DUMP_ACCOUTNS = State()
+    WAITING_DUMP_ACCOUNTS = State()

@@ -16,7 +16,7 @@ redis_db = Redis(
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASS,
         db=0
-    )
+    ), decode_responses=True
 )
 
 redis_cache = Redis(
@@ -25,7 +25,7 @@ redis_cache = Redis(
         port=settings.REDIS_PORT,
         password=settings.REDIS_PASS,
         db=1
-    )
+    ), decode_responses=True
 )
 
 storage = RedisStorage(
