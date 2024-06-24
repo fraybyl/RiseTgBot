@@ -4,7 +4,7 @@ class Item(dict):
             item_name: str,
             price: float,
             sell_count: int = 0
-    ):
+    ) -> None:
         super().__init__(
             item_name=item_name,
             price=price,
