@@ -7,7 +7,7 @@ class Item(dict):
     ) -> None:
         super().__init__(
             item_name=item_name,
-            price=price,
+            price=round(price, 2),
             sell_count=sell_count
         )
 
@@ -32,4 +32,4 @@ class Item(dict):
         return self['sell_count']
 
     def total_capitalization(self) -> float:
-        return self.price * self.sell_count
+        return round(self.price * self.sell_count, 2)

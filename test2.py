@@ -55,7 +55,15 @@ async def add_player_bans(
 
 
 async def main() -> None:
-    await add_player_bans([76561198986923662, 76561198997994621])
+    await add_player_bans([
+        76561198037717949,
+        76561198965030463,
+        76561198997994621,
+        76561198986923662,
+        76561198069678468,
+        76561198855186239,
+        76561198007241107
+    ])
 
 if __name__ == '__main__':
     asyncio.run(main())

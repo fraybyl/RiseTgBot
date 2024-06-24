@@ -54,7 +54,7 @@ class SteamInventory:
 
         async with limiter:
             async with session.get(inventory_url, proxy=proxy) as response:
-                logger.debug(f'fetch with {proxy} {steam_id}')
+                print(f'fetch with {proxy} {steam_id}')
 
                 if response.status == 200:
                     data = await response.json(encoding='utf-8', loads=orjson.loads)
@@ -66,7 +66,6 @@ class SteamInventory:
 
                     inventory_process = InventoryProcess(self.redis_db)
                     steam_id_inventory = await inventory_process.parse_inventory_data(assets, descriptions)
-
                     if steam_id_inventory:
                         await self.redis_db.hset(f'data::{steam_id}', 'inventory', steam_id_inventory.to_json())
                         return True
@@ -102,6 +101,9 @@ class SteamInventory:
 
                 if is_update and self.redis_db.hexists(f'data::{steam_id}', 'inventory'):
                     logger.error('SKIP')
+                    continue
+
+                if await self.redis_db.exists(f'blacklist::{steam_id}'):
                     continue
 
                 task = self.get_inventory(steam_id, proxy)

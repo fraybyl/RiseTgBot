@@ -67,7 +67,6 @@ class SteamInventory:
 
                     inventory_process = InventoryProcess(self.redis_db)
                     steam_id_inventory = await inventory_process.parse_inventory_data(assets, descriptions)
-
                     if steam_id_inventory:
                         await self.redis_db.hset(f'data::{steam_id}', 'inventory', steam_id_inventory.to_json())
                         return True
@@ -105,6 +104,9 @@ class SteamInventory:
                     logger.error('SKIP')
                     continue
 
+                if await self.redis_db.exists(f'blacklist::{steam_id}'):
+                    continue
+
                 task = self.get_inventory(steam_id, proxy)
                 tasks.append(task)
 
@@ -113,8 +115,26 @@ class SteamInventory:
 
 async def main() -> None:
     proxies = [
+        "http://jzdwnepi:iyhnzdzkxoin@38.154.227.167:5868",
+        "http://jzdwnepi:iyhnzdzkxoin@185.199.229.156:7492",
+        "http://jzdwnepi:iyhnzdzkxoin@185.199.228.220:7300",
+        "http://jzdwnepi:iyhnzdzkxoin@185.199.231.45:8382",
         "http://jzdwnepi:iyhnzdzkxoin@188.74.210.207:6286",
-        "http://qrfovqak:8hl3t3895fne@45.94.47.66:8110",
+        "http://jzdwnepi:iyhnzdzkxoin@188.74.183.10:8279",
+        "http://jzdwnepi:iyhnzdzkxoin@188.74.210.21:6100",
+        "http://jzdwnepi:iyhnzdzkxoin@45.155.68.129:8133",
+        "http://jzdwnepi:iyhnzdzkxoin@154.95.36.199:6893",
+        "http://jzdwnepi:iyhnzdzkxoin@45.94.47.66:8110",
+        "http://upydhjbu:6y03hyo3r224@38.154.227.167:5868",
+        "http://upydhjbu:6y03hyo3r224@185.199.229.156:7492",
+        "http://upydhjbu:6y03hyo3r224@185.199.228.220:7300",
+        "http://upydhjbu:6y03hyo3r224@185.199.231.45:8382",
+        "http://upydhjbu:6y03hyo3r224@188.74.210.207:6286",
+        "http://upydhjbu:6y03hyo3r224@188.74.183.10:8279",
+        "http://upydhjbu:6y03hyo3r224@188.74.210.21:6100",
+        "http://upydhjbu:6y03hyo3r224@45.155.68.129:8133",
+        "http://upydhjbu:6y03hyo3r224@154.95.36.199:6893",
+        "http://upydhjbu:6y03hyo3r224@45.94.47.66:8110"
     ]
     steam = SteamInventory(proxies, redis_db)
     async with steam:
@@ -134,3 +154,4 @@ async def main() -> None:
 
 if __name__ == "__main__":
     asyncio.run(main())
+
