@@ -97,7 +97,14 @@ class InventoryProcess:
         """
         redis_keys = [f'steam_market::{item_details[uid]}' for uid in item_counts if uid in item_details]
         redis_data = await asyncio.gather(*[self.redis_db.get(key) for key in redis_keys])
-        return {key: orjson.loads(data.decode('utf-8')) for key, data in zip(redis_keys, redis_data)}
+        result = {}
+        for key, data in zip(redis_keys, redis_data):
+            if data is not None:
+                result[key] = orjson.loads(data.decode('utf-8'))
+            else:
+                result[key] = None
+
+        return result
 
     @staticmethod
     def _build_items_with_count(
@@ -122,6 +129,7 @@ class InventoryProcess:
                 redis_key = f'steam_market::{item_details[uid]}'
                 if redis_key in redis_data_dict:
                     market_item_data = redis_data_dict[redis_key]
-                    item = Item(item_details[uid], **market_item_data)
-                    items_with_count.append((item, count))
+                    if market_item_data is not None:
+                        item = Item(item_details[uid], **market_item_data)
+                        items_with_count.append((item, count))
         return items_with_count
