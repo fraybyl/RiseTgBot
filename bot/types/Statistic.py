@@ -40,8 +40,8 @@ class Statistic(dict):
             prices=inventories['prices']  # исправить инвентари
         )
 
-    def to_dict(self) -> dict:
-        orjson.dumps(self).decode('utf-8')
+    def to_dict(self) -> str:
+        return orjson.dumps(self).decode('utf-8')
 
     @property
     def total_accounts(self) -> int:
