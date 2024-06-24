@@ -35,6 +35,7 @@ async def fetch_get_player_bans(
 
 async def add_or_update_player_bans(
         steam_ids: list[int],
+        is_update: bool = False,
         max_concurrent_requests: int = 2
 ) -> None:
     async with lock:
@@ -43,8 +44,18 @@ async def add_or_update_player_bans(
         tasks = []
 
         async with aiohttp.ClientSession() as session:
+            if not is_update:
+                async with redis_db.pipeline() as pipe:
+                    exists_futures = [pipe.hexists(f'data::{steam_id}', 'ban') for steam_id in steam_ids]
+                    exists_results = await asyncio.gather(*exists_futures)
+
+                steam_ids = [steam_id for steam_id, exists in zip(steam_ids, exists_results) if not exists]
+
             for i in range(0, len(steam_ids), 100):
                 steam_ids_chunk = steam_ids[i:i + 100]
+                if not steam_ids_chunk:
+                    continue
+
                 url = (
                     f'https://api.steampowered.com/ISteamUser/GetPlayerBans/v1/'
                     f'?key={api_key}&steamids={",".join(map(str, steam_ids_chunk))}'
@@ -52,3 +63,6 @@ async def add_or_update_player_bans(
                 tasks.append(fetch_get_player_bans(session, url, semaphore))
 
             results = await asyncio.gather(*tasks, return_exceptions=True)
+            for result in results:
+                if isinstance(result, Exception):
+                    logger.error(f"ОШИБКА В ФЕТЧЕ ОБНОВЛЕНИЕ БАНОВ ЕПТА: {result}")

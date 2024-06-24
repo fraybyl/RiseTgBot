@@ -56,7 +56,7 @@ async def steam64_from_url(session, url, http_timeout=10, semaphore=None):
         return None
 
 
-async def steam_urls_parse(lines: list[str], concurrency_limit: int = 1000) -> list[int]:
+async def steam_urls_parse(lines: list[str], concurrency_limit: int = 500) -> list[int]:
     semaphore = asyncio.Semaphore(concurrency_limit)
     connector = aiohttp.TCPConnector(limit_per_host=concurrency_limit, limit=concurrency_limit * 2)
     async with aiohttp.ClientSession(connector=connector) as session:
