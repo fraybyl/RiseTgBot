@@ -33,7 +33,7 @@ async def fetch_get_player_bans(
             return False
 
 
-async def add_or_update_player_bans(
+async def add_player_bans(
         steam_ids: list[int],
         max_concurrent_requests: int = 2
 ) -> None:
@@ -52,3 +52,10 @@ async def add_or_update_player_bans(
                 tasks.append(fetch_get_player_bans(session, url, semaphore))
 
             results = await asyncio.gather(*tasks, return_exceptions=True)
+
+
+async def main() -> None:
+    await add_player_bans([76561198986923662, 76561198997994621])
+
+if __name__ == '__main__':
+    asyncio.run(main())

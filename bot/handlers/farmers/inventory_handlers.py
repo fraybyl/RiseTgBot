@@ -13,7 +13,7 @@ from bot.utils.statistics import get_personal_statistics, get_general_statistics
 from bot.core.loader import bot
 from bot.states.inventory_states import InventoryStates
 from bot.services.steamid.fetch_steamid64 import steam_urls_parse
-from bot.services.steam_ban.fetch_steam_ban import remove_player_bans, set_player_bans
+from bot.services.steam_ban.fetch_steam_ban import add_or_update_player_bans
 from bot.utils.dump_accounts import dump_accounts
 
 router = Router(name=__name__)
@@ -108,7 +108,7 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
                                    reply_markup=get_personal_inventory_settings_kb())
 
     if valid_steam_ids:
-        await set_player_bans(steam_ids, message.from_user.id)
+        await add_or_update_player_bans(steam_ids)
     #     # добавить обработку инвентарей
     #     return
 
@@ -165,8 +165,9 @@ async def process_remove_accounts(message: Message, state: FSMContext, l10n: Flu
                                        caption=f'Удалено {len(removed_accounts)} аккаунтов',
                                        reply_markup=get_personal_inventory_settings_kb())
 
-        if removed_accounts:
-            await remove_player_bans(removed_accounts, message.from_user.id)
+       # if removed_accounts:
+            # await remove_player_bans(removed_accounts, message.from_user.id)
+            # перенести ремов плеер в другой файл какой нибудь хз
             # добвить удаление инвентарей хз
             # redis_key = f"telegram_user::{user_id}"
             # await redis_db.hget(redis_key, 'inventory')

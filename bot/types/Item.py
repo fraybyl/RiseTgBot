@@ -1,8 +1,10 @@
 class Item(dict):
-    def __init__(self,
-                 item_name: str,
-                 price: float,
-                 sell_count: int = 0):
+    def __init__(
+            self,
+            item_name: str,
+            price: float,
+            sell_count: int = 0
+    ):
         super().__init__(
             item_name=item_name,
             price=price,
@@ -14,7 +16,8 @@ class Item(dict):
         return cls(
             item_name=data.get('item_name', ''),
             price=data.get('price', 0),
-            sell_count=data.get('sell_count', 0))
+            sell_count=data.get('sell_count', 0)
+        )
 
     @property
     def item_name(self) -> str:
@@ -27,3 +30,6 @@ class Item(dict):
     @property
     def sell_count(self) -> int:
         return self['sell_count']
+
+    def total_capitalization(self) -> float:
+        return self.price * self.sell_count

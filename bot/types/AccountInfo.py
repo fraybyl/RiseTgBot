@@ -1,3 +1,6 @@
+import orjson
+
+
 class AccountInfo(dict):
     def __init__(self,
                  steam_id: int,
@@ -20,14 +23,17 @@ class AccountInfo(dict):
     @classmethod
     def from_dict(cls, data: dict[str, any]):
         return cls(
-            steam_id=data.get('SteamId', 0),
-            community_banned=data.get('CommunityBanned', False),
-            vac_banned=data.get('VACBanned', False),
-            number_of_vac_bans=data.get('NumberOfVACBans', 0),
-            days_since_last_ban=data.get('DaysSinceLastBan', 0),
-            number_of_game_bans=data.get('NumberOfGameBans', 0),
-            economy_ban=data.get('EconomyBan', '')
+            steam_id=data['SteamId'],
+            community_banned=data['CommunityBanned'],
+            vac_banned=data['VACBanned'],
+            number_of_vac_bans=data['NumberOfVACBans'],
+            days_since_last_ban=data['DaysSinceLastBan'],
+            number_of_game_bans=data['NumberOfGameBans'],
+            economy_ban=data['EconomyBan']
         )
+
+    def to_dict(self) -> bytes:
+        return orjson.dumps(self)
 
     @property
     def steam_id(self) -> str:
@@ -56,6 +62,3 @@ class AccountInfo(dict):
     @property
     def economy_ban(self) -> str:
         return self['EconomyBan']
-
-
-

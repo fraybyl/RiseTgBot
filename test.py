@@ -1,48 +1,136 @@
 import asyncio
-import aiofiles
-import aiohttp
+
+from loguru import logger
+
+from bot.core.loader import redis_db
+from bot.services.steam_inventory.inventory_process import InventoryProcess
+from bot.types.InventoryAsset import InventoryAsset
+from bot.types.InventoryDescription import InventoryDescription
+from redis.asyncio import Redis
+from aiolimiter import AsyncLimiter
 import ua_generator
+import aiohttp
+import orjson
 
 
-async def fetch_accounts(session, page):
-    url = 'https://vaclist.net/api/banned'
-    headers = ua_generator.generate().headers.get()
-    params = {
-        'count': '60',
-        'page': page,
-    }
-    async with session.get(url, headers=headers, params=params) as response:
-        response.raise_for_status()
-        data = await response.json()
-        return data
+class SteamInventory:
+    def __init__(
+            self,
+            proxies: list[str],
+            redis_db: Redis,
+            rate_period: float = 3.0,
+            blacklist_ttl: int = 28800
+    ) -> None:
+        self.sessions: dict[str, dict] = {}
+        self.proxies = proxies
+        self.redis_db = redis_db
+        self.blacklist_ttl = blacklist_ttl
+        self.rate_period = rate_period
 
+    async def __aenter__(self):
+        for proxy in self.proxies:
+            headers = ua_generator.generate(browser=('chrome', 'firefox')).headers.get()
+            session = aiohttp.ClientSession(headers=headers)
+            limiter = AsyncLimiter(max_rate=1.0, time_period=self.rate_period)
+            self.sessions[proxy] = {'session': session, 'limiter': limiter}
+        return self
 
-async def get_and_write_accounts(session, page):
-    print('Fetching %d' % page)
-    data = await fetch_accounts(session, page)
-    profile_urls = [account['profile_url'] for account in data]
-    return profile_urls
+    async def __aexit__(self, exc_type, exc, tb):
+        for proxy, data in self.sessions.items():
+            await data['session'].close()
 
+    async def get_inventory(
+            self,
+            steam_id: int,
+            proxy: str
+    ) -> bool:
+        inventory_url = f"https://steamcommunity.com/inventory/{steam_id}/730/2?l=english&count=1999"
+        session_data = self.sessions.get(proxy)
 
-async def write_to_file(profile_urls, file):
-    async with aiofiles.open(file, 'a', encoding='utf-8') as f:
-        for url in profile_urls:
-            await f.write(url + '\n')
+        if not session_data:
+            return False
 
+        limiter = self.sessions[proxy]['limiter']
+        session = self.sessions[proxy]['session']
 
-async def get_accounts():
-    async with aiohttp.ClientSession() as session:
-        file = 'profile_urls.txt'
-        page = 600
-        while True:
-            tasks = [get_and_write_accounts(session, page + i) for i in range(50)]
-            results = await asyncio.gather(*tasks)
-            flattened_urls = [url for sublist in results for url in sublist]
-            await write_to_file(flattened_urls, file)
-            if all(len(result) < 60 for result in results):
+        async with limiter:
+            async with session.get(inventory_url, proxy=proxy) as response:
+                print(f'fetch with {proxy} {steam_id}')
+
+                if response.status == 200:
+                    data = await response.json(encoding='utf-8', loads=orjson.loads)
+                    assets_data = data.get('assets', [])
+                    descriptions_data = data.get('descriptions', [])
+
+                    assets = InventoryAsset.from_list(assets_data)
+                    descriptions = InventoryDescription.from_list(descriptions_data)
+
+                    inventory_process = InventoryProcess(self.redis_db)
+                    steam_id_inventory = await inventory_process.parse_inventory_data(assets, descriptions)
+
+                    if steam_id_inventory:
+                        await self.redis_db.hset(f'data::{steam_id}', 'inventory', steam_id_inventory.to_json())
+                        return True
+
+                    return False
+
+                elif response.status in {401, 403}:
+                    await self.redis_db.setex(f"blacklist::{steam_id}", self.blacklist_ttl, "")
+                    return False
+
+                elif response.status == 429:
+                    logger.error(f'429 ошибка при фетче инвентаря с прокси {proxy}')
+                    await session.close()
+                    self.proxies.remove(proxy)
+                    self.sessions.pop(proxy, None)
+                    return False
+
+                return False
+
+    async def process_inventories(
+            self,
+            steam_ids: list[int],
+            is_update=False
+    ) -> None:
+        while steam_ids:
+            if not self.proxies:
+                logger.error(f'Закончились прокси, осталось {len(steam_ids)} аккаунтов для проверки. АЛАРМ')
                 break
-            page += 50
+
+            tasks = []
+            for proxy in self.proxies[:len(steam_ids)]:
+                steam_id = steam_ids.pop(0)
+
+                if is_update and self.redis_db.hexists(f'data::{steam_id}', 'inventory'):
+                    logger.error('SKIP')
+                    continue
+
+                task = self.get_inventory(steam_id, proxy)
+                tasks.append(task)
+
+            await asyncio.gather(*tasks)
 
 
-if __name__ == '__main__':
-    asyncio.run(get_accounts())
+async def main() -> None:
+    proxies = [
+        "http://jzdwnepi:iyhnzdzkxoin@188.74.210.207:6286",
+        "http://qrfovqak:8hl3t3895fne@45.94.47.66:8110",
+    ]
+    steam = SteamInventory(proxies, redis_db)
+    async with steam:
+        await steam.process_inventories(
+            [
+                76561198037717949,
+                76561198965030463,
+                76561198997994621,
+                76561198986923662,
+                76561198069678468,
+                76561198855186239,
+                76561198007241107
+            ]
+        )
+        await redis_db.connection_pool.aclose()
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

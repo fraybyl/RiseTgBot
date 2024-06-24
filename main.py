@@ -35,6 +35,7 @@ async def on_shutdown() -> None:
     logger.info('Bot shutdown...')
     await dp.storage.close()
     await dp.fsm.storage.close()
+
     await redis_shutdown()
     await close_db_postgres(engine)
 
