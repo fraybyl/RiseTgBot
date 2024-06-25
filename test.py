@@ -1,7 +1,6 @@
-# Precompiled patterns
 import asyncio
 import re
-
+import time
 import aiohttp
 from loguru import logger
 from orjson import orjson
@@ -17,7 +16,6 @@ profile_url_pattern = re.compile(r"https://steamcommunity\.com/profiles/(?P<valu
 def is_valid_steamid64(steamid: str) -> bool:
     return steamid.isdigit() and len(steamid) == 17 and int(steamid) >= 0x0110000100000000
 
-
 async def fetch_page(session: aiohttp.ClientSession, url: str) -> str | None:
     try:
         async with session.get(url) as response:
@@ -27,7 +25,6 @@ async def fetch_page(session: aiohttp.ClientSession, url: str) -> str | None:
     except aiohttp.ClientError as e:
         logger.error(f'Ошибка в парсе steamid -> url {url}: {e}')
         return None
-
 
 async def steam64_from_url(session: aiohttp.ClientSession, url: str) -> int | None:
     if is_valid_steamid64(url):
@@ -58,7 +55,6 @@ async def steam64_from_url(session: aiohttp.ClientSession, url: str) -> int | No
         logger.error(f'Ошибка при обработке данных из url {url}: {e}')
     return None
 
-
 async def steam_urls_parse(urls: list[str], max_concurrent_requests: int = 500) -> list[int]:
     headers = {'Accept-Encoding': 'gzip, deflate, br'}
     connector = aiohttp.TCPConnector(limit=max_concurrent_requests)
@@ -66,3 +62,23 @@ async def steam_urls_parse(urls: list[str], max_concurrent_requests: int = 500) 
         tasks = [steam64_from_url(session, url.strip()) for url in urls]
         results = await asyncio.gather(*tasks, return_exceptions=True)
         return [result for result in results if isinstance(result, int)]
+
+async def test_max_concurrent_requests(urls: list[str], test_values: list[int]) -> dict[int, float]:
+    results = {}
+    for value in test_values:
+        start_time = time.time()
+        await steam_urls_parse(urls, value)
+        end_time = time.time()
+        results[value] = end_time - start_time
+        print(f"Для {value} параллельных запросов время выполнения: {results[value]:.2f} секунд")
+    return results
+
+def load_urls_from_file(file_path: str) -> list[str]:
+    with open(file_path, 'r') as file:
+        return [line.strip() for line in file]
+
+urls = load_urls_from_file('sdfds.txt')
+
+test_values = [200, 300, 400, 500, 1000]
+
+asyncio.run(test_max_concurrent_requests(urls, test_values))
