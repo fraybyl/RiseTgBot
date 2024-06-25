@@ -1,6 +1,6 @@
 from fluent.runtime import FluentLocalization
 
-from bot.core.loader import redis_cache, redis_db
+from bot.core.loader import redis_db
 from bot.decorators.dec_cache import cached, build_key
 from bot.types.AccountInfo import AccountInfo
 from bot.types.Inventory import Inventory

@@ -2,7 +2,7 @@ import aiohttp
 from bs4 import BeautifulSoup
 import re
 from loguru import logger
-from bot.core.loader import config_json, redis_cache
+from bot.decorators.dec_cache import cached
 
 
 async def fetch(url):
@@ -34,17 +34,12 @@ async def parse(html):
     return None
 
 
+@cached(ttl=300)
 async def get_avg_drop():
-    avg_drop = await redis_cache.get("avg_drop")
-    if avg_drop:
-        return avg_drop.decode('utf-8')
-
     url = 'https://21level.ru/ru'
     html = await fetch(url)
-    TTL = await config_json.get_config_value('avg_drop_ttl')
     if html:
         cost_value = await parse(html)
         if cost_value:
-            await redis_cache.setex("avg_drop", TTL, cost_value)
             return cost_value
     return 0.0

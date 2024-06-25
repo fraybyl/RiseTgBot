@@ -4,7 +4,7 @@ from sqlalchemy import delete as sql_delete
 from sqlalchemy.future import select
 from bot.database.models import User, Product, Category, SteamAccount
 from bot.database.database import async_session
-from bot.core.loader import config_json, redis_cache
+from bot.core.loader import config_json
 from decimal import Decimal
 from loguru import logger
 from bot.decorators.dec_cache import cached, build_key, clear_cache
