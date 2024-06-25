@@ -55,7 +55,7 @@ async def get_general_statistics(l10n: FluentLocalization) -> str:
         'prices': statistics.prices
     })
 
-    await redis_cache.setex('accounts_statistics', 30, text)
+    await redis_cache.setex('accounts_statistics', 120, text)
     return text
 
 
@@ -77,5 +77,5 @@ async def get_personal_statistics(user_id: int, steam_ids: list[int], l10n: Flue
         'prices': statistics.prices
     })
 
-    await redis_cache.setex(f'personal_statistics::{user_id}', 30, text)
+    await redis_cache.setex(f'personal_statistics::{user_id}', 120, text)
     return text
