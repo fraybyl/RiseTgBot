@@ -20,4 +20,3 @@ async def handle_personal_callback(query: CallbackQuery, l10n: FluentLocalizatio
                              caption=l10n.format_value('personal-info',
                                                        {'discountPercentage': user.discount_percentage,
                                                         'bonusPoints': user.bonus_points, 'link': link}))
-    await query.answer()

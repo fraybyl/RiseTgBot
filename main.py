@@ -1,4 +1,7 @@
 import asyncio
+
+from aiogram.utils.callback_answer import CallbackAnswerMiddleware
+
 import bot.utils.logging
 from loguru import logger
 
@@ -7,6 +10,7 @@ from bot.database.database import start_db_postgres, close_db_postgres, engine
 from bot.handlers import router as main_router
 from bot.l10n.fluent_localization import get_fluent_localization
 from bot.middlewares.l10n import L10nMiddleware
+from bot.middlewares.valid_answer import ValidateQuantityMiddleware
 from bot.schedulers.schedule import start_schedulers
 
 
@@ -17,7 +21,7 @@ async def on_startup() -> None:
 
     dp.message.outer_middleware(L10nMiddleware(locale))
     dp.callback_query.outer_middleware(L10nMiddleware(locale))
-    dp.pre_checkout_query.outer_middleware(L10nMiddleware(locale))
+    dp.callback_query.middleware(CallbackAnswerMiddleware())
 
     dp.include_router(main_router)
 

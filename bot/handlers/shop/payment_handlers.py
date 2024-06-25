@@ -16,4 +16,3 @@ async def handle_payment_product(query: CallbackQuery, state: FSMContext):
     await query.message.edit_caption(caption=f"Продукта {quantity_product}\n Бонусов: {quantity_bonus or 0}",
                                      reply_markup=get_payment_settings_kb())
     await state.set_state(OrderStates.WAITING_PAYMENT)
-    await query.answer()

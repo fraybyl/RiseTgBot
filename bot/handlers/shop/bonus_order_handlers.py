@@ -32,7 +32,6 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext):
         await query.message.edit_caption(caption=f"У вас нет бонусов для использования",
                                          reply_markup=get_payment_settings_kb())
         await state.update_data(max_bonus=-1)
-    await query.answer()
 
 
 @bonus_router.message(

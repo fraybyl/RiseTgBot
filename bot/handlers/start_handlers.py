@@ -34,4 +34,3 @@ async def command_start_handler(message: Message, command: CommandObject) -> Non
 @router.callback_query(lambda query: query.data == "back_start")
 async def handle_back_start(query: CallbackQuery):
     await edit_message_media(query, 'RISE_BACKGROUND', get_start_kb())
-    await query.answer()

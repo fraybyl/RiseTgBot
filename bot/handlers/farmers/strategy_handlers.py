@@ -42,7 +42,6 @@ def strategy_filter(query):
 @router.callback_query(lambda query: query.data == "strategy")
 async def handle_shop(query: CallbackQuery):
     await edit_message_media(query, 'RISE_STRATEGY', get_strategy_kb())
-    await query.answer()
 
 
 @router.callback_query(
@@ -61,7 +60,6 @@ async def handle_strategy_choice(query: CallbackQuery, state: FSMContext, l10n: 
                             message_id=message_id)
 
     await push_state(state, StrategyStates.INITIAL_ACCOUNTS.state)
-    await query.answer()
 
 
 @router.message(CorrectNumberFilter(StrategyStates.INITIAL_ACCOUNTS, StrategyStates.TOTAL_WEEKS))
@@ -78,7 +76,6 @@ async def handle_back_strategy(query: CallbackQuery, state: FSMContext, l10n: Fl
     initial_accounts = data.get('initial_accounts')
 
     await state.set_state(previous_state)
-    await query.answer()
     if previous_state is None:
         await state.clear()
         await edit_message_media(query, 'RISE_STRATEGY', get_strategy_kb())

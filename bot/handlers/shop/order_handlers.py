@@ -37,7 +37,6 @@ async def handle_buy_product(query: CallbackQuery, state: FSMContext, l10n: Flue
     await state.update_data(user=user.as_dict)
     await state.update_data(minimal_price=minimal_price)
     await state.update_data(message_id=message.message_id)
-    await query.answer()
 
 
 @router.message(OrderStates.WAITING_PRODUCT_QUANTITY, lambda message: message.text.isdigit() and int(message.text) > 0)
@@ -71,7 +70,6 @@ async def handle_back_payment(query: CallbackQuery, state: FSMContext, l10n: Flu
     data = await state.get_data()
     current_state = await state.get_state()
 
-    await query.answer()
     if current_state is None:
         product = data.get('product')
         min_quantity = data.get('min_quantity')

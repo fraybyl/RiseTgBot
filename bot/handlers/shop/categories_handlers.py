@@ -13,7 +13,6 @@ async def handle_products_category(query: CallbackQuery):
     category_id = int(query.data.split("_")[1])
     category = await get_category_by_id(category_id)
     await edit_message_media(query, category.photo_filename, await get_products_kb(category_id))
-    await query.answer()
 
 
 @router.callback_query(lambda query: query.data.startswith("back_product_"))
@@ -21,4 +20,3 @@ async def handle_back_products(query: CallbackQuery):
     category_id = int(query.data.split("_")[2])
     category = await get_category_by_id(category_id)
     await edit_message_media(query, category.photo_filename, await get_products_kb(category_id))
-    await query.answer()
