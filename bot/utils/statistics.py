@@ -1,6 +1,7 @@
 from fluent.runtime import FluentLocalization
 
 from bot.core.loader import redis_cache, redis_db
+from bot.decorators.dec_cache import cached, build_key
 from bot.types.AccountInfo import AccountInfo
 from bot.types.Inventory import Inventory
 from bot.types.Statistic import Statistic
@@ -39,11 +40,8 @@ async def get_statistic(steam_ids: list[int] = None) -> Statistic:
     return statistics
 
 
+@cached(key_builder=lambda *args, **kwargs: "")
 async def get_general_statistics(l10n: FluentLocalization) -> str:
-    cache = await redis_cache.get('accounts_statistics')
-    if cache:
-        return cache
-
     statistics = await get_statistic()
     text = l10n.format_value('general-accounts-info', {
         'accounts': statistics.total_accounts,
@@ -57,15 +55,11 @@ async def get_general_statistics(l10n: FluentLocalization) -> str:
         'prices': statistics.prices
     })
 
-    await redis_cache.setex('accounts_statistics', 120, text)
     return text
 
 
+@cached(key_builder=lambda user_id, *args, **kwargs: build_key(user_id))
 async def get_personal_statistics(user_id: int, steam_ids: list[int], l10n: FluentLocalization) -> str:
-    cache = await redis_cache.get(f'personal_statistics::{user_id}')
-    if cache:
-        return cache
-
     statistics = await get_statistic(steam_ids)
     text = l10n.format_value('personal-accounts-info', {
         'accounts': statistics.total_accounts,
@@ -79,5 +73,4 @@ async def get_personal_statistics(user_id: int, steam_ids: list[int], l10n: Flue
         'prices': statistics.prices
     })
 
-    await redis_cache.setex(f'personal_statistics::{user_id}', 120, text)
     return text

@@ -6,7 +6,7 @@ from bot.core.loader import redis_cache
 from bot.serializers.abstract_serializer import AbstractSerializer
 from bot.serializers.orjson_serializer import JSONSerializer
 
-DEFAULT_TTL = 60
+DEFAULT_TTL = 120
 
 
 async def set_redis_value(
