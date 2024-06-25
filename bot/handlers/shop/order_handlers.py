@@ -1,6 +1,7 @@
 from aiogram import Router
+from aiogram.enums import ReactionTypeType
 from aiogram.fsm.context import FSMContext
-from aiogram.types import CallbackQuery, Message
+from aiogram.types import CallbackQuery, Message, ReactionTypeEmoji
 from fluent.runtime import FluentLocalization
 
 from bot.core.loader import config_json, bot
@@ -47,8 +48,13 @@ async def process_product_quantity(message: Message, state: FSMContext, l10n: Fl
     message_id = data.get('message_id')
     min_quantity = data.get('min_quantity')
     await message.delete()
-
+    reaction = ReactionTypeEmoji(emoji='🤬')
     if quantity_msg < min_quantity or quantity_msg > product['quantity']:
+        await bot.set_message_reaction(
+            chat_id=message.chat.id,
+            message_id=message_id,
+            reaction=[reaction]
+        )
         return
 
     await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id, reply_markup=get_payment_order_kb(),
@@ -56,6 +62,11 @@ async def process_product_quantity(message: Message, state: FSMContext, l10n: Fl
                                                              {'name': product['label'], 'quantity': quantity_msg,
                                                               'bonus': None}))
     await state.update_data(quantity_product=quantity_msg)
+    await bot.set_message_reaction(
+        chat_id=message.chat.id,
+        message_id=message_id,
+        reaction=None
+    )
     await state.update_data(previous_state=OrderStates.WAITING_PRODUCT_QUANTITY.state)
     await state.set_state(state=None)
 
