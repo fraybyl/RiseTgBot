@@ -32,8 +32,23 @@ class AccountInfo(dict):
             economy_ban=data['EconomyBan']
         )
 
+    @classmethod
+    def from_json(cls, json_data: str):
+        data = orjson.loads(json_data)
+        return cls.from_dict(data)
+
     def to_dict(self) -> bytes:
         return orjson.dumps(self)
+
+    def ban_in_last_week(self) -> bool:
+        return 0 < self.days_since_last_ban <= 7
+
+    def is_banned(self) -> bool:
+        return (self.community_banned or
+                self.vac_banned or
+                self.number_of_vac_bans > 0 or
+                self.number_of_game_bans > 0 or
+                self.economy_ban != 'none')
 
     @property
     def steam_id(self) -> str:

@@ -8,9 +8,11 @@ from loguru import logger
 from bot.database.db_requests import get_steamid64_by_userid, set_steamid64_for_user, remove_steamid64_for_user
 from bot.keyboards.farmers_keyboards import get_inventory_kb, get_personal_inventory_kb, \
     get_personal_inventory_settings_kb
+from bot.services.steam_inventory.steam_inventory import SteamInventory
 from bot.utils.edit_media import edit_message_media
+from bot.utils.remove_data_steam import remove_data_steam
 from bot.utils.statistics import get_personal_statistics, get_general_statistics
-from bot.core.loader import bot
+from bot.core.loader import bot, config_json, redis_db
 from bot.states.inventory_states import InventoryStates
 from bot.services.steamid.fetch_steamid64 import steam_urls_parse
 from bot.services.steam_ban.fetch_steam_ban import add_or_update_player_bans
@@ -30,7 +32,7 @@ async def handle_inventory(query: CallbackQuery, l10n: FluentLocalization):
 async def handle_personal_accounts(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     steam_ids = await get_steamid64_by_userid(query.from_user.id)
     if steam_ids:
-        personal_stat = await get_personal_statistics(query.from_user.id, l10n)
+        personal_stat = await get_personal_statistics(query.from_user.id, steam_ids, l10n)
         message = await query.message.edit_caption(caption=personal_stat,
                                                    reply_markup=get_personal_inventory_kb())
     else:
@@ -109,8 +111,10 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
 
     if valid_steam_ids:
         await add_or_update_player_bans(steam_ids)
-    #     # добавить обработку инвентарей
-    #     return
+        proxies = await config_json.get_config_value('proxies')
+        steam_inventory = SteamInventory(proxies, redis_db)
+        async with steam_inventory:
+            await steam_inventory.process_inventories(valid_steam_ids)
 
 
 @router.callback_query(lambda query: query.data == "get_accounts")
@@ -165,12 +169,8 @@ async def process_remove_accounts(message: Message, state: FSMContext, l10n: Flu
                                        caption=f'Удалено {len(removed_accounts)} аккаунтов',
                                        reply_markup=get_personal_inventory_settings_kb())
 
-       # if removed_accounts:
-            # await remove_player_bans(removed_accounts, message.from_user.id)
-            # перенести ремов плеер в другой файл какой нибудь хз
-            # добвить удаление инвентарей хз
-            # redis_key = f"telegram_user::{user_id}"
-            # await redis_db.hget(redis_key, 'inventory')
+        if removed_accounts:
+            await remove_data_steam(removed_accounts)
 
 
 @router.callback_query(lambda query: query.data == 'back_personal_inventory')
