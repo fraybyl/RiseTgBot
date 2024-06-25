@@ -1,15 +1,11 @@
-from decimal import Decimal
 from sqlalchemy import DECIMAL, Integer, String, DateTime, ForeignKey, BigInteger, func
-from sqlalchemy.orm import relationship, DeclarativeBase, Mapped, mapped_column
-from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from datetime import datetime
 
-
-class Base(AsyncAttrs, DeclarativeBase):
-    __abstract__ = True
+from .base_model import BaseModel
 
 
-class User(Base):
+class User(BaseModel):
     __tablename__ = 'user'
 
     telegram_id: Mapped[int] = mapped_column(BigInteger, primary_key=True, index=True, unique=True, nullable=False)
@@ -22,21 +18,8 @@ class User(Base):
     referrer = relationship('User', remote_side=[telegram_id])
     steam_accounts = relationship('SteamAccount', back_populates='user')
 
-    @property
-    def as_dict(self):
-        result = {}
-        for column in self.__table__.columns:
-            value = getattr(self, column.name)
-            if isinstance(value, Decimal):
-                result[column.name] = float(value)
-            elif isinstance(value, datetime):
-                result[column.name] = value.isoformat()
-            else:
-                result[column.name] = value
-        return result
 
-
-class SteamAccount(Base):
+class SteamAccount(BaseModel):
     __tablename__ = 'steam_accounts'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -46,7 +29,7 @@ class SteamAccount(Base):
     user = relationship('User', back_populates='steam_accounts')
 
 
-class Category(Base):
+class Category(BaseModel):
     __tablename__ = 'categories'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, unique=True, nullable=False)
@@ -56,7 +39,7 @@ class Category(Base):
     products = relationship('Product', back_populates='category')
 
 
-class Product(Base):
+class Product(BaseModel):
     __tablename__ = 'products'
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, unique=True, nullable=False)
@@ -70,14 +53,3 @@ class Product(Base):
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey('categories.id'), nullable=False)
 
     category = relationship('Category', back_populates='products')
-
-    @property
-    def as_dict(self):
-        result = {}
-        for column in self.__table__.columns:
-            value = getattr(self, column.name)
-            if isinstance(value, Decimal):
-                result[column.name] = float(value)
-            else:
-                result[column.name] = value
-        return result

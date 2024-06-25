@@ -8,6 +8,7 @@ from bot.core.loader import config_json, redis_cache
 from decimal import Decimal
 from loguru import logger
 from bot.decorators.dec_cache import cached, build_key, clear_cache
+from bot.serializers.sql_serializer import SQLSerializer
 
 
 async def set_user(telegram_id: int, username: str = None, referral_code: str = None) -> User:
@@ -140,6 +141,7 @@ async def get_all_steamid64() -> list[int]:
             raise
 
 
+@cached(ttl=None)
 async def get_users_with_steam_accounts() -> list[int]:
     """Возвращает telegram_id всех пользователей с не пустым steam_account."""
     async with async_session() as session:
@@ -177,7 +179,9 @@ async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[int
             session.add_all(new_steam_account_objects)
 
             await session.commit()
-            await clear_cache(get_steamid64_by_userid, user_id=user_id)
+            await clear_cache(get_steamid64_by_userid, user_id)
+            await clear_cache(get_all_steamid64)
+            await clear_cache(get_users_with_steam_accounts)
             return new_steam_accounts
         except Exception as e:
             logger.error(f"Error in set_steamid64_for_user: {e}")
@@ -218,7 +222,9 @@ async def remove_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[
                 )
 
             await session.commit()
-            await clear_cache(get_steamid64_by_userid, user_id=user_id)
+            await clear_cache(get_steamid64_by_userid, user_id)
+            await clear_cache(get_all_steamid64)
+            await clear_cache(get_users_with_steam_accounts)
             return accounts_to_remove
         except Exception as e:
             logger.error(f"Error in remove_steamid64_for_user: {e}")

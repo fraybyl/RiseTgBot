@@ -4,7 +4,7 @@ from sqlalchemy import URL
 from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine, async_sessionmaker, AsyncSession
 
 from bot.core.config import settings
-from bot.database.models import Base
+from bot.database.base_model import BaseModel
 
 
 class CConnection(Connection):
@@ -34,7 +34,7 @@ async_session = get_sessionmaker(engine)
 
 async def start_db_postgres():
     async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(BaseModel.metadata.create_all)
 
 
 async def close_db_postgres(engine: AsyncEngine):

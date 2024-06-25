@@ -3,6 +3,8 @@ from datetime import timedelta
 from functools import wraps
 
 from bot.core.loader import redis_cache
+from bot.serializers.abstract_serializer import AbstractSerializer
+from bot.serializers.orjson_serializer import JSONSerializer
 
 DEFAULT_TTL = 60
 
@@ -29,9 +31,11 @@ def cached(
         ttl: int | timedelta | None = DEFAULT_TTL,
         namespace: str = "main",
         key_builder: callable = build_key,
+        serializer: AbstractSerializer | None = None
 ) -> callable:
     """Caches the function's return value into a key generated with module_name, function_name, and args."""
-
+    if serializer is None:
+        serializer = JSONSerializer()
     def decorator(func: callable) -> callable:
         @wraps(func)
         async def wrapper(*args: any, **kwargs: any) -> any:
@@ -41,7 +45,7 @@ def cached(
             # Check if the key is in the cache
             cached_value = await redis_cache.get(key)
             if cached_value is not None:
-                return orjson.loads(cached_value)
+                return serializer.deserialize(cached_value)
 
             # If not in cache, call the original function
             result = await func(*args, **kwargs)
@@ -49,7 +53,7 @@ def cached(
             # Store the result in Redis
             await set_redis_value(
                 key=key,
-                value=orjson.dumps(result).decode("utf-8"),
+                value=serializer.serialize(result),
                 ttl=ttl,
             )
 
@@ -80,5 +84,4 @@ async def clear_cache(
 
     key = build_key(*args, **kwargs)
     key = f"{namespace}:{func.__module__}:{func.__name__}:{key}"
-
     await redis_cache.delete(key)

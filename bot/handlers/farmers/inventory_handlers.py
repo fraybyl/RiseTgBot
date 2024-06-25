@@ -6,7 +6,7 @@ from aiogram.utils.chat_action import ChatActionSender
 from fluent.runtime import FluentLocalization
 from loguru import logger
 
-from bot.database.db_requests import get_steamid64_by_userid, set_steamid64_for_user, remove_steamid64_for_user
+from bot.database.db_requests import get_steamid64_by_userid, set_steamid64_for_user, remove_steamid64_for_user, get_all_steamid64
 from bot.keyboards.farmers_keyboards import get_inventory_kb, get_personal_inventory_kb, \
     get_personal_inventory_settings_kb
 from bot.decorators.dec_throttle import throttle
@@ -25,6 +25,7 @@ router = Router(name=__name__)
 
 @router.callback_query(lambda query: query.data == "inventory")
 async def handle_inventory(query: CallbackQuery, l10n: FluentLocalization):
+    asdas = await get_all_steamid64()
     general_stat = await get_general_statistics(l10n)
     await edit_message_media(query, 'RISE_FOR_FARMERS', get_inventory_kb(), caption=general_stat)
     await query.answer()
