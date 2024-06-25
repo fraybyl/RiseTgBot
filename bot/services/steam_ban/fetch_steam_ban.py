@@ -46,8 +46,8 @@ async def add_or_update_player_bans(
         async with aiohttp.ClientSession() as session:
             if not is_update:
                 async with redis_db.pipeline() as pipe:
-                    exists_futures = [pipe.hexists(f'data::{steam_id}', 'ban') for steam_id in steam_ids]
-                    exists_results = await asyncio.gather(*exists_futures)
+                    [pipe.hexists(f'data::{steam_id}', 'ban') for steam_id in steam_ids]
+                    exists_results = await pipe.execute()
 
                 steam_ids = [steam_id for steam_id, exists in zip(steam_ids, exists_results) if not exists]
 

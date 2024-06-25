@@ -7,6 +7,7 @@ from bot.database.database import async_session
 from bot.core.loader import config_json, redis_cache
 from decimal import Decimal
 from loguru import logger
+from bot.decorators.dec_cache import cached, build_key, clear_cache
 
 
 async def set_user(telegram_id: int, username: str = None, referral_code: str = None) -> User:
@@ -112,26 +113,21 @@ async def get_product_by_id(product_id: int) -> Product:
             raise
 
 
+@cached(ttl=None, key_builder=lambda user_id: build_key(user_id))
 async def get_steamid64_by_userid(user_id: int) -> list[int]:
     """Возвращает Steam ID по user ID."""
-    cached_result = await redis_cache.get(f"steamid64::{user_id}")
-    if cached_result:
-        return [int(steamid) for steamid in cached_result.decode().split(',')]
-
     async with async_session() as session:
         try:
             result = await session.execute(select(SteamAccount.steamid64).where(user_id == SteamAccount.user_id))
             steam_accounts = result.scalars().all()
             steamid64_list = [acc for acc in steam_accounts]
-
-            await redis_cache.set(f"steamid64::{user_id}", ','.join(map(str, steamid64_list)))
-
             return steamid64_list
         except Exception as e:
             logger.error(f"Ошибка в get_steamid64_by_userid: {e}")
             raise
 
 
+@cached(ttl=None)
 async def get_all_steamid64() -> list[int]:
     """Retrieves all Steam URLs."""
     async with async_session() as session:
@@ -181,7 +177,7 @@ async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[int
             session.add_all(new_steam_account_objects)
 
             await session.commit()
-            await redis_cache.delete(f"steamid64::{user_id}")
+            await clear_cache(get_steamid64_by_userid, user_id=user_id)
             return new_steam_accounts
         except Exception as e:
             logger.error(f"Error in set_steamid64_for_user: {e}")
@@ -193,7 +189,6 @@ async def remove_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[
     """Удаляет указанные Steam ID для пользователя."""
     async with async_session() as session:
         try:
-            start = time.time()
             accounts_to_remove = []
 
             # Разбиваем steamid64 на группы по 32766 элементов postgres limit
@@ -223,8 +218,7 @@ async def remove_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[
                 )
 
             await session.commit()
-            await redis_cache.delete(f"steamid64::{user_id}")
-            print(time.time() - start)
+            await clear_cache(get_steamid64_by_userid, user_id=user_id)
             return accounts_to_remove
         except Exception as e:
             logger.error(f"Error in remove_steamid64_for_user: {e}")

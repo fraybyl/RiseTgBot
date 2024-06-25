@@ -1,84 +1,72 @@
-import asyncio
-import re
-import time
-import aiohttp
-from loguru import logger
-from orjson import orjson
+async def set_redis_value(
+    key: bytes | str, value: bytes | str, ttl: int | timedelta | None = DEFAULT_TTL, is_transaction: bool = False
+) -> None:
+    """Set a value in Redis with an optional time-to-live (TTL)."""
+    async with redis_client.pipeline(transaction=is_transaction) as pipeline:
+        await pipeline.set(key, value)
+        if ttl:
+            await pipeline.expire(key, ttl)
 
-url_pattern = re.compile(
-    r'^(?P<clean_url>https?://steamcommunity\.com/(?P<type>id|user)/(?P<value>[^/?#]+))(/.*)?$'
-)
-
-profile_data_pattern = re.compile(r"g_rgProfileData\s*=\s*(?P<json>{.*?});\s*\n")
-profile_url_pattern = re.compile(r"https://steamcommunity\.com/profiles/(?P<value>\d+)")
+        await pipeline.execute()
 
 
-def is_valid_steamid64(steamid: str) -> bool:
-    return steamid.isdigit() and len(steamid) == 17 and int(steamid) >= 0x0110000100000000
+def cached(
+    ttl: int | timedelta = DEFAULT_TTL,
+    namespace: str = "main",
+    cache: Redis = redis_client,
+    key_builder: Callable[..., str] = build_key,
+) -> Callable:
+    """Caches the functions return value into a key generated with module_name, function_name and args."""
+    if serializer is None:
+        serializer = PickleSerializer()
 
-async def fetch_page(session: aiohttp.ClientSession, url: str) -> str | None:
-    try:
-        async with session.get(url) as response:
-            if response.status == 200:
-                return await response.text()
-            return None
-    except aiohttp.ClientError as e:
-        logger.error(f'Ошибка в парсе steamid -> url {url}: {e}')
-        return None
+    def decorator(func: Callable) -> Callable:
+        @wraps(func)
+        async def wrapper(*args: tuple[str, Any], **kwargs: dict[str, Any]) -> Any:
+            key = key_builder(*args, **kwargs)
+            key = f"{namespace}:{func.__module__}:{func.__name__}:{key}"
 
-async def steam64_from_url(session: aiohttp.ClientSession, url: str) -> int | None:
-    if is_valid_steamid64(url):
-        return int(url)
+            # Check if the key is in the cache
+            cached_value = await cache.get(key)
+            if cached_value is not None:
+                return serializer.deserialize(cached_value)
 
-    profile_match = profile_url_pattern.match(url)
-    if profile_match:
-        if is_valid_steamid64(profile_match.group('value')):
-            return int(profile_match.group('value'))
+            # If not in cache, call the original function
+            result = await func(*args, **kwargs)
 
-    match = url_pattern.match(url)
+            # Store the result in Redis
+            await set_redis_value(
+                key=key,
+                value=serializer.serialize(result),
+                ttl=ttl,
+            )
 
-    if not match:
-        return None
+            return result
 
-    text = await fetch_page(session, match.group('clean_url'))
+        return wrapper
 
-    if not text:
-        return None
+    return decorator
 
-    try:
-        if match.group('type') in ('id', 'profiles', 'user'):
-            data_match = profile_data_pattern.search(text)
-            if data_match:
-                data = orjson.loads(data_match.group('json'))
-                return int(data['steamid'])
-    except Exception as e:
-        logger.error(f'Ошибка при обработке данных из url {url}: {e}')
-    return None
 
-async def steam_urls_parse(urls: list[str], max_concurrent_requests: int = 500) -> list[int]:
-    headers = {'Accept-Encoding': 'gzip, deflate, br'}
-    connector = aiohttp.TCPConnector(limit=max_concurrent_requests)
-    async with aiohttp.ClientSession(connector=connector, headers=headers) as session:
-        tasks = [steam64_from_url(session, url.strip()) for url in urls]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
-        return [result for result in results if isinstance(result, int)]
+async def clear_cache(
+    func: Callable,
+    *args: Any,
+    **kwargs: Any,
+) -> None:
+    """Clear the cache for a specific function and arguments.
 
-async def test_max_concurrent_requests(urls: list[str], test_values: list[int]) -> dict[int, float]:
-    results = {}
-    for value in test_values:
-        start_time = time.time()
-        await steam_urls_parse(urls, value)
-        end_time = time.time()
-        results[value] = end_time - start_time
-        print(f"Для {value} параллельных запросов время выполнения: {results[value]:.2f} секунд")
-    return results
+    Parameters
+    ----------
+    - func (Callable): The target function for which the cache needs to be cleared.
+    - args (Any): Positional arguments passed to the function.
+    - kwargs (Any): Keyword arguments passed to the function.
 
-def load_urls_from_file(file_path: str) -> list[str]:
-    with open(file_path, 'r') as file:
-        return [line.strip() for line in file]
+    Keyword Arguments:
+    - namespace (str, optional): A string indicating the namespace for the cache. Defaults to "main".
+    """
+    namespace: str = kwargs.get("namespace", "main")
 
-urls = load_urls_from_file('sdfds.txt')
+    key = build_key(*args, **kwargs)
+    key = f"{namespace}:{func.__module__}:{func.__name__}:{key}"
 
-test_values = [200, 300, 400, 500, 1000]
-
-asyncio.run(test_max_concurrent_requests(urls, test_values))
+    await redis_client.delete(key)

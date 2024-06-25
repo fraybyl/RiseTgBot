@@ -25,6 +25,9 @@ async def get_statistic(steam_ids: list[int] = None) -> Statistic:
                 account_info_json = result.get(b'ban', {})
                 inventory_json = result.get(b'inventory', {})
 
+                if account_info_json or inventory_json:
+                    statistics['total_accounts'] += 1
+
                 if account_info_json:
                     account_info = AccountInfo.from_json(account_info_json)
                     statistics.add_account_info(account_info)
@@ -42,7 +45,6 @@ async def get_general_statistics(l10n: FluentLocalization) -> str:
         return cache
 
     statistics = await get_statistic()
-    print(statistics)
     text = l10n.format_value('general-accounts-info', {
         'accounts': statistics.total_accounts,
         'total_bans': statistics.total_bans,

@@ -39,7 +39,6 @@ class Statistic(dict):
         return instance
 
     def add_account_info(self, bans: AccountInfo):
-        self['total_accounts'] += 1
         self['total_bans'] += bans.is_banned()
         self['total_vac'] += bans.vac_banned
         self['total_community'] += bans.community_banned

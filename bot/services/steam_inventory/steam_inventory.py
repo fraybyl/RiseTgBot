@@ -17,7 +17,7 @@ class SteamInventory:
             self,
             proxies: list[str],
             redis_db: Redis,
-            rate_period: float = 3.0,
+            rate_period: float = 5.0,
             blacklist_ttl: int = 28800
     ) -> None:
         self.sessions: dict[str, dict] = {}
@@ -99,8 +99,7 @@ class SteamInventory:
             for proxy in self.proxies[:len(steam_ids)]:
                 steam_id = steam_ids.pop(0)
 
-                if is_update and self.redis_db.hexists(f'data::{steam_id}', 'inventory'):
-                    logger.error('SKIP')
+                if not is_update and await self.redis_db.hexists(f'data::{steam_id}', 'inventory'):
                     continue
 
                 if await self.redis_db.exists(f'blacklist::{steam_id}'):

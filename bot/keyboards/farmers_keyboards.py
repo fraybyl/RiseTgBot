@@ -69,10 +69,10 @@ def get_personal_inventory_kb() -> InlineKeyboardMarkup:
                 InlineKeyboardButton(text="Добавить аккаунты", callback_data="add_accounts")
             ],
             [
-                InlineKeyboardButton(text="Удалить аккаунты", callback_data="remove_accounts")
+                InlineKeyboardButton(text="Получить аккаунты", callback_data="get_accounts")
             ],
             [
-                InlineKeyboardButton(text="Получить аккаунты", callback_data="get_accounts")
+                InlineKeyboardButton(text="Удалить аккаунты", callback_data="remove_accounts")
             ],
             [
                 InlineKeyboardButton(text='Назад', callback_data="back_inventory")
