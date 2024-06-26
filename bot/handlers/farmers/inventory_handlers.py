@@ -124,12 +124,12 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
                                    caption=f'Добавлено {len(valid_steam_ids)} аккаунтов',
                                    reply_markup=get_personal_inventory_settings_kb())
 
-    # if valid_steam_ids:
-    #     await add_or_update_player_bans(steam_ids)
-    #     proxies = await config_json.get_config_value('proxies')
-    #     steam_inventory = SteamInventory(proxies, redis_db)
-    #     async with steam_inventory:
-    #         await steam_inventory.process_inventories(valid_steam_ids)
+    if valid_steam_ids:
+        await add_or_update_player_bans(steam_ids)
+        proxies = await config_json.get_config_value('proxies')
+        steam_inventory = SteamInventory(proxies, redis_db)
+        async with steam_inventory:
+            await steam_inventory.process_inventories(valid_steam_ids)
 
 
 @router.callback_query(lambda query: query.data == "get_accounts")
