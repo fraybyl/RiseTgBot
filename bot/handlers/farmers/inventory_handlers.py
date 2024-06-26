@@ -36,8 +36,6 @@ async def handle_personal_accounts(query: CallbackQuery, state: FSMContext, l10n
         personal_stat = await get_personal_statistics(query.from_user.id, steam_ids, l10n)
         message = await query.message.edit_caption(caption=personal_stat,
                                                    reply_markup=get_personal_inventory_kb())
-        await state.update_data(len_steam_ids=len(steam_ids))
-
     else:
         message = await query.message.edit_caption(caption='У вас нет аккаунтов.\nНажмите кнопку добавить аккаунты',
                                                    reply_markup=get_personal_inventory_kb())
@@ -99,9 +97,11 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
     async with ChatActionSender.upload_document(message.chat.id, bot, interval=1):
         data = await state.get_data()
         message_id = data.get('message_id')
-        len_steam_ids = data.get('len_steam_ids', 0)
         lines = await process_file_accounts(message, message_id, l10n)
-        if len(lines) + len_steam_ids > 2000:
+        steam_ids_db = await get_steamid64_by_userid(message.from_user.id)
+        limit = await config_json.get_config_value('accounts_per_account_limit')
+
+        if len(lines) + len(steam_ids_db) > limit:
             await bot.edit_message_caption(
                 chat_id=message.chat.id,
                 message_id=message_id,
@@ -124,12 +124,12 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
                                    caption=f'Добавлено {len(valid_steam_ids)} аккаунтов',
                                    reply_markup=get_personal_inventory_settings_kb())
 
-    if valid_steam_ids:
-        await add_or_update_player_bans(steam_ids)
-        proxies = await config_json.get_config_value('proxies')
-        steam_inventory = SteamInventory(proxies, redis_db)
-        async with steam_inventory:
-            await steam_inventory.process_inventories(valid_steam_ids)
+    # if valid_steam_ids:
+    #     await add_or_update_player_bans(steam_ids)
+    #     proxies = await config_json.get_config_value('proxies')
+    #     steam_inventory = SteamInventory(proxies, redis_db)
+    #     async with steam_inventory:
+    #         await steam_inventory.process_inventories(valid_steam_ids)
 
 
 @router.callback_query(lambda query: query.data == "get_accounts")

@@ -24,5 +24,6 @@
         "http://upydhjbu:6y03hyo3r224@45.155.68.129:8133",
         "http://upydhjbu:6y03hyo3r224@154.95.36.199:6893",
         "http://upydhjbu:6y03hyo3r224@45.94.47.66:8110"
-    ]
+    ],
+    "accounts_per_account_limit": 2000
 }
