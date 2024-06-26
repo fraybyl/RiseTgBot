@@ -36,6 +36,8 @@ async def handle_personal_accounts(query: CallbackQuery, state: FSMContext, l10n
         personal_stat = await get_personal_statistics(query.from_user.id, steam_ids, l10n)
         message = await query.message.edit_caption(caption=personal_stat,
                                                    reply_markup=get_personal_inventory_kb())
+        await state.update_data(len_steam_ids=len(steam_ids))
+
     else:
         message = await query.message.edit_caption(caption='У вас нет аккаунтов.\nНажмите кнопку добавить аккаунты',
                                                    reply_markup=get_personal_inventory_kb())
@@ -47,7 +49,6 @@ async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
     message = await query.message.edit_caption(
         caption="Отправьте файл или сообщение с аккаунтами\nтекст не длинее 78 строк ...",
         reply_markup=get_personal_inventory_settings_kb())
-
     await state.set_state(InventoryStates.WAITING_ADD_ACCOUNTS)
     await state.update_data(message_id=message.message_id)
 
@@ -98,7 +99,16 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
     async with ChatActionSender.upload_document(message.chat.id, bot, interval=1):
         data = await state.get_data()
         message_id = data.get('message_id')
+        len_steam_ids = data.get('len_steam_ids', 0)
         lines = await process_file_accounts(message, message_id, l10n)
+        if len(lines) + len_steam_ids > 2000:
+            await bot.edit_message_caption(
+                chat_id=message.chat.id,
+                message_id=message_id,
+                caption='Вы можете добавить не более 2000 аккаунтов',
+                reply_markup=get_personal_inventory_settings_kb()
+            )
+            return
 
         steam_ids = await steam_urls_parse(lines)
 
