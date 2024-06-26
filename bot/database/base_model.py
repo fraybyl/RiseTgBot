@@ -1,7 +1,8 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.asyncio import AsyncAttrs
 from datetime import datetime
 from decimal import Decimal
+
+from sqlalchemy.ext.asyncio import AsyncAttrs
+from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 model_registry = {}

@@ -1,6 +1,7 @@
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InputMediaPhoto, FSInputFile
-from bot.core.loader import config_json
 from loguru import logger
+
+from bot.core.loader import config_json
 
 
 async def edit_message_media(callback_query: CallbackQuery, media: str = None,

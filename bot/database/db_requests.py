@@ -1,14 +1,13 @@
-import time
+from decimal import Decimal
 
+from loguru import logger
 from sqlalchemy import delete as sql_delete
 from sqlalchemy.future import select
-from bot.database.models import User, Product, Category, SteamAccount
-from bot.database.database import async_session
+
 from bot.core.loader import config_json
-from decimal import Decimal
-from loguru import logger
+from bot.database.database import async_session
+from bot.database.models import User, Product, Category, SteamAccount
 from bot.decorators.dec_cache import cached, build_key, clear_cache
-from bot.serializers.sql_serializer import SQLSerializer
 
 
 async def set_user(telegram_id: int, username: str = None, referral_code: str = None) -> User:

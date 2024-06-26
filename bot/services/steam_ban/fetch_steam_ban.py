@@ -1,8 +1,6 @@
 import asyncio
-import itertools
 
 import aiohttp
-from orjson import orjson
 from loguru import logger
 
 from bot.core.loader import redis_db, config_json

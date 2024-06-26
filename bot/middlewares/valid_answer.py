@@ -1,9 +1,9 @@
 from typing import Callable, Dict, Any, Awaitable
 
-from aiogram import BaseMiddleware
-from aiogram.types import Message
-from aiogram.fsm.context import FSMContext
 import fluent.runtime
+from aiogram import BaseMiddleware
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
 
 
 class ValidateQuantityMiddleware(BaseMiddleware):

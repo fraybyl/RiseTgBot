@@ -1,16 +1,14 @@
 import asyncio
 
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
-
-import bot.utils.logging
 from loguru import logger
 
+import bot.utils.logging
 from bot.core.loader import bot, dp, redis_db, redis_cache
 from bot.database.database import start_db_postgres, close_db_postgres, engine
 from bot.handlers import router as main_router
 from bot.l10n.fluent_localization import get_fluent_localization
 from bot.middlewares.l10n import L10nMiddleware
-from bot.middlewares.valid_answer import ValidateQuantityMiddleware
 from bot.schedulers.schedule import start_schedulers
 
 

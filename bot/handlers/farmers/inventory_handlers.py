@@ -6,19 +6,19 @@ from aiogram.utils.chat_action import ChatActionSender
 from fluent.runtime import FluentLocalization
 from loguru import logger
 
+from bot.core.loader import bot, config_json, redis_db
 from bot.database.db_requests import get_steamid64_by_userid, set_steamid64_for_user, remove_steamid64_for_user
+from bot.decorators.dec_throttle import throttle
 from bot.keyboards.farmers_keyboards import get_inventory_kb, get_personal_inventory_kb, \
     get_personal_inventory_settings_kb
-from bot.decorators.dec_throttle import throttle
+from bot.services.steam_ban.fetch_steam_ban import add_or_update_player_bans
 from bot.services.steam_inventory.steam_inventory import SteamInventory
+from bot.services.steamid.fetch_steamid64 import steam_urls_parse
+from bot.states.inventory_states import InventoryStates
+from bot.utils.dump_accounts import dump_accounts
 from bot.utils.edit_media import edit_message_media
 from bot.utils.remove_data_steam import remove_data_steam
 from bot.utils.statistics import get_personal_statistics, get_general_statistics
-from bot.core.loader import bot, config_json, redis_db
-from bot.states.inventory_states import InventoryStates
-from bot.services.steamid.fetch_steamid64 import steam_urls_parse
-from bot.services.steam_ban.fetch_steam_ban import add_or_update_player_bans
-from bot.utils.dump_accounts import dump_accounts
 
 router = Router(name=__name__)
 

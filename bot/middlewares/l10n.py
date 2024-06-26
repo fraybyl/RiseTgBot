@@ -1,8 +1,8 @@
 from typing import Callable, Dict, Any, Awaitable
 
+import fluent.runtime
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-import fluent.runtime
 
 
 class L10nMiddleware(BaseMiddleware):

@@ -4,10 +4,10 @@ from aiogram.types import Message, FSInputFile, CallbackQuery
 from aiogram.utils.payload import decode_payload
 from loguru import logger
 
-from bot.database import db_requests
 from bot.core.loader import config_json
-from bot.utils.edit_media import edit_message_media
+from bot.database import db_requests
 from bot.keyboards.start_keyboards import get_start_kb
+from bot.utils.edit_media import edit_message_media
 
 router = Router(name=__name__)
 

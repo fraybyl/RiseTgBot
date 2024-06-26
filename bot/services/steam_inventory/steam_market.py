@@ -4,8 +4,8 @@ from datetime import datetime
 import aiohttp
 import requests
 import ua_generator
-from orjson import orjson
 from loguru import logger
+from orjson import orjson
 
 from bot.core.loader import redis_db
 

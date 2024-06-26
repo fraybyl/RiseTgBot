@@ -1,5 +1,6 @@
-from fluent.runtime import FluentLocalization, FluentResourceLoader
 from pathlib import Path
+
+from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 
 def get_fluent_localization() -> FluentLocalization:

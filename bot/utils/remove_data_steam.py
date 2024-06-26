@@ -1,5 +1,3 @@
-from loguru import logger
-
 from bot.core.loader import redis_db
 
 

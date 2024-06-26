@@ -1,8 +1,8 @@
+import asyncio
+from datetime import datetime
 from functools import wraps
 
 from aiogram.types import CallbackQuery
-import asyncio
-from datetime import datetime
 
 
 def throttle(rate_limit: int):

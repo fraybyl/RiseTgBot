@@ -1,7 +1,9 @@
+import re
+
 import aiohttp
 from bs4 import BeautifulSoup
-import re
 from loguru import logger
+
 from bot.decorators.dec_cache import cached
 
 

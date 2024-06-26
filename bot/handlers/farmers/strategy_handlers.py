@@ -3,11 +3,11 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 from fluent.runtime import FluentLocalization
 
+from bot.filters.correct_number import CorrectNumberFilter
 from bot.keyboards.farmers_keyboards import get_strategy_kb, get_cancel_strategy_kb
 from bot.states.state_helper import push_state, pop_state
 from bot.states.strategy_states import StrategyStates
 from bot.utils.edit_media import edit_message_media
-from bot.filters.correct_number import CorrectNumberFilter
 from .initial_accounts_handlers import initial_accounts_router
 from .total_weeks_handlers import total_weeks_router
 

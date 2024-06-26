@@ -1,15 +1,15 @@
 import asyncio
 
+import aiohttp
+import orjson
+import ua_generator
+from aiolimiter import AsyncLimiter
 from loguru import logger
+from redis.asyncio import Redis
 
 from bot.services.steam_inventory.inventory_process import InventoryProcess
 from bot.types.InventoryAsset import InventoryAsset
 from bot.types.InventoryDescription import InventoryDescription
-from redis.asyncio import Redis
-from aiolimiter import AsyncLimiter
-import ua_generator
-import aiohttp
-import orjson
 
 
 class SteamInventory:

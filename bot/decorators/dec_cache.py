@@ -1,4 +1,3 @@
-import orjson
 from datetime import timedelta
 from functools import wraps
 
