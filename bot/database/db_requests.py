@@ -140,6 +140,25 @@ async def get_all_steamid64() -> list[int]:
             raise
 
 
+async def get_steamids64_owners(steamid64_list: list[int]) -> dict[int, list[int]]:
+    async with async_session() as session:
+        try:
+            result = await session.execute(
+                select(SteamAccount.user_id, SteamAccount.steamid64)
+                .where(SteamAccount.steamid64.in_(steamid64_list))
+            )
+
+            user_to_steamids = {}
+            for user_id, steamid64 in result:
+                if user_id not in user_to_steamids:
+                    user_to_steamids[user_id] = []
+                user_to_steamids[user_id].append(steamid64)
+
+            return user_to_steamids
+        except Exception as e:
+            logger.error(f"Error in get_steamids64_owners: {e}")
+            raise
+
 @cached(ttl=None)
 async def get_users_with_steam_accounts() -> list[int]:
     """Возвращает telegram_id всех пользователей с не пустым steam_account."""

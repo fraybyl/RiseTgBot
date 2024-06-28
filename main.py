@@ -4,7 +4,7 @@ from aiogram.utils.callback_answer import CallbackAnswerMiddleware
 from loguru import logger
 
 import bot.utils.logging
-from bot.core.loader import bot, dp, redis_db, redis_cache
+from bot.core.loader import bot, dp, redis_db
 from bot.database.database import start_db_postgres, close_db_postgres, engine
 from bot.handlers import router as main_router
 from bot.l10n.fluent_localization import get_fluent_localization
@@ -28,9 +28,7 @@ async def on_startup() -> None:
 
 async def redis_shutdown() -> None:
     await redis_db.connection_pool.aclose()
-    await redis_cache.connection_pool.aclose()
     await redis_db.aclose()
-    await redis_cache.aclose()
 
 
 async def on_shutdown() -> None:

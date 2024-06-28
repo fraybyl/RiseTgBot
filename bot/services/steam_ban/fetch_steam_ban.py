@@ -13,7 +13,7 @@ async def fetch_get_player_bans(
         session: aiohttp.ClientSession,
         url: str,
         semaphore: asyncio.Semaphore
-) -> bool:
+) -> list[AccountInfo]:
     async with semaphore:
         try:
             async with session.get(url, timeout=10) as response:
@@ -25,17 +25,17 @@ async def fetch_get_player_bans(
                     for account_info in accounts_info:
                         pipe.hset(f'data::{account_info.steam_id}', 'ban', account_info.to_dict())
                     await pipe.execute()
-            return True
+            return accounts_info
         except Exception as e:
             logger.error(f"Ошибка фетча fetch_get players: {e}")
-            return False
+            return []
 
 
 async def add_or_update_player_bans(
         steam_ids: list[int],
         is_update: bool = False,
         max_concurrent_requests: int = 2
-) -> None:
+) -> list[AccountInfo]:
     async with lock:
         api_key = await config_json.get_config_value('steam_web_api_key')
         semaphore = asyncio.Semaphore(max_concurrent_requests)
@@ -61,6 +61,10 @@ async def add_or_update_player_bans(
                 tasks.append(fetch_get_player_bans(session, url, semaphore))
 
             results = await asyncio.gather(*tasks, return_exceptions=True)
+            results_account_info = []
             for result in results:
                 if isinstance(result, Exception):
                     logger.error(f"ОШИБКА В ФЕТЧЕ ОБНОВЛЕНИЕ БАНОВ ЕПТА: {result}")
+                elif isinstance(result, list):
+                    results_account_info.extend(result)
+            return results_account_info

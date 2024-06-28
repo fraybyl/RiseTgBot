@@ -1,6 +1,7 @@
 import asyncio
 from collections import defaultdict
 
+from loguru import logger
 from orjson import orjson
 
 from bot.types.Inventory import Inventory
@@ -95,16 +96,11 @@ class InventoryProcess:
         Возвращает:
             Словарь с ключами Redis и декодированными данными.
         """
-        redis_keys = [f'steam_market::{item_details[uid]}' for uid in item_counts if uid in item_details]
+        redis_keys = [f'market::{item_details[uid]}' for uid in item_counts if uid in item_details]
         redis_data = await asyncio.gather(*[self.redis_db.get(key) for key in redis_keys])
-        result = {}
-        for key, data in zip(redis_keys, redis_data):
-            if data is not None:
-                result[key] = orjson.loads(data.decode('utf-8'))
-            else:
-                result[key] = None
-
-        return result
+        #АЛЛАРМ НЕ ДОДЕЛАЛ
+        logger.error('ОЖИДАЕТ ДОБАВЛЕНИЕ ФЕТЧА ПРЕДМЕТОВ ЗАКОММЕНТИРУЙ НАХУЙ В INVENTORY_HANDLERS ЭТО )')
+        return redis_data
 
     @staticmethod
     def _build_items_with_count(

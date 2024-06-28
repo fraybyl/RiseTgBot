@@ -50,6 +50,19 @@ class AccountInfo(dict):
                 self.number_of_game_bans > 0 or
                 self.economy_ban != 'none')
 
+    def __eq__(self, other):
+        if not isinstance(other, AccountInfo):
+            return False
+        return (
+                self.steam_id == other.steam_id and
+                self.community_banned == other.community_banned and
+                self.vac_banned == other.vac_banned and
+                self.number_of_vac_bans == other.number_of_vac_bans and
+                self.days_since_last_ban == other.days_since_last_ban and
+                self.number_of_game_bans == other.number_of_game_bans and
+                self.economy_ban == other.economy_ban
+        )
+
     @property
     def steam_id(self) -> str:
         return self['SteamId']

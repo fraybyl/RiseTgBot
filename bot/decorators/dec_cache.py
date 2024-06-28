@@ -1,7 +1,7 @@
 from datetime import timedelta
 from functools import wraps
 
-from bot.core.loader import redis_cache
+from bot.core.loader import redis_db
 from bot.serializers.abstract_serializer import AbstractSerializer
 from bot.serializers.orjson_serializer import JSONSerializer
 
@@ -12,7 +12,7 @@ async def set_redis_value(
         key: bytes | str, value: bytes | str, ttl: int | timedelta | None = DEFAULT_TTL, is_transaction: bool = False
 ) -> None:
     """Set a value in Redis with an optional time-to-live (TTL)."""
-    async with redis_cache.pipeline(transaction=is_transaction) as pipeline:
+    async with redis_db.pipeline(transaction=is_transaction) as pipeline:
         await pipeline.set(key, value)
         if ttl:
             await pipeline.expire(key, ttl)
@@ -42,7 +42,7 @@ def cached(
             key = f"{namespace}:{func.__module__}:{func.__name__}:{key}"
 
             # Check if the key is in the cache
-            cached_value = await redis_cache.get(key)
+            cached_value = await redis_db.get(key)
             if cached_value is not None:
                 return serializer.deserialize(cached_value)
 
@@ -83,4 +83,4 @@ async def clear_cache(
 
     key = build_key(*args, **kwargs)
     key = f"{namespace}:{func.__module__}:{func.__name__}:{key}"
-    await redis_cache.delete(key)
+    await redis_db.delete(key)

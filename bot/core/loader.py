@@ -20,15 +20,6 @@ redis_db = Redis(
     ), decode_responses=True
 )
 
-redis_cache = Redis(
-    connection_pool=ConnectionPool(
-        host=settings.REDIS_HOST,
-        port=settings.REDIS_PORT,
-        password=settings.REDIS_PASS,
-        db=1
-    ), decode_responses=True
-)
-
 storage = RedisStorage(
     redis=redis_db,
     key_builder=DefaultKeyBuilder(),
