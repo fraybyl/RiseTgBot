@@ -19,17 +19,17 @@ router.include_router(total_weeks_router)
 strategy_mapping = {
     'aggressive_strategy': {
         'float_strategy': 0.8,
-        'text_strategy': 'агрессивную стратегию',
+        'text_strategy': 'агрессивную стратегию😡',
         'media_type': 'AGGRESSIVE'
     },
     'moderate_strategy': {
         'float_strategy': 0.6,
-        'text_strategy': 'умеренную стратегию',
+        'text_strategy': 'умеренную стратегию😴',
         'media_type': 'MODERATE'
     },
     'conservative_strategy': {
         'float_strategy': 0.4,
-        'text_strategy': 'консервативную стратегию',
+        'text_strategy': 'консервативную стратегию😁',
         'media_type': 'CONSERVATIVE'
     }
 }
