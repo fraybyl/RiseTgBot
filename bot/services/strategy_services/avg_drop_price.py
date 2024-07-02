@@ -1,16 +1,16 @@
 import re
-
 import aiohttp
 from bs4 import BeautifulSoup
 from loguru import logger
-
+from datetime import datetime
+import asyncio
+import json
 from bot.decorators.dec_cache import cached
 
-
-async def fetch(url):
+async def fetch(url, currency: str):
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
-            logger.info("запрос на обновление price_drop")
+            logger.info(f"запрос на обновление {currency}")
             if response.status != 200:
                 logger.error(f"Запрос не удался, статус код: {response.status}")
                 return None
@@ -37,11 +37,27 @@ async def parse(html):
 
 
 @cached(ttl=300)
-async def get_avg_drop():
+async def get_avg_drop() -> float:
     url = 'https://21level.ru/ru'
-    html = await fetch(url)
+    currency = 'Средний дроп'
+    html = await fetch(url,currency)
     if html:
         cost_value = await parse(html)
         if cost_value:
             return cost_value
     return 0.0
+
+@cached(ttl=300)
+async def get_rub_rate(currency: int) -> float:
+    if currency == 1:
+        currency = "USD:RUB"
+    elif currency == 2:
+        currency = "RUB:UAH"
+
+    url = f"https://api.steam-currency.ru/currency/{currency}"
+    response = await fetch(url, currency) 
+    data = json.loads(response)
+
+    # Извлечение последнего значения
+    price = data['data'][-1]['close_price']
+    return float(price)
