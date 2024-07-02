@@ -11,7 +11,7 @@ from bot.decorators.dec_cache import cached, build_key, clear_cache
 
 
 async def set_user(telegram_id: int, username: str = None, referral_code: str = None) -> User:
-    """Sets or retrieves a user based on telegram_id, with optional referral code for bonuses."""
+    """Создает или извлекает пользователя на основе telegram_id, с дополнительным реферальным кодом для бонусов"""
     async with async_session() as session:
         try:
             user = await session.scalar(select(User).where(telegram_id == User.telegram_id))
@@ -25,9 +25,9 @@ async def set_user(telegram_id: int, username: str = None, referral_code: str = 
                         if referrer:
                             referred_by = referrer.telegram_id
                         else:
-                            logger.info(f"Referral code {referral_code} does not exist")
+                            logger.info(f"Реферальный код {referral_code} не существует")
                     except ValueError:
-                        logger.info(f"Invalid referral code: {referral_code}")
+                        logger.info(f"Неправильный реферальный код : {referral_code}")
 
                 user = User(telegram_id=telegram_id, username=username, referred_by=referred_by)
                 session.add(user)
@@ -40,76 +40,76 @@ async def set_user(telegram_id: int, username: str = None, referral_code: str = 
                 await session.commit()
             return user
         except Exception as e:
-            logger.error(f"Error in set_user: {e}")
+            logger.error(f"ошибка в set_user: {e}")
             await session.rollback()
             raise
 
 
 async def get_user_by_telegram_id(telegram_id: int) -> User:
-    """Retrieves a user by their telegram_id."""
+    """Возвращает user по его telegramID"""
     async with async_session() as session:
         try:
             user = await session.scalar(select(User).where(telegram_id == User.telegram_id))
             return user
         except Exception as e:
-            logger.error(f"Error in get_user_by_telegram_id: {e}")
+            logger.error(f"Ошибка в get_user_by_telegram_id: {e}")
             raise
 
 
 async def get_product_by_name(product_name: str) -> Product:
-    """Retrieves a product by its name."""
+    """Возвращает product по product Name"""
     async with async_session() as session:
         try:
             product = await session.scalar(select(Product).where(product_name == Product.name))
             return product
         except Exception as e:
-            logger.error(f"Error in get_product_by_name: {e}")
+            logger.error(f"Ошибка в get_product_by_name: {e}")
             raise
 
 
 async def get_all_categories() -> list[Category]:
-    """Retrieves all categories."""
+    """Возвращает все categories"""
     async with async_session() as session:
         try:
             result = await session.scalars(select(Category))
             categories = result.all()
             return categories
         except Exception as e:
-            logger.error(f"Error in get_all_categories: {e}")
+            logger.error(f"ошибка в get_all_categories: {e}")
             raise
 
 
 async def get_category_by_id(category_id: int) -> Category:
-    """Retrieves a category by its ID."""
+    """Возвращает category по ID."""
     async with async_session() as session:
         try:
             category = await session.scalar(select(Category).where(category_id == Category.id))
             return category
         except Exception as e:
-            logger.error(f"Error in get_category_by_id: {e}")
+            logger.error(f"ошибка в get_category_by_id: {e}")
             raise
 
 
 async def get_products_by_category(category_id: int) -> list[Product]:
-    """Retrieves products by category ID."""
+    """Возвращает список product по category ID."""
     async with async_session() as session:
         try:
             products = await session.scalars(select(Product).where(category_id == Product.category_id))
             products_list = products.all()
             return products_list
         except Exception as e:
-            logger.error(f"Error in get_products_by_category: {e}")
+            logger.error(f"ошибка в get_products_by_category: {e}")
             raise
 
 
 async def get_product_by_id(product_id: int) -> Product:
-    """Retrieves a product by its ID."""
+    """Возвращает product по productID."""
     async with async_session() as session:
         try:
             product = await session.scalar(select(Product).where(product_id == Product.id))
             return product
         except Exception as e:
-            logger.error(f"Error in get_product_by_id: {e}")
+            logger.error(f"ошибка в get_product_by_id: {e}")
             raise
 
 
@@ -129,14 +129,16 @@ async def get_steamid64_by_userid(user_id: int) -> list[int]:
 
 @cached(ttl=None)
 async def get_all_steamid64() -> list[int]:
-    """Retrieves all Steam URLs."""
+    """
+    Извлекает все Steam URLs
+    """
     async with async_session() as session:
         try:
             result = await session.execute(select(SteamAccount.steamid64).distinct())
             steam_accounts = result.scalars().all()
             return steam_accounts
         except Exception as e:
-            logger.error(f"Error in get_all_steamid64: {e}")
+            logger.error(f"ошибка в get_all_steamid64: {e}")
             raise
 
 
@@ -156,7 +158,7 @@ async def get_steamids64_owners(steamid64_list: list[int]) -> dict[int, list[int
 
             return user_to_steamids
         except Exception as e:
-            logger.error(f"Error in get_steamids64_owners: {e}")
+            logger.error(f"ошибка в get_steamids64_owners: {e}")
             raise
 
 @cached(ttl=None)
@@ -177,7 +179,10 @@ async def get_users_with_steam_accounts() -> list[int]:
 
 
 async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[int]:
-    """Sets Steam URLs for a user, avoiding duplicates."""
+    """
+    Устанвливает Steam URLs для user
+    Удаляет/Избегает дубликаты
+    """
     async with async_session() as session:
         try:
             existing_accounts_result = await session.execute(
@@ -202,7 +207,7 @@ async def set_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[int
             await clear_cache(get_users_with_steam_accounts)
             return new_steam_accounts
         except Exception as e:
-            logger.error(f"Error in set_steamid64_for_user: {e}")
+            logger.error(f"ошибка в set_steamid64_for_user: {e}")
             await session.rollback()
             raise
 
@@ -245,6 +250,6 @@ async def remove_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[
             await clear_cache(get_users_with_steam_accounts)
             return accounts_to_remove
         except Exception as e:
-            logger.error(f"Error in remove_steamid64_for_user: {e}")
+            logger.error(f"ошибка в remove_steamid64_for_user: {e}")
             await session.rollback()
             raise
