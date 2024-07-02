@@ -4,6 +4,11 @@ from aiogram.fsm.context import FSMContext
 
 
 class CorrectNumberFilter(BaseFilter):
+    """
+    Получает states, проверяет на на совпадение states и проверяет является ли число float и больше ли 0
+    :param states: Принимает в себя state
+    :return: Возвращает bool. совпадает или нет
+    """
     def __init__(self, *states):
         self.states = states
 
