@@ -9,6 +9,7 @@ from bot.database.database import start_db_postgres, close_db_postgres, engine
 from bot.handlers import router as main_router
 from bot.l10n.fluent_localization import get_fluent_localization
 from bot.middlewares.l10n import L10nMiddleware
+from bot.schedulers.providers_items_update import providers_items_update
 from bot.schedulers.schedule import start_schedulers
 
 

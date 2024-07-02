@@ -1,35 +1,68 @@
-import requests
-import sys
+import json
+from collections import defaultdict
 
+class InventoryProcess:
+    def __init__(self, json_data):
+        self.json_data = json_data
 
-def measure_traffic(url):
-    # Выполнение запроса
-    response = requests.get(url,headers={'Accept-Enconding': 'br'},     proxies={
-        "http": "http://teiqogrk-rotate:md5yfndvjcze@p.webshare.io:80/",
-        "https": "http://teiqogrk-rotate:md5yfndvjcze@p.webshare.io:80/"
-    })
+    def parse_inventory_data(self):
+        assets = self.json_data.get('assets', [])
+        descriptions = self.json_data.get('descriptions', [])
 
-    # Подсчёт размера отправленных данных
-    method_size = len(response.request.method)
-    url_size = len(response.request.url)
-    headers_size = sum(len(k) + len(v) for k, v in response.request.headers.items())
-    body_size = len(response.request.body) if response.request.body else 0
-    sent_data_size = method_size + url_size + headers_size + body_size
+        item_counts = self._collect_item_counts(assets)
+        item_details = self._collect_item_details(descriptions)
 
-    # Подсчёт размера полученных данных
-    content_size = len(response.content)
-    headers_size = sum(len(k) + len(v) for k, v in response.headers.items())
-    received_data_size = content_size + headers_size
+        if not item_details or not item_counts:
+            return None
 
-    # Суммарный трафик
-    total_traffic = sent_data_size + received_data_size
+        item_names_with_count = self._build_items_with_count(item_counts, item_details)
 
-    return sent_data_size, received_data_size, total_traffic
+        return item_names_with_count if item_names_with_count else None
 
+    @staticmethod
+    def _collect_item_counts(assets):
+        item_counts = defaultdict(int)
+        for item in assets:
+            unique_id = f"{item['classid']}_{item['instanceid']}"
+            item_counts[unique_id] += 1
+        return item_counts
 
-# Пример использования функции
-url = 'https://steamcommunity.com/inventory/76561198852253632/730/2?l=english'
-sent, received, total = measure_traffic(url)
-print(f'Sent data: {sent} bytes')
-print(f'Received data: {received} bytes')
-print(f'Total traffic: {total} bytes')
+    @staticmethod
+    def _collect_item_details(descriptions):
+        item_details = {}
+        for desc in descriptions:
+            if desc['marketable']:
+                unique_id = f"{desc['classid']}_{desc['instanceid']}"
+                item_details[unique_id] = {
+                    'market_hash_name': desc['market_hash_name'],
+                    'doppler_info': desc.get('doppler_info', 'N/A')
+                }
+        return item_details
+
+    @staticmethod
+    def _build_items_with_count(item_counts, item_details):
+        items_with_count = []
+        for uid, count in item_counts.items():
+            if uid in item_details:
+                items_with_count.append({
+                    'name': item_details[uid]['market_hash_name'],
+                    'count': count,
+                })
+        return items_with_count
+
+# Загрузка данных из JSON-файла
+with open('prices_v6.json', 'r', encoding='utf-8') as file:
+    data = json.load(file)
+
+# Создание объекта InventoryProcess и парсинг данных
+inventory_process = InventoryProcess(data)
+marketable_items = inventory_process.parse_inventory_data()
+
+# Вывод результата
+if marketable_items:
+    for item in marketable_items:
+        print(f"Название: {item['name']}, Количество: {item['count']}, Doppler Info: {item['doppler_info']}")
+
+# Сохранение результата в новый JSON-файл
+with open('marketable_items.json', 'w', encoding='utf-8') as file:
+    json.dump(marketable_items, file, ensure_ascii=False, indent=4)

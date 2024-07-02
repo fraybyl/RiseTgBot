@@ -1,16 +1,40 @@
 from fluent.runtime import FluentLocalization
+from orjson import orjson
 
 from bot.core.loader import redis_db
 from bot.decorators.dec_cache import cached, build_key
 from bot.types.AccountInfo import AccountInfo
 from bot.types.Inventory import Inventory
+from bot.types.Item import Item
 from bot.types.Statistic import Statistic
 
 
-async def get_statistic(steam_ids: list[int] = None) -> Statistic:
+async def fetch_price_results(provider: str, mode: str, currency: str) -> list[Item]:
+    cursor = '0'
+    prices_results = []
+    redis_key = f'prices:{provider}' + (f':{mode}' if mode else '')
+    currency_ratio = float((await redis_db.hget('exchangeRates', currency)).decode('utf-8'))
+    while cursor != 0:
+        cursor, fields = await redis_db.hscan(name=redis_key, cursor=cursor, count=30000)
+        if fields:
+            pipeline = redis_db.pipeline()
+            for field in fields:
+                pipeline.hget(redis_key, field)
+
+            pipeline_provider_results = await pipeline.execute()
+            for field, value in zip(fields.keys(), pipeline_provider_results):
+                item = Item.from_json(field, value, currency_ratio)
+                prices_results.append(item)
+
+    return prices_results
+
+
+async def get_statistic(provider: str, mode: str = None, steam_ids: list[int] = None) -> Statistic:
     cursor = '0'
     steam_ids_set = set(steam_ids) if steam_ids else None
-    statistics: Statistic = Statistic()
+    statistics = Statistic()
+
+    prices_results = await fetch_price_results(provider, mode, 'RUB')
 
     while cursor != 0:
         cursor, keys = await redis_db.scan(cursor=cursor, count=30000, match='data::*')
@@ -27,22 +51,22 @@ async def get_statistic(steam_ids: list[int] = None) -> Statistic:
                 inventory_json = result.get(b'inventory', {})
 
                 if account_info_json or inventory_json:
-                    statistics['total_accounts'] += 1
+                    statistics.total_accounts += 1
 
                 if account_info_json:
                     account_info = AccountInfo.from_json(account_info_json)
                     statistics.add_account_info(account_info)
 
                 if inventory_json:
-                    inventory = Inventory.from_json(inventory_json)
+                    inventory = Inventory.from_json_and_prices(inventory_json, prices_results)
                     statistics.add_inventory_info(inventory)
 
     return statistics
 
 
 @cached(key_builder=lambda *args, **kwargs: "")
-async def get_general_statistics(l10n: FluentLocalization) -> str:
-    statistics = await get_statistic()
+async def get_general_statistics(l10n: FluentLocalization, provider: str, mode: str = None) -> str:
+    statistics = await get_statistic(provider=provider, mode=mode,)
     text = l10n.format_value('general-accounts-info', {
         'accounts': statistics.total_accounts,
         'total_bans': statistics.total_bans,
@@ -59,8 +83,8 @@ async def get_general_statistics(l10n: FluentLocalization) -> str:
 
 
 @cached(key_builder=lambda user_id, *args, **kwargs: build_key(user_id))
-async def get_personal_statistics(user_id: int, steam_ids: list[int], l10n: FluentLocalization) -> str:
-    statistics = await get_statistic(steam_ids)
+async def get_personal_statistics(user_id: int, steam_ids: list[int], l10n: FluentLocalization, provider: str, mode: str = None) -> str:
+    statistics = await get_statistic(provider=provider, mode=mode, steam_ids=steam_ids)
     text = l10n.format_value('personal-accounts-info', {
         'accounts': statistics.total_accounts,
         'total_bans': statistics.total_bans,

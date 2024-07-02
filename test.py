@@ -1,136 +1,85 @@
 import asyncio
 import time
 
-import redis
-import redis.asyncio as Redis
-import ua_generator
-from aiogram.client.session import aiohttp
-from yarl import URL
-from aiolimiter import AsyncLimiter
-from loguru import logger
-import urllib.parse
+from orjson import orjson
 
 from bot.core.loader import redis_db
+from bot.types.AccountInfo import AccountInfo
+from bot.types.Inventory import Inventory
 from bot.types.Item import Item
+from bot.types.Statistic import Statistic
 
 
-class SteamItemFetch:
-    def __init__(
-            self,
-            proxies: list[str],
-            redis: Redis,
-            rate_period: float = 0.25,
-            currency: int = 5,
-            appid: int = 730
-    ) -> None:
-        self.sessions: dict[str, aiohttp.ClientSession] = {}
-        self.proxies = proxies
-        self.redis = redis
-        self.currency = currency
-        self.rate_period = rate_period
-        self.appid = appid
+async def fetch_price_results(provider: str, mode: str) -> list[Item]:
+    cursor = '0'
+    prices_results = []
+    redis_key = f'prices:{provider}' + (f':{mode}' if mode else '')
 
-    async def __aenter__(self):
-        for proxy in self.proxies:
-            headers = {'Accept-Encoding': 'br', 'Connection': 'close'}
-            session = aiohttp.ClientSession(headers=headers)
-            self.sessions[proxy] = session
-        return self
+    while cursor != 0:
+        cursor, fields = await redis_db.hscan(name=redis_key, cursor=cursor, count=30000)
+        if fields:
+            pipeline = redis_db.pipeline()
+            for field in fields:
+                pipeline.hget(redis_key, field)
 
-    async def __aexit__(self, exc_type, exc, tb):
-        for proxy, session in self.sessions.items():
-            await session.close()
-        self.sessions.clear()
+            pipeline_provider_results = await pipeline.execute()
+            for field, value in zip(fields.keys(), pipeline_provider_results):
+                item = Item.from_json(field, value)
+                prices_results.append(item)
 
-    def convert_price(self, price: str) -> float:
-        if self.currency == 5:
-            price = price.replace(' pуб.', '').replace(',', '.')
-            return float(price)
-        elif self.currency == 1:
-            price = price.replace('$', '')
-            return float(price)
-        else:
-            return float(price)
+    return prices_results
 
-    async def __fetch_item_price(
-            self,
-            item_hash_name: str,
-            proxy: str
-    ) -> Item | None:
-        item_url = URL(
-            f"https://steamcommunity.com/market/priceoverview?appid={self.appid}&currency={self.currency}&market_hash_name={self.convert_hash_to_url(item_hash_name)}",
-            encoded=True)
-        session = self.sessions[proxy]
-        async with session.get(url=item_url, proxy=proxy) as response:
-            if response.status == 200:
-                logger.info(f'ФЕТЧ ИТЕМА {response.url} - {item_hash_name}')
-                data = await response.json()
-                price = data.get('lowest_price') or data.get('median_price') or None
-                sell_count = data.get('volume', 0)
-                if price:
-                    price = self.convert_price(price)
-                    item = Item(f'market::{item_hash_name}', price, sell_count)
-                    await self.redis.hset(item.item_name, mapping={
-                        'price': item.price,
-                        'sell_count': item.sell_count,
-                    })
-                    return item
-            else:
-                logger.error(f'Ошибка фетча предмета {response.status} - {item_hash_name}')
-                return None
+async def get_statistic(provider: str, mode: str = None, steam_ids: list[int] = None) -> Statistic:
+    cursor = '0'
+    steam_ids_set = set(steam_ids) if steam_ids else None
+    statistics = Statistic()
 
-    @staticmethod
-    def convert_hash_to_url(hash: str) -> str:
-        hash_first = hash.replace(' ', '%20')
-        hash_secod = hash_first.replace('&', '%26')
-        hash_result = hash_secod.replace('|', '%7C')
+    prices_results = await fetch_price_results(provider, mode)
 
-        return hash_result
+    while cursor != 0:
+        cursor, keys = await redis_db.scan(cursor=cursor, count=30000, match='data::*')
+        if keys:
+            pipeline = redis_db.pipeline()
+            for key in keys:
+                steam_id = int(key.decode('utf-8').split("::")[1])
+                if not steam_ids_set or steam_id in steam_ids_set:
+                    pipeline.hgetall(key)
 
-    async def get_hash_names_prices(
-            self,
-            hash_names: list[str],
-            is_update: bool = False,
-    ) -> None:
-        while hash_names:
-            if not self.proxies:
-                logger.error(f'Закончились прокси, осталось {len(hash_names)} аккаунтов для проверки. АЛАРМ')
-                break
+            results = await pipeline.execute()
+            for result in results:
+                account_info_json = result.get(b'ban', {})
+                inventory_json = result.get(b'inventory', {})
 
-            tasks = []
+                if account_info_json or inventory_json:
+                    statistics.total_accounts += 1
 
-            for proxy in self.proxies[:len(hash_names)]:
-                hash_name = hash_names.pop(0)
+                if account_info_json:
+                    account_info = AccountInfo.from_json(account_info_json)
+                    statistics.add_account_info(account_info)
 
-                if not is_update and await self.redis.exists(f'market::{hash_name}'):
-                    continue
+                if inventory_json:
+                    inventory = Inventory.from_json_and_prices(inventory_json, prices_results)
+                    statistics.add_inventory_info(inventory)
 
-                task = self.__fetch_item_price(hash_name, proxy)
-                tasks.append(task)
-
-            await asyncio.gather(*tasks)
+    return statistics
 
 
 async def main():
-    steam = SteamItemFetch(
-        ["http://teiqogrk-rotate:md5yfndvjcze@p.webshare.io:80",
-         'http://teiqogrk-rotate:md5yfndvjcze@p.webshare.io:1080'],
-        redis_db
+    statistics = await get_statistic(
+        'steam',
+        'last_24h',
+
     )
-    with open('sdfds.txt', 'r', encoding='utf-8') as file:
-        data = file.read()
 
-    # Загрузка данных как словаря
-    data_dict = eval(data)
-
-    # Извлечение ключей и формирование списка строк
-    result = list(data_dict.keys())
-    start = time.time()
-    async with steam:
-        await steam.get_hash_names_prices(result)
-    print(time.time() - start)
-    await redis_db.connection_pool.aclose()
-
+    print(f"Всего предметов: {statistics.items}")
+    print(f"Всего кейсов: {statistics.cases}")
+    print(f"Общая цена: {statistics.prices:.2f}$")
+    print(f"Всего аккаунтов: {statistics.total_accounts}")
+    print(f"Всего банов: {statistics.total_bans}")
+    print(f"Всего VAC банов: {statistics.total_vac}")
+    print(f"Всего коммьюнити банов: {statistics.total_community}")
+    print(f"Всего игровых банов: {statistics.total_game_ban}")
+    print(f"Баны за последнюю неделю: {statistics.bans_in_last_week}")
 
 if __name__ == '__main__':
     asyncio.run(main())

@@ -25,7 +25,7 @@ router = Router(name=__name__)
 
 @router.callback_query(lambda query: query.data == "inventory")
 async def handle_inventory(query: CallbackQuery, l10n: FluentLocalization):
-    general_stat = await get_general_statistics(l10n)
+    general_stat = await get_general_statistics(l10n, 'steam', 'last_24h')
     await edit_message_media(query, 'RISE_FOR_FARMERS', get_inventory_kb(), caption=general_stat)
 
 
@@ -33,7 +33,7 @@ async def handle_inventory(query: CallbackQuery, l10n: FluentLocalization):
 async def handle_personal_accounts(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     steam_ids = await get_steamid64_by_userid(query.from_user.id)
     if steam_ids:
-        personal_stat = await get_personal_statistics(query.from_user.id, steam_ids, l10n)
+        personal_stat = await get_personal_statistics(query.from_user.id, steam_ids, l10n, 'steam', 'last_24h')
         message = await query.message.edit_caption(caption=personal_stat,
                                                    reply_markup=get_personal_inventory_kb())
     else:

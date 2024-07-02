@@ -23,7 +23,7 @@ async def fetch_get_player_bans(
                     players = data.get('players', [])
                     accounts_info = list(map(AccountInfo.from_dict, players))
                     for account_info in accounts_info:
-                        pipe.hset(f'data::{account_info.steam_id}', 'ban', account_info.to_dict())
+                        pipe.hset(f'data::{account_info.SteamId}', 'ban', account_info.to_json())
                     await pipe.execute()
             return accounts_info
         except Exception as e:

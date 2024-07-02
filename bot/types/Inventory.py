@@ -1,34 +1,41 @@
-import orjson
+from dataclasses import dataclass
+
+from orjson import orjson
 
 from bot.types.Item import Item
 
 
-class Inventory(dict):
-    def __init__(self, items: list):
-        super().__init__({item.item_name: {'price': item.price, 'count': count} for item, count in items})
+@dataclass
+class Inventory:
+    items: list[Item]
 
-    @classmethod
-    def from_data(cls, data: list):
-        items = [(Item(item_data['item_name'], item_data['price']), count) for item_data, count in data]
-        return cls(items)
-
-    @classmethod
-    def from_json(cls, json_data: str):
-        data = orjson.loads(json_data)
-        items = [(Item(name, details['price']), details['count']) for name, details in data.items()]
-        return cls(items)
-
-    def to_dict(self):
-        return {key: {'price': value['price'], 'count': value['count']} for key, value in self.items()}
-
-    def to_json(self):
-        return orjson.dumps(self.to_dict()).decode('utf-8')
+    def total_cases(self) -> int:
+        count = 0
+        for item in self.items:
+            if 'case' in item.item_name.lower():
+                count += 1
+        return count
 
     def total_price(self) -> float:
-        return sum(details['price'] * details['count'] for details in self.values())
+        total_prices = 0
+        for item in self.items:
+            total_prices += item.price
+        return total_prices
 
-    def total_count(self) -> int:
-        return sum(details['count'] for details in self.values())
-
-    def total_case_items(self) -> int:
-        return sum(details['count'] for name, details in self.items() if 'case' in name.lower())
+    @staticmethod
+    def from_json_and_prices(inventory_json: str, prices_results: list[Item]) -> 'Inventory':
+        inventory_dict = orjson.loads(inventory_json)
+        items = []
+        for item_name, count in inventory_dict:
+            for price_item in prices_results:
+                if item_name == price_item.item_name:
+                    for _ in range(count):
+                        items.append(
+                            Item(
+                                item_name=item_name,
+                                price=price_item.price,
+                                doppler_prices=price_item.doppler_prices
+                            )
+                        )
+                    break
+        return Inventory(items=items)

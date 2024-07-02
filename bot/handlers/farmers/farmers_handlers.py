@@ -13,7 +13,6 @@ async def handle_farmers(query: CallbackQuery):
     await edit_message_media(query, 'RISE_FOR_FARMERS', get_farmers_kb())
 
 
-
 @router.callback_query(lambda query: query.data == "back_farmers")
 async def handle_back_farmers(query: CallbackQuery, state: FSMContext):
     await state.clear()

@@ -64,10 +64,14 @@ class SteamInventory:
                     assets = InventoryAsset.from_list(assets_data)
                     descriptions = InventoryDescription.from_list(descriptions_data)
 
-                    inventory_process = InventoryProcess(self.redis_db)
+                    inventory_process = InventoryProcess()
                     steam_id_inventory = await inventory_process.parse_inventory_data(assets, descriptions)
                     if steam_id_inventory:
-                        await self.redis_db.hset(f'data::{steam_id}', 'inventory', steam_id_inventory.to_json())
+                        await self.redis_db.hset(
+                            f'data::{steam_id}',
+                            'inventory',
+                            orjson.dumps(steam_id_inventory).decode('utf-8')
+                        )
                         return True
 
                     return False
