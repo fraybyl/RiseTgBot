@@ -36,11 +36,15 @@ strategy-result =
         *[other] Цена аккаунта - <b>{$account_price} рубля</b>▫️
     }
     ━━━━━━━━━━━━━━━━━━━━━━
+    { $accounts_profit ->
+      *[one] Количество аккаунтов - <b> {$accounts_profit} шт </b>🧾
+    }
+    ━━━━━━━━━━━━━━━━━━━━━━
     { $profit -> 
-        [one] Сохраненная прибыль - <b>{$profit} рубль </b>💎
-        [few] Сохраненная прибыль - <b>{$profit} рубля</b>💎
-        [many] Сохраненная прибыль - <b>{$profit} рублей</b>💎
-        *[other] Сохраненная прибыль - <b>{$profit} рублей</b>💎
+        [one] Отложенная прибыль - <b>{$profit} рубль </b>💎
+        [few] Отложенная прибыль - <b>{$profit} рубля</b>💎
+        [many] Отложенная прибыль - <b>{$profit} рублей</b>💎
+        *[other] Отложенная прибыль - <b>{$profit} рублей</b>💎
     }</blockquote>
 
 product-quantity =
