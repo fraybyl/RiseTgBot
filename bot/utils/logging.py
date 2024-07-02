@@ -1,7 +1,7 @@
 import logging
-
 from loguru import logger
 from bot.core.config import settings
+
 
 class InterceptHandler(logging.Handler):
     """
@@ -23,10 +23,17 @@ class InterceptHandler(logging.Handler):
         logger_opt.log(record.levelname, record.getMessage())
 
 
-logging.basicConfig(handlers=[InterceptHandler()], level=0)
+if settings.DEBUG:
+    log_level = logging.DEBUG
+    logger_level = "DEBUG"
+else:
+    log_level = logging.WARNING
+    logger_level = "WARNING"
+
+logging.basicConfig(handlers=[InterceptHandler()], level=log_level)
 logger.add(
     "logs/telegram_bot.log",
-    level="DEBUG",
+    level=logger_level,
     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {module}:{function}:{line} | {message}",
     rotation="100 KB",
     compression="zip",
