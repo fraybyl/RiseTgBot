@@ -41,7 +41,7 @@ class Inventory:
         """
         inventory_dict = orjson.loads(inventory_json)
         items = []
-        for item_name, count in inventory_dict.items():
+        for item_name, count in inventory_dict:
             for price_item in prices_results:
                 if item_name == price_item.item_name:
                     for _ in range(count):
