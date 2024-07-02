@@ -2,6 +2,7 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message
 from fluent.runtime import FluentLocalization
+from loguru import logger
 
 from bot.core.loader import bot
 from bot.keyboards.farmers_keyboards import get_cancel_strategy_kb
@@ -26,4 +27,4 @@ async def process_initial_accounts(message: Message, state: FSMContext, l10n: Fl
 
         await push_state(state, StrategyStates.TOTAL_WEEKS.state)
     except Exception as e:
-        print(e)
+        logger.error(e)

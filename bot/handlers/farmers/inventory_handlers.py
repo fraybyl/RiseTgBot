@@ -37,15 +37,15 @@ async def handle_personal_accounts(query: CallbackQuery, state: FSMContext, l10n
         message = await query.message.edit_caption(caption=personal_stat,
                                                    reply_markup=get_personal_inventory_kb())
     else:
-        message = await query.message.edit_caption(caption='У вас нет аккаунтов.\nНажмите кнопку добавить аккаунты',
+        message = await query.message.edit_caption(caption=l10n.format_value('personal-accounts-empty'),
                                                    reply_markup=get_personal_inventory_kb())
     await state.update_data(message_id=message.message_id)
 
 
 @router.callback_query(lambda query: query.data == "add_accounts")
-async def handle_add_accounts(query: CallbackQuery, state: FSMContext):
+async def handle_add_accounts(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     message = await query.message.edit_caption(
-        caption="Отправьте файл или сообщение с аккаунтами\nтекст не длинее 78 строк ...",
+        caption=l10n.format_value('add-accounts-info'),
         reply_markup=get_personal_inventory_settings_kb())
     await state.set_state(InventoryStates.WAITING_ADD_ACCOUNTS)
     await state.update_data(message_id=message.message_id)
@@ -59,7 +59,7 @@ async def process_file_accounts(message: Message, message_id: int, l10n: FluentL
         await bot.edit_message_caption(
             chat_id=message.chat.id,
             message_id=message_id,
-            caption='Файл или текст не найден!',
+            caption=l10n.format_value('error-file-found'),
             reply_markup=get_personal_inventory_settings_kb()
         )
         return
@@ -67,7 +67,7 @@ async def process_file_accounts(message: Message, message_id: int, l10n: FluentL
     await bot.edit_message_caption(
         chat_id=message.chat.id,
         message_id=message_id,
-        caption='Идет обработка...',
+        caption=l10n.format_value('process-accounts-file'),
         reply_markup=get_personal_inventory_settings_kb()
     )
 
@@ -87,7 +87,7 @@ async def process_file_accounts(message: Message, message_id: int, l10n: FluentL
         await bot.edit_message_caption(
             chat_id=message.chat.id,
             message_id=message_id,
-            caption='Ошибка при обработке',
+            caption=l10n.format_value('error-process-accounts-file'),
             reply_markup=get_personal_inventory_settings_kb()
         )
 
@@ -105,7 +105,7 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
             await bot.edit_message_caption(
                 chat_id=message.chat.id,
                 message_id=message_id,
-                caption='Вы можете добавить не более 2000 аккаунтов',
+                caption=l10n.format_value('error-quantity-add-accounts', {'accounts_limit': limit}),
                 reply_markup=get_personal_inventory_settings_kb()
             )
             return
@@ -114,14 +114,14 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
 
         if not steam_ids:
             await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                           caption='Добавлено 0 аккаунтов',
+                                           caption=l10n.format_value('success_add_accounts', {'accounts': len(steam_ids)}),
                                            reply_markup=get_personal_inventory_settings_kb())
             return
 
         valid_steam_ids = await set_steamid64_for_user(message.from_user.id, steam_ids)
 
     await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                   caption=f'Добавлено {len(valid_steam_ids)} аккаунтов',
+                                   caption=l10n.format_value('success_add_accounts', {'accounts': len(steam_ids)}),
                                    reply_markup=get_personal_inventory_settings_kb())
 
     if valid_steam_ids:
@@ -137,21 +137,19 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
 async def handle_get_accounts(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     accounts = await get_steamid64_by_userid(query.from_user.id)
     if not accounts:
-        await query.message.edit_caption(caption='У вас нет аккаунтов для получение.',
+        await query.message.edit_caption(caption=l10n.format_value('error-accounts-dump'),
                                          reply_markup=get_personal_inventory_kb())
         return
     dump_file = await dump_accounts(accounts)
 
-    document_message_id = await bot.send_document(query.message.chat.id, dump_file,
-                                                  caption='Файл удалиться через 30 секунд')
+    document_message_id = await bot.send_document(query.message.chat.id, dump_file, caption=l10n.format_value('get-accounts-dump'))
 
-    # scheduler.add_job(ban_statistics_schedule, IntervalTrigger(hours=1))
     await state.update_data(document_message_id=document_message_id.message_id)
 
 
 @router.callback_query(lambda query: query.data == "remove_accounts")
 async def handle_remove_accounts(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
-    message = await query.message.edit_caption(caption="Отправьте файл с аккаунтами которые нужно удалить...",
+    message = await query.message.edit_caption(caption=l10n.format_value('remove-accounts-info'),
                                                reply_markup=get_personal_inventory_settings_kb())
 
     await state.set_state(InventoryStates.WAITING_REMOVE_ACCOUNTS)
@@ -169,14 +167,14 @@ async def process_remove_accounts(message: Message, state: FSMContext, l10n: Flu
 
         if not steam_ids:
             await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                           caption='Отправьте файл содержащий steamid/vanity_url/steam_urls',
+                                           caption=l10n.format_value('error-not-steam_ids_dump'),
                                            reply_markup=get_personal_inventory_settings_kb())
             return
 
         removed_accounts = await remove_steamid64_for_user(message.from_user.id, steam_ids)
 
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                       caption=f'Удалено {len(removed_accounts)} аккаунтов',
+                                       caption=l10n.format_value('success-remove-accounts', {'length_accounts': len(removed_accounts)}),
                                        reply_markup=get_personal_inventory_settings_kb())
 
         if removed_accounts:

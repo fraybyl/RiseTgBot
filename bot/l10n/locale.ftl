@@ -98,3 +98,29 @@ personal-accounts-info =
     Всего предметов: <b>{$items}</b>
     Всего кейсов: <b>{$cases}</b>
     Общая цена: <b>{$prices} рублей</b></code>
+
+error-quantity-add-accounts = Вы можете добавить не более $accounts_limit аккаунтов
+
+success_add_accounts = Добавлено $accounts аккаунтов
+
+get-accounts-dump = получать аккаунты подпись
+
+error-accounts-dump = ошибка при нажатие на кнопку
+
+remove-accounts-info = Отправьте файл с аккаунтами которые нужно удалить...
+
+error-not-steam_ids_dump = Отправьте файл содержащий steamid/vanity_url/steam_urls
+
+success-remove-accounts = Удалено $length_accounts аккаунтов
+
+error-process-accounts-file = Ошибка при обработке
+
+error-file-found = Файл или текст не найден!
+
+process-accounts-file = Идет обработка...
+
+add-accounts-info = Отправьте файл или сообщение с аккаунтами\nтекст не длинее 78 строк ...
+
+personal-accounts-empty =
+    У вас нет аккаунтов.
+    Нажмите кнопку добавить аккаунты
