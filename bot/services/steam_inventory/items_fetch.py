@@ -15,7 +15,6 @@ class ItemsFetch:
         self.redis_db = redis_client
         self.pricing_providers = pricing_providers
 
-
     async def exchanges_rate(self):
         """Получение курсов обмена и сохранение в Redis."""
         url = 'https://prices.csgotrader.app/latest/exchange_rates.json'

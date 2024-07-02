@@ -1,7 +1,7 @@
 import os
 
 import aiofiles
-from orjson import orjson
+import orjson
 
 from bot.services.steam_inventory.items_fetch import ItemsFetch
 from bot.core.loader import redis_db
