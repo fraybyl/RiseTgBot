@@ -12,7 +12,7 @@ bonus_router = Router(name=__name__)
 
 
 @bonus_router.callback_query(lambda query: query.data == "bonus_use_product")
-async def handle_bonus_use(query: CallbackQuery, state: FSMContext):
+async def handle_bonus_use(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     data = await state.get_data()
     quantity_product = data.get('quantity_product')
     product = data.get('product')
@@ -24,12 +24,12 @@ async def handle_bonus_use(query: CallbackQuery, state: FSMContext):
         max_bonus = calculate_max_bonus(product['price'] * quantity_product, user['discount_percentage'], minimal_price)
 
         await query.message.edit_caption(
-            caption=f"Введите количество не больше {min(max_bonus, user['bonus_points']):.0f}",
+            caption=l10n.format_value('bonus-quantity-max', {'bonus': min(max_bonus, user['bonus_points'])}),
             reply_markup=get_payment_settings_kb())
 
         await state.update_data(max_bonus=min(max_bonus, user['bonus_points']))
     else:
-        await query.message.edit_caption(caption=f"У вас нет бонусов для использования",
+        await query.message.edit_caption(caption=l10n.format_value('error-user-havent-bonus'),
                                          reply_markup=get_payment_settings_kb())
         await state.update_data(max_bonus=-1)
 

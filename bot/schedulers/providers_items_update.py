@@ -8,6 +8,12 @@ from bot.services.steam_inventory.items_fetch import ItemsFetch
 
 
 async def providers_items_update():
+    """
+    Здесь инициализируются провайдеры, которые
+    нужно добавить в бд
+    Обновляются курсы валют
+    Обновляются все цены у provider
+    """
     providers_to_fetch = {'steam': 'last_24h', 'csmoney': ''}
     pricing_providers = await _load_file('data/pricing_providers.json')
     items_fetcher = ItemsFetch(redis_db, pricing_providers)

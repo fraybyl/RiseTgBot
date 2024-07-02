@@ -4,8 +4,24 @@ from loguru import logger
 from bot.core.loader import config_json
 
 
-async def edit_message_media(callback_query: CallbackQuery, media: str = None,
-                             reply_markup: InlineKeyboardMarkup = None, caption: str = None) -> int | None:
+async def edit_message_media(
+        callback_query: CallbackQuery,
+        media: str = None,
+        reply_markup: InlineKeyboardMarkup = None,
+        caption: str = None
+) -> int | None:
+    """
+    Асинхронно редактирует медиа-сообщение в ответ на callback_query.
+
+    Args:
+        callback_query (CallbackQuery): Объект callback_query.
+        media (str, optional): Имя или путь к медиа-файлу. Defaults to None.
+        reply_markup (InlineKeyboardMarkup, optional): Объект InlineKeyboardMarkup для сообщения. Defaults to None.
+        caption (str, optional): Подпись к медиа-файлу. Defaults to None.
+
+    Returns:
+        int | None: ID отредактированного сообщения или None в случае ошибки.
+    """
     try:
         file_id = await config_json.get_file_id(media)
         if file_id:

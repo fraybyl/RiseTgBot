@@ -1,5 +1,20 @@
 def simulate_investment_strategy(initial_accounts_str, account_cost_str, weekly_profit_per_account_str, total_weeks_str,
                                  reinvest_ratio_str):
+    """
+    Симулирует стратегию инвестирования на основе заданных параметров.
+
+    Args:
+        initial_accounts_str (str): Начальное количество аккаунтов.
+        account_cost_str (str): Стоимость одного аккаунта.
+        weekly_profit_per_account_str (str): Недельная прибыль с одного аккаунта.
+        total_weeks_str (str): Общее количество недель для симуляции.
+        reinvest_ratio_str (str): Доля прибыли, которая реинвестируется.
+
+    Returns:
+        tuple: Кортеж из двух элементов:
+            - int: Итоговое количество аккаунтов после симуляции.
+            - float: Накопленные сбережения после симуляции.
+    """
     # Parse inputs once
     initial_accounts = int(initial_accounts_str)
     account_cost = float(account_cost_str)

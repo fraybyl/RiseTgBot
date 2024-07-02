@@ -7,7 +7,12 @@ from bot.services.steam_ban.fetch_steam_ban import add_or_update_player_bans
 from bot.types.AccountInfo import AccountInfo
 
 
-async def fetch_ban_statistics(keys):
+async def fetch_ban_statistics(keys: str) -> list[AccountInfo]:
+    """
+    собирает информацию из redis о статистике всех аккаунтов
+    :param keys: Какие ключи искать
+    :returns Возвращает список AccountInfo
+    """
     pipeline = redis_db.pipeline()
     for key in keys:
         pipeline.hget(key, 'ban')
@@ -16,6 +21,13 @@ async def fetch_ban_statistics(keys):
 
 
 async def ban_statistics_schedule() -> None:
+    """
+    Обновляет статистику банов.
+    Запоминает предыдущие значения.
+    Обновляет по всей базе redis аккаунты
+    Сравнивает и отправляет уведомление пользователям, если
+    есть забаненные аккаунты
+    """
     logger.info('Обновление статистики банов начато...')
     try:
         all_accounts = await get_all_steamid64()
@@ -27,12 +39,12 @@ async def ban_statistics_schedule() -> None:
             if keys:
                 ban_infos = await fetch_ban_statistics(keys)
                 for ban_info in ban_infos:
-                    ban_statistics[ban_info.steam_id] = ban_info
+                    ban_statistics[ban_info.SteamId] = ban_info
 
         stat = await add_or_update_player_bans(all_accounts, True)
         for new_ban_statistics in stat:
-            if new_ban_statistics != ban_statistics[new_ban_statistics.steam_id]:
-                bans.append(int(new_ban_statistics.steam_id))
+            if new_ban_statistics != ban_statistics[new_ban_statistics.SteamId]:
+                bans.append(int(new_ban_statistics.SteamId))
 
         if bans:
             user_bans = await get_steamids64_owners(bans)

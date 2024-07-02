@@ -7,6 +7,12 @@ from aiogram.types import Message
 
 
 class ValidateQuantityMiddleware(BaseMiddleware):
+    """
+    А это вроде не доделано надо доделать
+    мидлварь которая проверяет правильный ли введенный текст.
+    :params event: Событие
+    :returns Если является числом и больше 0, True, иначе False
+    """
     def __init__(self, locale: fluent.runtime.FluentLocalization):
         self.locale = locale
 
@@ -16,7 +22,6 @@ class ValidateQuantityMiddleware(BaseMiddleware):
         event: Message,
         data: Dict[str, Any]
     ) -> Any:
-        state: FSMContext = data['state']
         if event.text.isdigit() and int(event.text) > 0:
             data['valid'] = True
         else:

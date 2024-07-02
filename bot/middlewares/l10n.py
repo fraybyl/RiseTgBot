@@ -6,6 +6,11 @@ from aiogram.types import Message
 
 
 class L10nMiddleware(BaseMiddleware):
+    """
+    Регистрирует мидлварь на локализацию в файле Locale.ftl
+    :param locale: Принимает локаль из инициализации
+    :returns Возвращает локаль из файла locale.ftl
+    """
     def __init__(
         self,
         locale: fluent.runtime.FluentLocalization

@@ -7,12 +7,40 @@ from bot.types.Item import Item
 
 
 class ItemsFetch:
+    """
+    Класс для получения данных о ценах и курсах обмена предметов и сохранения их в Redis.
+
+    Атрибуты:
+    - redis_db (Redis): Асинхронный клиент Redis для выполнения операций с базой данных.
+    - pricing_providers (dict): Словарь с информацией о провайдерах цен.
+
+    Методы:
+    - exchanges_rate(self):
+      Асинхронно получает курсы обмена и сохраняет их в Redis под ключом 'exchangeRates'.
+
+    - items_prices(self, provider: str, mode: str = None):
+      Асинхронно получает цены предметов от указанного провайдера и сохраняет их в Redis.
+
+      Аргументы:
+      - provider (str): Наименование провайдера цен.
+      - mode (str, optional): Режим ценообразования (для определённых провайдеров). По умолчанию None.
+    """
+
     def __init__(self, redis_client: Redis, pricing_providers: dict):
+        """
+        Инициализирует объект класса ItemsFetch.
+
+        Аргументы:
+        - redis_client (Redis): Асинхронный клиент Redis для выполнения операций с базой данных.
+        - pricing_providers (dict): Словарь с информацией о провайдерах цен.
+        """
         self.redis_db = redis_client
         self.pricing_providers = pricing_providers
 
     async def exchanges_rate(self):
-        """Получение курсов обмена и сохранение в Redis."""
+        """
+        Асинхронно получает курсы обмена и сохраняет их в Redis под ключом 'exchangeRates'.
+        """
         url = 'https://prices.csgotrader.app/latest/exchange_rates.json'
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
@@ -23,7 +51,13 @@ class ItemsFetch:
                     logger.warning(f"Не удалось получить данные курсов обмена. Статус: {response.status}")
 
     async def items_prices(self, provider: str, mode: str = None):
-        """Получение цен предметов и сохранение в Redis."""
+        """
+        Асинхронно получает цены предметов от указанного провайдера и сохраняет их в Redis.
+
+        Аргументы:
+        - provider (str): Наименование провайдера цен.
+        - mode (str, optional): Режим ценообразования (для определённых провайдеров). По умолчанию None.
+        """
         url = f'https://prices.csgotrader.app/latest/{provider}.json'
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:

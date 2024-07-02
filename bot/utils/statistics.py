@@ -9,6 +9,20 @@ from bot.types.Statistic import Statistic
 
 
 async def fetch_price_results(provider: str, mode: str, currency: str) -> list[Item]:
+    """
+    Асинхронно извлекает результаты цен для предметов из Redis по провайдеру цен, преобразует в валюту и возвращает список объектов Item.
+
+    Args:
+        provider (str): Провайдер, данные которого требуется извлечь.
+        mode (str, optional): Режим провайдера, если применим (по умолчанию None).
+        currency (str): Валюта для конвертации цен.
+
+    Returns:
+        list[Item]: Список объектов Item, представляющих результаты цен.
+
+    Raises:
+        TypeError: Если cursor не является строкой.
+    """
     cursor = '0'
     prices_results = []
     redis_key = f'prices:{provider}' + (f':{mode}' if mode else '')
@@ -29,6 +43,20 @@ async def fetch_price_results(provider: str, mode: str, currency: str) -> list[I
 
 
 async def get_statistic(provider: str, mode: str = None, steam_ids: list[int] = None) -> Statistic:
+    """
+    Асинхронно считает статистику либо по всем аккаунтам либо по определенным.
+
+    Args:
+        provider (str): Провайдер, для которого требуется извлечь статистику.
+        mode (str, optional): Режим провайдера, если применим (по умолчанию None).
+        steam_ids (list[int], optional): Список steam_id для фильтрации статистики (по умолчанию None).
+
+    Returns:
+        Statistic: Объект Statistic, содержащий собранную статистику.
+
+    Raises:
+        TypeError: Если cursor не является строкой.
+    """
     cursor = '0'
     steam_ids_set = set(steam_ids) if steam_ids else None
     statistics = Statistic()
@@ -65,6 +93,17 @@ async def get_statistic(provider: str, mode: str = None, steam_ids: list[int] = 
 
 @cached(key_builder=lambda *args, **kwargs: "")
 async def get_general_statistics(l10n: FluentLocalization, provider: str, mode: str = None) -> str:
+    """
+    Асинхронно получает общую статистику на основе локализации и провайдера для указанного режима.
+
+    Args:
+        l10n (FluentLocalization): Объект локализации для форматирования текста.
+        provider (str): Провайдер, с которого смотреть цены.
+        mode (str, optional): Режим провайдера, если применим (по умолчанию None).
+
+    Returns:
+        str: Текст общей статистики в формате, согласованном с локализацией.
+    """
     statistics = await get_statistic(provider=provider, mode=mode,)
     text = l10n.format_value('general-accounts-info', {
         'accounts': statistics.total_accounts,
@@ -83,6 +122,19 @@ async def get_general_statistics(l10n: FluentLocalization, provider: str, mode: 
 
 @cached(key_builder=lambda user_id, *args, **kwargs: build_key(user_id))
 async def get_personal_statistics(user_id: int, steam_ids: list[int], l10n: FluentLocalization, provider: str, mode: str = None) -> str:
+    """
+    Асинхронно получает персональную статистику для указанного пользователя на основе локализации, списка steam_ids и провайдера для указанного режима.
+
+    Args:
+        user_id (int): ID пользователя, под которым сохранить кеш.
+        steam_ids (list[int]): Список steam_id по которым делать статистику.
+        l10n (FluentLocalization): Объект локализации для форматирования текста.
+        provider (str): Провайдер, с которого смотреть цены.
+        mode (str, optional): Режим провайдера, если применим (по умолчанию None).
+
+    Returns:
+        str: Текст персональной статистики в формате, согласованном с локализацией.
+    """
     statistics = await get_statistic(provider=provider, mode=mode, steam_ids=steam_ids)
     text = l10n.format_value('personal-accounts-info', {
         'accounts': statistics.total_accounts,

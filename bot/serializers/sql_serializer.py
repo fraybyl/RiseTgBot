@@ -5,9 +5,40 @@ from bot.serializers.abstract_serializer import AbstractSerializer
 
 
 class SQLSerializer(AbstractSerializer):
-    """Serialize values using to_dict and orjson."""
+    """
+    Сериализация и десериализация объектов с использованием библиотеки orjson.
+
+    Методы:
+    - serialize(obj: any) -> bytes:
+      Сериализует объект в формат байтов. Добавляет информацию о классе модели (_model), если объект имеет метод as_dict.
+
+      Аргументы:
+      - obj (any): Объект для сериализации.
+
+      Возвращает:
+      - bytes: Сериализованный объект в формате байтов.
+
+    - deserialize(data: bytes) -> any:
+      Десериализует байтовые данные в объект(ы). Если данные представляют собой список, каждый элемент десериализуется отдельно.
+      Ожидается, что каждый объект содержит информацию о классе модели (_model).
+
+      Аргументы:
+      - data (bytes): Байтовые данные для десериализации.
+
+      Возвращает:
+      - any: Десериализованный объект или список объектов.
+    """
 
     def serialize(self, obj: any) -> bytes:
+        """
+        Сериализует объект в формат байтов с использованием orjson.
+
+        Аргументы:
+        - obj (any): Объект для сериализации.
+
+        Возвращает:
+        - bytes: Сериализованный объект в формате байтов.
+        """
         def default(obj):
             if hasattr(obj, 'as_dict'):
                 data = obj.as_dict
@@ -18,6 +49,15 @@ class SQLSerializer(AbstractSerializer):
         return orjson.dumps(obj, default=default, option=orjson.OPT_SERIALIZE_NUMPY | orjson.OPT_SERIALIZE_DATACLASS)
 
     def deserialize(self, data: bytes) -> any:
+        """
+        Десериализует байтовые данные в объект(ы) с использованием orjson.
+
+        Аргументы:
+        - data (bytes): Байтовые данные для десериализации.
+
+        Возвращает:
+        - any: Десериализованный объект или список объектов.
+        """
         obj_dict_or_list = orjson.loads(data)
 
         if isinstance(obj_dict_or_list, list):
@@ -27,6 +67,18 @@ class SQLSerializer(AbstractSerializer):
 
     @staticmethod
     def _deserialize_single(obj_dict: dict) -> any:
+        """
+        Восстанавливает отдельный объект из словаря с информацией о классе модели.
+
+        Аргументы:
+        - obj_dict (dict): Словарь с данными объекта и информацией о классе модели.
+
+        Возвращает:
+        - any: Десериализованный объект.
+
+        Исключения:
+        - ValueError: Если данные не содержат информации о модели или модель неизвестна.
+        """
         model_name = obj_dict.pop('_model', None)
 
         if model_name is None:

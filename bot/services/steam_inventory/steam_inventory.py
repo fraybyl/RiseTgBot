@@ -1,5 +1,4 @@
 import asyncio
-
 import aiohttp
 import orjson
 import ua_generator
@@ -13,6 +12,29 @@ from bot.types.InventoryDescription import InventoryDescription
 
 
 class SteamInventory:
+    """
+    Класс для работы с инвентарем Steam через API и сохранения данных в Redis.
+
+    Атрибуты:
+    - proxies (list[str]): Список прокси-серверов для отправки запросов.
+    - redis_db (Redis): Асинхронный клиент Redis для выполнения операций с базой данных.
+    - rate_period (float): Период ограничения скорости запросов к API Steam. По умолчанию 5.0.
+    - blacklist_ttl (int): Время жизни записи в Redis о наличии в черном списке. По умолчанию 28800 секунд.
+
+    Методы:
+    - __aenter__(self):
+      Асинхронный контекстный менеджер для инициализации сессий и лимитеров для каждого прокси.
+
+    - __aexit__(self, exc_type, exc, tb):
+      Асинхронный метод для закрытия сессий при завершении работы с контекстным менеджером.
+
+    - get_inventory(self, steam_id: int, proxy: str) -> bool:
+      Асинхронно получает данные инвентаря указанного пользователя Steam и сохраняет их в Redis.
+
+    - process_inventories(self, steam_ids: list[int], is_update=False) -> None:
+      Асинхронно обрабатывает инвентари пользователей Steam из списка steam_ids.
+    """
+
     def __init__(
             self,
             proxies: list[str],
@@ -20,6 +42,15 @@ class SteamInventory:
             rate_period: float = 5.0,
             blacklist_ttl: int = 28800
     ) -> None:
+        """
+        Инициализирует объект класса SteamInventory.
+
+        Аргументы:
+        - proxies (list[str]): Список прокси-серверов для отправки запросов.
+        - redis_db (Redis): Асинхронный клиент Redis для выполнения операций с базой данных.
+        - rate_period (float, optional): Период ограничения скорости запросов к API Steam. По умолчанию 5.0.
+        - blacklist_ttl (int, optional): Время жизни записи в Redis о наличии в черном списке. По умолчанию 28800 секунд.
+        """
         self.sessions: dict[str, dict] = {}
         self.proxies = proxies
         self.redis_db = redis_db
@@ -27,6 +58,9 @@ class SteamInventory:
         self.rate_period = rate_period
 
     async def __aenter__(self):
+        """
+        Асинхронный контекстный менеджер для инициализации сессий и лимитеров для каждого прокси.
+        """
         for proxy in self.proxies:
             headers = ua_generator.generate(browser=('chrome', 'firefox')).headers.get()
             session = aiohttp.ClientSession(headers=headers)
@@ -35,6 +69,9 @@ class SteamInventory:
         return self
 
     async def __aexit__(self, exc_type, exc, tb):
+        """
+        Асинхронный метод для закрытия сессий при завершении работы с контекстным менеджером.
+        """
         for proxy, data in self.sessions.items():
             await data['session'].close()
 
@@ -43,6 +80,16 @@ class SteamInventory:
             steam_id: int,
             proxy: str
     ) -> bool:
+        """
+        Асинхронно получает данные инвентаря указанного пользователя Steam и сохраняет их в Redis.
+
+        Аргументы:
+        - steam_id (int): Steam ID пользователя.
+        - proxy (str): Прокси-сервер для отправки запроса.
+
+        Возвращает:
+        - bool: True, если данные инвентаря успешно получены и сохранены, иначе False.
+        """
         inventory_url = f"https://steamcommunity.com/inventory/{steam_id}/730/2?l=english&count=1999"
         session_data = self.sessions.get(proxy)
 
@@ -54,7 +101,7 @@ class SteamInventory:
 
         async with limiter:
             async with session.get(inventory_url, proxy=proxy) as response:
-                print(f'fetch with {proxy} {steam_id}')
+                logger.debug(f'Fetch with {proxy} {steam_id}')
 
                 if response.status == 200:
                     data = await response.json(encoding='utf-8', loads=orjson.loads)
@@ -94,6 +141,13 @@ class SteamInventory:
             steam_ids: list[int],
             is_update=False
     ) -> None:
+        """
+        Асинхронно обрабатывает инвентари пользователей Steam из списка steam_ids.
+
+        Аргументы:
+        - steam_ids (list[int]): Список Steam ID пользователей.
+        - is_update (bool, optional): Флаг, указывающий на необходимость обновления инвентаря. По умолчанию False.
+        """
         while steam_ids:
             if not self.proxies:
                 logger.error(f'Закончились прокси, осталось {len(steam_ids)} аккаунтов для проверки. АЛАРМ')
