@@ -73,7 +73,7 @@ async def handle_back_payment(query: CallbackQuery, state: FSMContext, l10n: Flu
         product = data.get('product')
         min_quantity = data.get('min_quantity')
         await query.message.edit_caption(caption=l10n.format_value('product-quantity', {
-            'quantity': product.quantity,
+            'quantity': product['quantity'],
             'min': min_quantity
         }),
                                          reply_markup=get_cancel_order_kb(product['id']))
