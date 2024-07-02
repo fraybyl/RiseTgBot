@@ -1,7 +1,3 @@
-import asyncio
-import os
-
-import aiofiles
 import aiohttp
 from loguru import logger
 from orjson import orjson

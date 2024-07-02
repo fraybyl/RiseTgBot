@@ -1,9 +1,9 @@
 from dataclasses import dataclass, asdict
+
 import orjson
 
 from bot.types.AccountInfo import AccountInfo
 from bot.types.Inventory import Inventory
-from bot.types.Item import Item
 
 
 @dataclass

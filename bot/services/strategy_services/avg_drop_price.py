@@ -1,11 +1,12 @@
+import json
 import re
+
 import aiohttp
 from bs4 import BeautifulSoup
 from loguru import logger
-from datetime import datetime
-import asyncio
-import json
+
 from bot.decorators.dec_cache import cached
+
 
 async def fetch(url, currency: str):
     async with aiohttp.ClientSession() as session:

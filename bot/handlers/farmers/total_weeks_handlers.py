@@ -4,7 +4,7 @@ from aiogram.types import Message
 from aiogram.utils.chat_action import ChatActionSender
 from fluent.runtime import FluentLocalization
 
-from bot.core.loader import config_json, bot
+from bot.core.loader import bot
 from bot.keyboards.farmers_keyboards import get_cancel_strategy_kb
 from bot.services.strategy_services.avg_drop_price import get_avg_drop, get_rub_rate
 from bot.states.state_helper import push_state

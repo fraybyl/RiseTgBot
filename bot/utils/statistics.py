@@ -1,5 +1,4 @@
 from fluent.runtime import FluentLocalization
-from orjson import orjson
 
 from bot.core.loader import redis_db
 from bot.decorators.dec_cache import cached, build_key

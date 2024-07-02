@@ -3,8 +3,8 @@ import os
 import aiofiles
 import orjson
 
-from bot.services.steam_inventory.items_fetch import ItemsFetch
 from bot.core.loader import redis_db
+from bot.services.steam_inventory.items_fetch import ItemsFetch
 
 
 async def providers_items_update():
