@@ -28,15 +28,20 @@ async def process_total_weeks(message: Message, state: FSMContext, l10n: FluentL
         avg_price = await get_avg_drop()
         await message.delete()
 
-        profit = simulate_investment_strategy(initial_accounts, account_cost, avg_price, total_weeks,
-                                                              float_strategy)
+        profit = simulate_investment_strategy(
+            initial_accounts,
+            account_cost,
+            avg_price,
+            total_weeks,
+            float_strategy
+        )
         caption_text = l10n.format_value(
             'strategy-result',
             {
                 'name': text_strategy,
                 'weeks': int(total_weeks),
                 'price': float(avg_price), 
-                'account_price': round(float(account_cost), 2),
+                'account_price':float(account_cost),
                 'profit': round(float(profit), 1),
             }
         )
