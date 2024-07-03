@@ -6,6 +6,11 @@ from aiogram.types import CallbackQuery
 
 
 def throttle(rate_limit: int):
+    """
+    Декоратор, позволяющий пользователям throttle вызываемую функцию.
+    :param rate_limit: Ограничение скорости в секундах.
+    :return: Декорированная функция.
+    """
     def decorator(func):
         @wraps(func)
         async def wrapped(callback_query: CallbackQuery, *args, **kwargs):
