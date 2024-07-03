@@ -1,5 +1,6 @@
-import requests
 import json
+
+import requests
 
 # URL API
 url = "https://api.steampowered.com/ISteamApps/GetAppList/v2/"

@@ -104,7 +104,7 @@ async def get_general_statistics(l10n: FluentLocalization, provider: str, mode: 
     Returns:
         str: Текст общей статистики в формате, согласованном с локализацией.
     """
-    statistics = await get_statistic(provider=provider, mode=mode,)
+    statistics = await get_statistic(provider=provider, mode=mode, )
     text = l10n.format_value('general-accounts-info', {
         'accounts': statistics.total_accounts,
         'total_bans': statistics.total_bans,
@@ -121,7 +121,8 @@ async def get_general_statistics(l10n: FluentLocalization, provider: str, mode: 
 
 
 @cached(key_builder=lambda user_id, *args, **kwargs: build_key(user_id))
-async def get_personal_statistics(user_id: int, steam_ids: list[int], l10n: FluentLocalization, provider: str, mode: str = None) -> str:
+async def get_personal_statistics(user_id: int, steam_ids: list[int], l10n: FluentLocalization, provider: str,
+                                  mode: str = None) -> str:
     """
     Асинхронно получает персональную статистику для указанного пользователя на основе локализации, списка steam_ids и провайдера для указанного режима.
 

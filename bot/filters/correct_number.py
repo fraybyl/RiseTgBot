@@ -9,6 +9,7 @@ class CorrectNumberFilter(BaseFilter):
     :param states: Принимает в себя state
     :return: Возвращает bool. совпадает или нет
     """
+
     def __init__(self, *states):
         self.states = states
 

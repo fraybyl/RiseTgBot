@@ -1,5 +1,6 @@
 import math
 
+
 def calculate_discount_percentage(price, discount):
     """
     Вычисляет процент скидки на основе цены и значения скидки.

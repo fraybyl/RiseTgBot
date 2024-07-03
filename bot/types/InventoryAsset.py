@@ -1,12 +1,12 @@
 class InventoryAsset(dict):
     def __init__(
-        self,
-        app_id: int,
-        context_id: str,
-        asset_id: str,
-        class_id: str,
-        instance_id: str,
-        amount: str
+            self,
+            app_id: int,
+            context_id: str,
+            asset_id: str,
+            class_id: str,
+            instance_id: str,
+            amount: str
     ):
         super().__init__(
             appid=app_id,

@@ -39,6 +39,7 @@ class SQLSerializer(AbstractSerializer):
         Возвращает:
         - bytes: Сериализованный объект в формате байтов.
         """
+
         def default(obj):
             if hasattr(obj, 'as_dict'):
                 data = obj.as_dict
@@ -90,4 +91,3 @@ class SQLSerializer(AbstractSerializer):
             raise ValueError(f"Unknown model: {model_name}")
 
         return model_class(**obj_dict)
-

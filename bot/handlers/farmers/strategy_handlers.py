@@ -15,7 +15,6 @@ router = Router(name=__name__)
 router.include_router(initial_accounts_router)
 router.include_router(total_weeks_router)
 
-
 strategy_mapping = {
     'aggressive_strategy': {
         'float_strategy': 0.8,

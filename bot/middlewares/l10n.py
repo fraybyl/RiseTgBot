@@ -11,18 +11,18 @@ class L10nMiddleware(BaseMiddleware):
     :param locale: Принимает локаль из инициализации
     :returns Возвращает локаль из файла locale.ftl
     """
+
     def __init__(
-        self,
-        locale: fluent.runtime.FluentLocalization
+            self,
+            locale: fluent.runtime.FluentLocalization
     ):
         self.locale = locale
 
     async def __call__(
-        self,
-        handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
-        event: Message,
-        data: Dict[str, Any]
+            self,
+            handler: Callable[[Message, Dict[str, Any]], Awaitable[Any]],
+            event: Message,
+            data: Dict[str, Any]
     ) -> Any:
         data["l10n"] = self.locale
         return await handler(event, data)
-
