@@ -70,10 +70,10 @@ general-accounts-info =
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     Всего аккаунтов: <b>{$accounts}</b>🧾
     Всего забанено: <b>{$total_bans}</b>⛔️
-    VAC баны: <b>{$total_vac}</b>
-    Community баны: <b>{$total_community}</b>
-    Game баны: <b>{$total_game_ban}</b>
-    ‼️Банов за последние 7 дней: <b>{$bans_in_last_week}</b>‼️
+    VAC баны: <b>{$total_vac}</b>🚫
+    Community баны: <b>{$total_community}</b>🔕
+    Game баны: <b>{$total_game_ban}</b>🔇
+    📆Банов за последние 7 дней: <b>{$bans_in_last_week}</b>📆
 
     <b>🔰Общая статистика инвентарей🔰</b>
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -85,11 +85,11 @@ personal-accounts-info =
     <code><b>🔰Личная статистика🔰</b>
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     Всего аккаунтов: <b>{$accounts}</b>🧾
-    Всего забанено: <b>{$total_bans}</b>
-    VAC баны: <b>{$total_vac}</b>
-    Community баны: <b>{$total_community}</b>
-    Game баны: <b>{$total_game_ban}</b>
-    Банов за последние 7 дней: <b>{$bans_in_last_week}</b>
+    Всего забанено: <b>{$total_bans}</b>⛔️
+    VAC баны: <b>{$total_vac}</b>🚫
+    Community баны: <b>{$total_community}</b>🔕
+    Game баны: <b>{$total_game_ban}</b>🔇
+    📆Банов за последние 7 дней: <b>{$bans_in_last_week}</b>📆
 
     <b>🔰Личная статистика инвентарей🔰</b>
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -113,18 +113,19 @@ success_add_accounts =
         *[other] Добавлено <b>{$accounts} аккаунта</b>🧾
     }
 
-get-accounts-dump = получать аккаунты подпись
+get-accounts-dump = 
+    ваши аккаунты
+    ❗️при нажатии кнопки <b>назад</b> файл удалится❗️
 
-error-accounts-dump = ошибка при нажатие на кнопку
+error-accounts-dump = 
+    ❗️<b>ошибка</b> при нажатие на кнопку❗️
 
-remove-accounts-info = Отправьте файл с аккаунтами которые нужно удалить...
+remove-accounts-info = 
+    Отправьте файл с аккаунтами которые нужно удалить...
 
 error-not-steam_ids_dump = 
     Отправьте файл содержащий 
-    <b>
-    steamid
-    vanity url
-    steam urls/b>
+    <b>steamid или ссылку на профиль/b>
 
 success-remove-accounts =
     { $length_accounts -> 
@@ -135,27 +136,27 @@ success-remove-accounts =
     }
 
 error-process-accounts-file =
-    <b>Ошибка при обработке</b>
+    ❗️<b>Ошибка при обработке</b>❗️
 
 error-file-found =
-    <b>Файл или текст не найден!</b>
+    <b>❗️Файл или текст не найден❗️</b>
 
 process-accounts-file =
-    Идет обработка...
+    💭Идет обработка...💭
 
 add-accounts-info =
-    Отправьте файл или сообщение с аккаунтами
-    текст не длинее 78 строк ...
+    Отправьте файл или сообщение с аккаунтами🧾
+    <b>текст не длинее 78 строк ...</b>
 
 personal-accounts-empty =
     У вас нет аккаунтов
-    Нажмите кнопку добавить аккаунты
+    Нажмите кнопку <b>📩добавить аккаунты📩</b>
 
 bonus-quantity-max = 
     Введите количество не больше {$bonus}
 
 error-user-havent-bonus = 
-    У вас нет бонусов для использования
+    ❗️У вас <b>нет</b> бонусов для использования❗️
 
 payment-product = 
     тут будет оплата продукта какая то инфа
