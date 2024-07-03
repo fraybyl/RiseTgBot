@@ -10,8 +10,8 @@ python = "^3.12"
 aiogram = "^3.8.0"
 sqlalchemy = "^2.0.31"
 pydantic-settings = "^2.3.4"
-redis = {extras = ["hiredis"], version = "^5.0.6"}
-aiohttp = {extras = ["speedups"], version = "^3.9.5"}
+redis = { extras = ["hiredis"], version = "^5.0.6" }
+aiohttp = { extras = ["speedups"], version = "^3.9.5" }
 loguru = "^0.7.2"
 asyncpg = "^0.29.0"
 fluent-runtime = "^0.4.0"

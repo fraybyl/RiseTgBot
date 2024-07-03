@@ -1,5 +1,7 @@
 from dataclasses import dataclass, asdict
+
 import orjson
+
 
 @dataclass
 class AccountInfo:

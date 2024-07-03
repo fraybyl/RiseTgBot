@@ -114,7 +114,8 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
 
         if not steam_ids:
             await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                           caption=l10n.format_value('success_add_accounts', {'accounts': len(steam_ids)}),
+                                           caption=l10n.format_value('success_add_accounts',
+                                                                     {'accounts': len(steam_ids)}),
                                            reply_markup=get_personal_inventory_settings_kb())
             return
 
@@ -142,7 +143,8 @@ async def handle_get_accounts(query: CallbackQuery, state: FSMContext, l10n: Flu
         return
     dump_file = await dump_accounts(accounts)
 
-    document_message_id = await bot.send_document(query.message.chat.id, dump_file, caption=l10n.format_value('get-accounts-dump'))
+    document_message_id = await bot.send_document(query.message.chat.id, dump_file,
+                                                  caption=l10n.format_value('get-accounts-dump'))
 
     await state.update_data(document_message_id=document_message_id.message_id)
 
@@ -174,7 +176,8 @@ async def process_remove_accounts(message: Message, state: FSMContext, l10n: Flu
         removed_accounts = await remove_steamid64_for_user(message.from_user.id, steam_ids)
 
         await bot.edit_message_caption(chat_id=message.chat.id, message_id=message_id,
-                                       caption=l10n.format_value('success-remove-accounts', {'length_accounts': len(removed_accounts)}),
+                                       caption=l10n.format_value('success-remove-accounts',
+                                                                 {'length_accounts': len(removed_accounts)}),
                                        reply_markup=get_personal_inventory_settings_kb())
 
         if removed_accounts:

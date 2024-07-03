@@ -1,5 +1,7 @@
 import asyncio
+
 from aiogram.types import BufferedInputFile
+
 
 def convert_steamid_to_link(steam_id: int) -> str:
     """
@@ -12,6 +14,7 @@ def convert_steamid_to_link(steam_id: int) -> str:
         str: Ссылка на профиль Steam Community.
     """
     return f"https://steamcommunity.com/profiles/{steam_id}"
+
 
 async def process_bytes(steam_ids: list[int]) -> bytes:
     """
@@ -26,6 +29,7 @@ async def process_bytes(steam_ids: list[int]) -> bytes:
     links = [convert_steamid_to_link(steam_id) for steam_id in steam_ids]
     steam_ids_str = '\n'.join(links) + '\n'
     return steam_ids_str.encode('utf-8')
+
 
 async def dump_accounts(steam_ids: list[int], chunk_size: int = 1000) -> BufferedInputFile:
     """

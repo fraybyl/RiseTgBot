@@ -5,9 +5,9 @@ from aiogram.utils.chat_action import ChatActionSender
 from fluent.runtime import FluentLocalization
 from loguru import logger
 
-from bot.core.loader import config_json, bot, redis_db
+from bot.core.loader import bot
 from bot.keyboards.farmers_keyboards import get_cancel_strategy_kb
-from bot.services.strategy_services.avg_drop_price import get_avg_drop, get_rub_rate
+from bot.services.strategy_services.avg_drop_price import get_avg_drop
 from bot.states.state_helper import push_state
 from bot.states.strategy_states import StrategyStates
 from bot.utils.investment_strategy import simulate_investment_strategy
@@ -61,8 +61,6 @@ async def process_total_weeks(message: Message, state: FSMContext, l10n: FluentL
             await push_state(state, StrategyStates.CALCULATE.state)
     except Exception as e:
         logger.error(e)
-
-
 
 # СДЕЛАТЬ НОРМАЛЬНЫЙ ПОИСК ВАЛЮТЫ
 # async def get_exchangeRates() -> str:

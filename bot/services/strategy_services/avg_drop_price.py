@@ -41,12 +41,13 @@ async def parse(html):
 async def get_avg_drop() -> float:
     url = 'https://21level.ru/ru'
     currency = 'Средний дроп'
-    html = await fetch(url,currency)
+    html = await fetch(url, currency)
     if html:
         cost_value = await parse(html)
         if cost_value:
             return cost_value
     return 0.0
+
 
 @cached(ttl=300)
 async def get_rub_rate(currency: int) -> float:
@@ -56,7 +57,7 @@ async def get_rub_rate(currency: int) -> float:
         currency = "RUB:UAH"
 
     url = f"https://api.steam-currency.ru/currency/{currency}"
-    response = await fetch(url, currency) 
+    response = await fetch(url, currency)
     data = json.loads(response)
 
     # Извлечение последнего значения

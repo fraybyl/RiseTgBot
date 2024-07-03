@@ -161,6 +161,7 @@ async def get_steamids64_owners(steamid64_list: list[int]) -> dict[int, list[int
             logger.error(f"ошибка в get_steamids64_owners: {e}")
             raise
 
+
 @cached(ttl=None)
 async def get_users_with_steam_accounts() -> list[int]:
     """Возвращает telegram_id всех пользователей с не пустым steam_account."""

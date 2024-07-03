@@ -35,6 +35,7 @@ def cached(
     """Кэширует возвращаемое значение функции в  key из module_name, function_name, и args."""
     if serializer is None:
         serializer = JSONSerializer()
+
     def decorator(func: callable) -> callable:
         @wraps(func)
         async def wrapper(*args: any, **kwargs: any) -> any:

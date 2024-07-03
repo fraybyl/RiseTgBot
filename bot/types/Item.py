@@ -39,7 +39,7 @@ class Item:
         item_name = item_name.decode('utf-8')
         data = orjson.loads(data.decode('utf-8'))
         price = float(data.get('price', 0.0))
-        doppler_prices = data.get('doppler', {})# здесь не доделано
+        doppler_prices = data.get('doppler', {})  # здесь не доделано
         return cls(
             item_name=item_name,
             price=round(price * currency_ratio, 2),
