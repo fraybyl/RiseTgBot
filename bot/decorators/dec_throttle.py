@@ -11,6 +11,7 @@ def throttle(rate_limit: int):
     :param rate_limit: Ограничение скорости в секундах.
     :return: Декорированная функция.
     """
+
     def decorator(func):
         @wraps(func)
         async def wrapped(callback_query: CallbackQuery, *args, **kwargs):
