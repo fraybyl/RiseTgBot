@@ -9,7 +9,7 @@ strategy-choose =
     Пожалуйста, введите количество аккаунтов...
 
 strategy-accounts = 
-    Вы ввели количество аккаунтов - <b>{$accounts}</b> шт.
+    Вы ввели количество аккаунтов - <b>{$accounts}</b> шт.🧾
     Пожалуйста, введите количество недель...
 
 strategy-result =
@@ -36,9 +36,7 @@ strategy-result =
         *[other] Цена аккаунта - <b>{$account_price} рубля</b>▫️
     }
     ━━━━━━━━━━━━━━━━━━━━━━
-    { $accounts_profit ->
-      *[one] Количество аккаунтов - <b> {$accounts_profit} шт </b>🧾
-    }
+    Количество аккаунтов - <b> {$accounts_profit} шт.   (  +  {$accounts_count}) </b>🧾
     ━━━━━━━━━━━━━━━━━━━━━━
     { $profit -> 
         [one] Отложенная прибыль - <b>{$profit} рубль </b>💎
@@ -48,86 +46,122 @@ strategy-result =
     }</blockquote>
 
 product-quantity =
-    <blockquote>Всего доступно - <b>{$quantity}</b> шт.
-    Введите не меньше - <b>{$min}</b> шт.</blockquote>
+    <blockquote>🔸Всего доступно - <b>{$quantity}</b> шт🔸
+    ❗️Введите не меньше - <b>{$min}</b> шт❗️</blockquote>
 
 product-info =
     <blockquote>
     Вы выбрали - <b>{$name}</b>
-    Количество - <b>{$quantity}</b> шт.
+    Количество - <b>{$quantity}</b> шт🧾
     { $bonus ->
-        [one] Вы используете - <b>{$bonus} бонус</b>
+        [one] Вы используете - <b>{$bonus} бонус</b>🎁
         { "" }
-        [few] Вы используете - <b>{$bonus} бонуса</b>
+        [few] Вы используете - <b>{$bonus} бонуса</b>🎁
         { "" }
-        [many] Вы используете - <b>{$bonus} бонусов</b>
+        [many] Вы используете - <b>{$bonus} бонусов</b>🎁
         { "" }
         *[None]   { "" }
     }
-    Нажмите <b>"Оплатить"</b> для продолжения
+    Нажмите <b>"🛍Оплатить🛍"</b> для продолжения
     </blockquote>
 
 general-accounts-info =
-    <code><b>Общая статистика</b>
+    <code><b>🔰Общая статистика🔰</b>
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    Всего аккаунтов: <b>{$accounts}</b>
-    Всего забанено: <b>{$total_bans}</b>
-    VAC баны: <b>{$total_vac}</b>
-    Community баны: <b>{$total_community}</b>
-    Game баны: <b>{$total_game_ban}</b>
-    Банов за последние 7 дней: <b>{$bans_in_last_week}</b>
+    Всего аккаунтов: <b>{$accounts}</b>🧾
+    Всего забанено: <b>{$total_bans}</b>⛔️
+    VAC баны: <b>{$total_vac}</b>🚫
+    Community баны: <b>{$total_community}</b>🔕
+    Game баны: <b>{$total_game_ban}</b>🔇
+    📆Банов за последние 7 дней: <b>{$bans_in_last_week}</b>📆
 
-    <b>Общая статистика инвентарей</b>
+    <b>🔰Общая статистика инвентарей🔰</b>
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    Всего предметов: <b>{$items}</b>
-    Всего кейсов: <b>{$cases}</b>
-    Общая цена: <b>{$prices} рублей</b></code>
+    🔫Всего предметов: <b>{$items}</b>🔫
+    📦Всего кейсов: <b>{$cases}</b>📦
+    💰Общая цена: <b>{$prices} рублей</b>💰</code>
 
 personal-accounts-info =
-    <code><b>Личная статистика</b>
+    <code><b>🔰Личная статистика🔰</b>
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    Всего аккаунтов: <b>{$accounts}</b>
-    Всего забанено: <b>{$total_bans}</b>
-    VAC баны: <b>{$total_vac}</b>
-    Community баны: <b>{$total_community}</b>
-    Game баны: <b>{$total_game_ban}</b>
-    Банов за последние 7 дней: <b>{$bans_in_last_week}</b>
+    Всего аккаунтов: <b>{$accounts}</b>🧾
+    Всего забанено: <b>{$total_bans}</b>⛔️
+    VAC баны: <b>{$total_vac}</b>🚫
+    Community баны: <b>{$total_community}</b>🔕
+    Game баны: <b>{$total_game_ban}</b>🔇
+    📆Банов за последние 7 дней: <b>{$bans_in_last_week}</b>📆
 
-    <b>Личная статистика инвентарей</b>
+    <b>🔰Личная статистика инвентарей🔰</b>
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-    Всего предметов: <b>{$items}</b>
-    Всего кейсов: <b>{$cases}</b>
-    Общая цена: <b>{$prices} рублей</b></code>
+    🔫Всего предметов: <b>{$items}</b>🔫
+    📦Всего кейсов: <b>{$cases}</b>📦
+    💰Общая цена: <b>{$prices} рублей</b>💰</code>
 
-error-quantity-add-accounts = Вы можете добавить не более $accounts_limit аккаунтов
+error-quantity-add-accounts = 
+    { $accounts_limit -> 
+        [one] Вы можете добавить не более <b>{$accounts_limit} аккаунт</b>🧾
+        [few] Вы можете добавить не более <b>{$accounts_limit} аккаунта</b>🧾
+        [many] Вы можете добавить не более <b>{$accounts_limit} аккаунтов</b>🧾
+        *[other] Вы можете добавить не более <b>{$accounts_limit} аккаунта</b>🧾
+    }
 
-success_add_accounts = Добавлено $accounts аккаунтов
+success_add_accounts =
+    { $accounts -> 
+        [one] Добавлен  <b>{$accounts} аккаунт</b>🧾
+        [few] Добавлено <b>{$accounts} аккаунта</b>🧾
+        [many] Добавлено <b>{$accounts} аккаунтов</b>🧾
+        *[other] Добавлено <b>{$accounts} аккаунта</b>🧾
+    }
 
-get-accounts-dump = получать аккаунты подпись
+get-accounts-dump = 
+    ваши аккаунты
+    ❗️при нажатии кнопки <b>назад</b> файл удалится❗️
 
-error-accounts-dump = ошибка при нажатие на кнопку
+error-accounts-dump = 
+    ❗️<b>ошибка</b> при нажатие на кнопку❗️
 
-remove-accounts-info = Отправьте файл с аккаунтами которые нужно удалить...
+remove-accounts-info = 
+    Отправьте файл с аккаунтами которые нужно удалить...
 
-error-not-steam_ids_dump = Отправьте файл содержащий steamid/vanity_url/steam_urls
+error-not-steam_ids_dump = 
+    Отправьте файл содержащий 
+    <b>steamid или ссылку на профиль/b>
 
-success-remove-accounts = Удалено $length_accounts аккаунтов
+success-remove-accounts =
+    { $length_accounts -> 
+        [one] Удалено  <b>{$length_accounts} аккаунт</b>🧾
+        [few] Удалено <b>{$length_accounts} аккаунта</b>🧾
+        [many] Удалено <b>{$length_accounts} аккаунтов</b>🧾
+        *[other] Удалено <b>{$length_accounts} аккаунта</b>🧾
+    }
 
-error-process-accounts-file = Ошибка при обработке
+error-process-accounts-file =
+    ❗️<b>Ошибка при обработке</b>❗️
 
-error-file-found = Файл или текст не найден!
+error-file-found =
+    <b>❗️Файл или текст не найден❗️</b>
 
-process-accounts-file = Идет обработка...
+process-accounts-file =
+    💭Идет обработка...💭
 
-add-accounts-info = Отправьте файл или сообщение с аккаунтами\nтекст не длинее 78 строк ...
+add-accounts-info =
+    Отправьте файл или сообщение с аккаунтами🧾
+    <b>текст не длинее 78 строк ...</b>
 
 personal-accounts-empty =
-    У вас нет аккаунтов.
-    Нажмите кнопку добавить аккаунты
+    У вас нет аккаунтов
+    Нажмите кнопку <b>📩добавить аккаунты📩</b>
 
-bonus-quantity-max = Введите количество не больше $bonus
+bonus-quantity-max = 
+    Введите количество не больше {$bonus}
 
-error-user-havent-bonus = У вас нет бонусов для использования
+error-user-havent-bonus = 
+    ❗️У вас <b>нет</b> бонусов для использования❗️
 
-payment-product = тут будет оплата продукта какая то инфа
+payment-product = 
+    тут будет оплата продукта какая то инфа
+    Я пидорас (с) Лешка Колеватов
+    я знаю, лешка 
+    
+    Минеев. Подписаться.
 
