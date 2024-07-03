@@ -1,0 +1,68 @@
+{
+    "csgotrader": {
+        "description": "CS2 Trader price",
+        "long": "CS2 Trader price"
+    },
+    "bitskins": {
+        "description": "Standard BITSKINS price",
+        "long": "Standard BITSKINS price",
+        "pricing_modes": {
+            "price": "Standard bitskins price",
+            "instant_sale": "Instant sale price"
+        }
+    },
+    "steam": {
+        "description": "Steam price",
+        "pricing_modes": {
+            "last_24h": "Sales from the past 24 hours",
+            "last_7d": "Sales from the past 7 days",
+            "last_30d": "Sales from the past 30 days"
+        }
+    },
+    "csmoney": {
+        "description": "CS.MONEY price",
+        "long": "CS.MONEY Price"
+    },
+    "csgotm": {
+        "description": "CSGO.TM price",
+        "long": "CSGO.TM Price"
+    },
+    "lootfarm": {
+        "description": "LOOT.FARM price",
+        "long": "LOOT.FARM Price"
+    },
+    "skinport": {
+        "description": "Skinport price",
+        "pricing_modes": {
+            "suggested_price": "Skinport suggested price",
+            "starting_at": "Skinport starting at price"
+        }
+    },
+    "csgoempire": {
+        "description": "CSGOEmpire price",
+        "long": "CSGOEmpire price (by pricempire.com)"
+    },
+    "swapgg": {
+        "description": "swap.gg price",
+        "long": "swap.gg price (by pricempire.com)"
+    },
+    "csgoexo": {
+        "description": "CSGOEXO.COM price",
+        "long": "CSGOEXO.COM price (by pricempire.com)"
+    },
+    "buff163": {
+        "description": "BUFF price",
+        "pricing_modes": {
+            "starting_at": "BUFF Starting at (by pricempire.com)",
+            "highest_order": "BUFF Highest order (by pricempire.com)"
+        }
+    },
+    "skinwallet": {
+        "description": "Skinwallet.com price",
+        "long": "Skinwallet.com price"
+    },
+    "cstrade": {
+        "description": "CS.TRADE price",
+        "long": "CS.TRADE price"
+    }
+}
