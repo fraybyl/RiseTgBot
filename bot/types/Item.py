@@ -26,7 +26,7 @@ class Item:
 
     @classmethod
     def from_dict(cls, item_name: str, data: dict):
-        price = data.get('price', 0.0)
+        price = data.get('price', 0.0) or 0
         doppler_prices = data.get('doppler', {})
         return cls(
             item_name=item_name,

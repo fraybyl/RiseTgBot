@@ -14,17 +14,12 @@ class Inventory:
 
     def total_cases(self) -> int:
         """Вычисляет общее количество предметов-кейсов в инвентаре."""
-        count = 0
-        for item in self.items:
-            if 'case' in item.item_name.lower():
-                count += 1
+        count = sum(1 for item in self.items if 'case' in item.item_name.lower())
         return count
 
     def total_price(self) -> float:
         """Вычисляет общую стоимость всех предметов в инвентаре."""
-        total_prices = 0
-        for item in self.items:
-            total_prices += item.price
+        total_prices = sum(item.price for item in self.items)
         return total_prices
 
     @staticmethod
@@ -39,18 +34,17 @@ class Inventory:
         Returns:
             Inventory: Объект Inventory, содержащий предметы с ценами из списка prices_results.
         """
-        inventory_dict = orjson.loads(inventory_json)
-        items = []
-        for item_name, count in inventory_dict:
-            for price_item in prices_results:
-                if item_name == price_item.item_name:
-                    for _ in range(count):
-                        items.append(
-                            Item(
-                                item_name=item_name,
-                                price=price_item.price,
-                                doppler_prices=price_item.doppler_prices
-                            )
-                        )
-                    break
+        inventory_list = orjson.loads(inventory_json)
+        price_dict = {item.item_name: item for item in prices_results}
+
+        items = [
+            Item(
+                item_name=item_name,
+                price=price_dict[item_name].price,
+                doppler_prices=price_dict[item_name].doppler_prices
+            )
+            for item_name, count in inventory_list if item_name in price_dict
+            for _ in range(count)
+        ]
+
         return Inventory(items=items)

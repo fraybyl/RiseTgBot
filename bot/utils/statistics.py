@@ -1,3 +1,5 @@
+import time
+
 from fluent.runtime import FluentLocalization
 
 from bot.core.loader import redis_db
@@ -87,7 +89,6 @@ async def get_statistic(provider: str, mode: str = None, steam_ids: list[int] = 
                 if inventory_json:
                     inventory = Inventory.from_json_and_prices(inventory_json, prices_results)
                     statistics.add_inventory_info(inventory)
-
     return statistics
 
 
@@ -104,7 +105,7 @@ async def get_general_statistics(l10n: FluentLocalization, provider: str, mode: 
     Returns:
         str: Текст общей статистики в формате, согласованном с локализацией.
     """
-    statistics = await get_statistic(provider=provider, mode=mode, )
+    statistics = await get_statistic(provider=provider, mode=mode)
     text = l10n.format_value('general-accounts-info', {
         'accounts': statistics.total_accounts,
         'total_bans': statistics.total_bans,

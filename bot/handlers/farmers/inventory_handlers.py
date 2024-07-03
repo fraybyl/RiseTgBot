@@ -134,7 +134,7 @@ async def process_add_accounts(message: Message, state: FSMContext, l10n: Fluent
 
 
 @router.callback_query(lambda query: query.data == "get_accounts")
-@throttle(rate_limit=30)
+@throttle(rate_limit=15)
 async def handle_get_accounts(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     accounts = await get_steamid64_by_userid(query.from_user.id)
     if not accounts:

@@ -90,7 +90,7 @@ class Statistic:
         """
         self.items += len(inventory.items)
         self.cases += inventory.total_cases()
-        self.prices = round(inventory.total_price())
+        self.prices += round(inventory.total_price())
 
     def to_dict(self) -> str:
         """

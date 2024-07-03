@@ -2,6 +2,7 @@ import os
 
 import aiofiles
 import orjson
+from loguru import logger
 
 from bot.core.loader import redis_db
 from bot.services.steam_inventory.items_fetch import ItemsFetch
@@ -14,13 +15,14 @@ async def providers_items_update():
     Обновляются курсы валют
     Обновляются все цены у provider
     """
+    logger.info('Обновление цен предметов...')
     providers_to_fetch = {'steam': 'last_24h', 'csmoney': ''}
     pricing_providers = await _load_file('data/pricing_providers.json')
     items_fetcher = ItemsFetch(redis_db, pricing_providers)
     await items_fetcher.exchanges_rate()
     for key, value in providers_to_fetch.items():
         await items_fetcher.items_prices(key, value)
-
+    logger.success('Обновление цен предметов завершено.')
 
 async def _load_file(path: str) -> dict:
     """Загрузка JSON файла и возврат его содержимого."""

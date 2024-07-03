@@ -51,6 +51,6 @@ async def ban_statistics_schedule() -> None:
             for key, value in user_bans.items():
                 await send_message_ban(key, value)
 
-        logger.info('Обновление статистики банов завершено')
+        logger.success('Обновление статистики банов завершено')
     except Exception as e:
         logger.error(f"Ошибка в ban_statistics_schedule: {e}")
