@@ -17,6 +17,8 @@ async def set_user(telegram_id: int, username: str = None, referral_code: str = 
             user = await session.scalar(select(User).where(telegram_id == User.telegram_id))
 
             if not user:
+                if username is None:
+                    username = str(telegram_id)
                 referred_by = None
                 if referral_code:
                     try:

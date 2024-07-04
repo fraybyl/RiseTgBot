@@ -94,7 +94,7 @@ async def process_file_accounts(message: Message, message_id: int, l10n: FluentL
 
 @router.message(InventoryStates.WAITING_ADD_ACCOUNTS, or_f(F.document, F.text))
 async def process_add_accounts(message: Message, state: FSMContext, l10n: FluentLocalization):
-    async with ChatActionSender.upload_document(message.chat.id, bot, interval=1):
+    async with ChatActionSender.upload_document(message.chat.id, bot, interval=1.0):
         data = await state.get_data()
         message_id = data.get('message_id')
         lines = await process_file_accounts(message, message_id, l10n)
