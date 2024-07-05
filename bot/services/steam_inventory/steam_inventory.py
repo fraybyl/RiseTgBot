@@ -134,14 +134,14 @@ class SteamInventory:
                             )
                             return True
                         else:
-                            logger.warning(f"Нет валидного инвентаря для {steam_id}")
+                            logger.info(f"Нет валидного инвентаря для {steam_id}")
                             await self.redis_db.setex(f"blacklist::{steam_id}", self.blacklist_ttl, "")
-                            logger.warning(f"Steam ID {steam_id} в черном списке")
+                            logger.info(f"Steam ID {steam_id} в черном списке")
                             return False
 
                     elif response.status in {401, 403}:
                         await self.redis_db.setex(f"blacklist::{steam_id}", self.blacklist_ttl, "")
-                        logger.warning(f"Steam ID {steam_id} в черном списке")
+                        logger.info(f"Steam ID {steam_id} в черном списке")
                         return False
 
                     elif response.status == 429:
