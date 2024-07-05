@@ -14,7 +14,7 @@ async def handle_product(query: CallbackQuery):
     product_id = int(query.data.split("_")[1])
     product = await get_product_by_id(product_id)
     await edit_message_media(query, product.photo_filename, await get_product_desc_kb(product_id),
-                             caption=product.label)
+                             caption=product.description)
 
 
 @router.callback_query(lambda query: query.data.startswith("back_order_"))
@@ -23,4 +23,4 @@ async def handle_back_products(query: CallbackQuery, state: FSMContext):
     product = await get_product_by_id(product_id)
     await state.clear()
     await edit_message_media(query, product.photo_filename, await get_product_desc_kb(product_id),
-                             caption=product.label)
+                             caption=product.description)

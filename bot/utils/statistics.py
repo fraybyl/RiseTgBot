@@ -27,7 +27,7 @@ async def fetch_price_results(provider: str, mode: str, currency: str) -> list[I
     """
     cursor = '0'
     prices_results = []
-    redis_key = f'prices:{provider}' + (f':{mode}' if mode else '')
+    redis_key = f'prices::{provider}' + (f'::{mode}' if mode else '')
     currency_ratio = float((await redis_db.hget('exchangeRates', currency)).decode('utf-8'))
     while cursor != 0:
         cursor, fields = await redis_db.hscan(name=redis_key, cursor=cursor, count=30000)
