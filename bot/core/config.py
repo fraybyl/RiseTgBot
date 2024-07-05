@@ -10,7 +10,7 @@ class EnvBaseSettings(BaseSettings):
 class BotSettings(EnvBaseSettings):
     BOT_TOKEN: SecretStr
     PAYMENTS_TOKEN: str
-
+    ADMINS: int
 
 class DBSettings(EnvBaseSettings):
     DB_HOST: str = "postgres"
