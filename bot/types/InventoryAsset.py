@@ -18,7 +18,7 @@ class InventoryAsset(dict):
         )
 
     @classmethod
-    def from_dict(cls, data: dict[str, any]):
+    def from_dict(cls, data: dict[str, any]) -> 'InventoryAsset':
         return cls(
             app_id=data['appid'],
             context_id=data['contextid'],
