@@ -42,7 +42,7 @@ class SteamInventory:
             proxies: list[str],
             redis_db: Redis,
             rate_period: float = 4.0,
-            blacklist_ttl: int = 28800,
+            blacklist_ttl: int = 86400,
             max_retries: int = 3,
     ) -> None:
         """
@@ -135,6 +135,8 @@ class SteamInventory:
                             return True
                         else:
                             logger.warning(f"Нет валидного инвентаря для {steam_id}")
+                            await self.redis_db.setex(f"blacklist::{steam_id}", self.blacklist_ttl, "")
+                            logger.warning(f"Steam ID {steam_id} в черном списке")
                             return False
 
                     elif response.status in {401, 403}:
