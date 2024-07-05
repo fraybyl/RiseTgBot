@@ -1,5 +1,3 @@
-import time
-
 from fluent.runtime import FluentLocalization
 
 from bot.core.loader import redis_db

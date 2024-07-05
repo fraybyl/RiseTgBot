@@ -4,7 +4,6 @@ from aiogram.types import Message
 from aiogram.utils.chat_action import ChatActionSender
 from fluent.runtime import FluentLocalization
 from loguru import logger
-from orjson import orjson
 
 from bot.core.loader import bot, redis_db
 from bot.keyboards.farmers_keyboards import get_cancel_strategy_kb
@@ -39,6 +38,7 @@ async def process_total_weeks(message: Message, state: FSMContext, l10n: FluentL
             account_cost: float = round((rub_ratio / uah_ratio) * 550, 2)
 
             avg_price: float = await get_avg_drop()
+            account_payback = round(account_cost / avg_price)
             await message.delete()
 
             final_accounts, final_savings, account_count = simulate_investment_strategy(
@@ -59,6 +59,7 @@ async def process_total_weeks(message: Message, state: FSMContext, l10n: FluentL
                     'accounts_profit': final_accounts,
                     'accounts_count': account_count,
                     'profit': final_savings,
+                    'payback': account_payback,
                 }
             )
 

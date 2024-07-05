@@ -2,8 +2,8 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
 from .ban_statistics import ban_statistics_schedule
-from .providers_items_update import providers_items_update
 from .inventories import update_inventories
+from .providers_items_update import providers_items_update
 
 
 def start_schedulers() -> None:

@@ -1,6 +1,8 @@
 import time
+
 import requests
 import ua_generator
+
 # Прокси-сервер
 proxies = {
     "http": "http://teiqogrk:md5yfndvjcze@45.94.47.66:8110",
@@ -14,7 +16,6 @@ additional = {'Connection': 'close', 'Accept-Encoding': 'gzip, deflate, br, zstd
 headers = ua | additional
 # Счетчик запросов
 request_count = 0
-
 
 while True:
     try:
@@ -39,5 +40,3 @@ while True:
     except KeyboardInterrupt:
         print(f"{request_count} requests")
         exit()
-
-

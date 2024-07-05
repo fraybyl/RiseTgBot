@@ -1,5 +1,5 @@
-from bot.database.db_requests import get_all_steamid64
 from bot.core.loader import redis_db, config_json
+from bot.database.db_requests import get_all_steamid64
 from bot.services.steam_inventory.steam_inventory import SteamInventory
 
 

@@ -24,6 +24,7 @@ async def providers_items_update():
         await items_fetcher.items_prices(key, value)
     logger.success('Обновление цен предметов завершено.')
 
+
 async def _load_file(path: str) -> dict:
     """Загрузка JSON файла и возврат его содержимого."""
     if not os.path.exists(path):
