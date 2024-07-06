@@ -53,3 +53,13 @@ class AccountInfo:
                 self.NumberOfVACBans > 0 or
                 self.NumberOfGameBans > 0 or
                 self.EconomyBan != 'none')
+
+    def __eq__(self, other):
+        """Сравнивает по community/vac/economy ban. Не учитывает дни"""
+        if isinstance(other, AccountInfo):
+            return (self.CommunityBanned == other.CommunityBanned and
+                    self.VACBanned == other.VACBanned and
+                    self.NumberOfVACBans == other.NumberOfVACBans and
+                    self.NumberOfGameBans == other.NumberOfGameBans and
+                    self.EconomyBan == other.EconomyBan)
+        return False
