@@ -49,7 +49,20 @@ class SteamSettings(EnvBaseSettings):
     STEAM_API_KEY: str
 
 
-class Settings(BotSettings, DBSettings, CacheSettings, SteamSettings):
+class PaymentServer(EnvBaseSettings):
+    SECRET_WORD_1: str
+    SECRET_WORD_2: str
+    WEBHOOK_HOST: str
+    WEBHOOK_PATH: str
+    WHITELISTED_IPS: list[str]
+    MERCHANT_ID: int
+
+    @property
+    def webhook_url(self) -> str:
+        return f"{self.WEBHOOK_HOST}://{self.WEBHOOK_PATH}"
+
+
+class Settings(BotSettings, DBSettings, CacheSettings, SteamSettings, PaymentServer):
     DEBUG: bool = False
 
 
