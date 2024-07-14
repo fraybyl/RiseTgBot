@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import os
 import json
 from aiogram import Router
@@ -135,3 +136,21 @@ async def confirm_delete_handlers(query: CallbackQuery, state: FSMContext):
         if deleted:
             await edit_message_media(query, "RISE_PERSONAL", caption=f"Категория '{category_name}' успешно удалена", reply_markup=get_close_category_kb())
             await pop_state(state)
+=======
+from aiogram import F
+from aiogram import Router
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
+from fluent.runtime import FluentLocalization
+
+from bot.core.config import BotSettings
+from bot.states.admins_state import AdminState
+
+router = Router(name=__name__)
+
+
+@router.message(AdminState.ADMIN_MESSAGE,
+                lambda message: message.text == "/admin" and F.from_user.id == BotSettings.ADMINS)
+async def admin_message(message: Message, state: FSMContext, l10n: FluentLocalization):
+    await message.answer()
+>>>>>>> a2ef3fd1da804b7ceaac0ba9cc2c523c5a49a043

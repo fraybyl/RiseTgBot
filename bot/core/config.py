@@ -12,6 +12,7 @@ class BotSettings(EnvBaseSettings):
     PAYMENTS_TOKEN: str
     ADMINS: int
 
+
 class DBSettings(EnvBaseSettings):
     DB_HOST: str = "postgres"
     DB_PORT: int = 5432

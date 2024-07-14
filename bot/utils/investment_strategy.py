@@ -1,5 +1,7 @@
-from loguru import logger
 from decimal import Decimal, DecimalException
+
+from loguru import logger
+
 
 def simulate_investment_strategy(
         initial_accounts: int,

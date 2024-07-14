@@ -42,7 +42,7 @@ class SteamInventory:
             proxies: list[str],
             redis_db: Redis,
             rate_period: float = 4.0,
-            blacklist_ttl: int = 28800,
+            blacklist_ttl: int = 86400,
             max_retries: int = 3,
     ) -> None:
         """
@@ -104,49 +104,64 @@ class SteamInventory:
         session_data = self.sessions.get(proxy)
 
         if not session_data:
+            logger.error(f"Не найдено сессии для прокси {proxy}")
             return False
 
-        limiter = self.sessions[proxy]['limiter']
-        session = self.sessions[proxy]['session']
+        limiter = session_data['limiter']
+        session = session_data['session']
 
-        async with limiter:
-            async with session.get(inventory_url, proxy=proxy) as response:
-                logger.debug(f'Fetch with {proxy} {steam_id}')
+        try:
+            async with limiter:
+                async with session.get(inventory_url, proxy=proxy) as response:
+                    logger.debug(f'Получение данных инвентаря для {steam_id} с прокси {proxy}')
 
-                if response.status == 200:
-                    data = await response.json(encoding='utf-8', loads=orjson.loads)
-                    assets_data = data.get('assets', [])
-                    descriptions_data = data.get('descriptions', [])
+                    if response.status == 200:
+                        data = await response.json(encoding='utf-8', loads=orjson.loads)
+                        assets_data = data.get('assets', [])
+                        descriptions_data = data.get('descriptions', [])
 
-                    assets = InventoryAsset.from_list(assets_data)
-                    descriptions = InventoryDescription.from_list(descriptions_data)
+                        assets = InventoryAsset.from_list(assets_data)
+                        descriptions = InventoryDescription.from_list(descriptions_data)
 
-                    inventory_process = InventoryProcess()
-                    steam_id_inventory = await inventory_process.parse_inventory_data(assets, descriptions)
-                    if steam_id_inventory:
-                        await self.redis_db.hset(
-                            f'data::{steam_id}',
-                            'inventory',
-                            orjson.dumps(steam_id_inventory).decode('utf-8')
-                        )
-                        return True
+                        inventory_process = InventoryProcess()
+                        steam_id_inventory = await inventory_process.parse_inventory_data(assets, descriptions)
 
-                    return False
+                        if steam_id_inventory:
+                            await self.redis_db.hset(
+                                f'data::{steam_id}',
+                                'inventory',
+                                orjson.dumps(steam_id_inventory).decode('utf-8')
+                            )
+                            return True
+                        else:
+                            logger.info(f"Нет валидного инвентаря для {steam_id}")
+                            await self.redis_db.setex(f"blacklist::{steam_id}", self.blacklist_ttl, "")
+                            logger.info(f"Steam ID {steam_id} в черном списке")
+                            return False
 
-                elif response.status in {401, 403}:
-                    await self.redis_db.setex(f"blacklist::{steam_id}", self.blacklist_ttl, "")
-                    return False
+                    elif response.status in {401, 403}:
+                        await self.redis_db.setex(f"blacklist::{steam_id}", self.blacklist_ttl, "")
+                        logger.info(f"Steam ID {steam_id} в черном списке")
+                        return False
 
-                elif response.status == 429:
-                    logger.error(f'429 ошибка при фетче инвентаря с прокси {proxy}')
-                    if retries < self.max_retries:
-                        await self.retry_queue.put((steam_id, retries + 1))
-                    await session.close()
-                    self.proxies.remove(proxy)
-                    self.sessions.pop(proxy, None)
-                    return False
-
-                return False
+                    elif response.status == 429:
+                        logger.error(
+                            f'Ошибка 429: превышен лимит запросов для прокси {proxy} при получении инвентаря {steam_id}')
+                        if retries < self.max_retries:
+                            await self.retry_queue.put((steam_id, retries + 1))
+                        await session.close()
+                        self.proxies.remove(proxy)
+                        self.sessions.pop(proxy, None)
+                        return False
+                    else:
+                        logger.error(f"Неожиданный статус {response.status} для {steam_id}")
+                        return False
+        except aiohttp.ClientError as e:
+            logger.error(f"Ошибка клиента {e} для {steam_id}")
+            return False
+        except asyncio.TimeoutError:
+            logger.error(f"Ошибка таймаута для {steam_id}")
+            return False
 
     async def process_inventories(
             self,
@@ -176,9 +191,11 @@ class SteamInventory:
                 steam_id, retries = await self.retry_queue.get()
 
                 if not is_update and await self.redis_db.hexists(f'data::{steam_id}', 'inventory'):
+                    logger.info(f"Steam ID {steam_id} уже имеет инвентарь в Redis")
                     continue
 
                 if await self.redis_db.exists(f'blacklist::{steam_id}'):
+                    logger.info(f"Steam ID {steam_id} в черном списке")
                     continue
 
                 proxy = self.proxies[len(tasks) % len(self.proxies)]

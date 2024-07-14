@@ -24,13 +24,13 @@ def get_engine(url: URL | str = settings.database_url) -> AsyncEngine:
     )
 
 
-def get_sessionmaker(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
+def get_session_maker(engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
     return async_sessionmaker(bind=engine, autoflush=False, expire_on_commit=False)
 
 
 db_url = settings.database_url
 engine = get_engine(url=db_url)
-async_session = get_sessionmaker(engine)
+async_session = get_session_maker(engine)
 
 
 async def start_db_postgres():
