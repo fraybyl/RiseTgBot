@@ -9,3 +9,15 @@ def get_personal_kb() -> InlineKeyboardMarkup:
             ]
         ]
     )
+
+def get_admins_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                InlineKeyboardButton(text="админ панель", callback_data="admin_panel"),
+            ],
+            [
+                InlineKeyboardButton(text="Назад↩️", callback_data="back_start"),
+            ]
+        ]
+    )

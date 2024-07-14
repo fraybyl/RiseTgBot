@@ -20,6 +20,7 @@ async def on_startup() -> None:
     dp.message.outer_middleware(L10nMiddleware(locale))
     dp.callback_query.outer_middleware(L10nMiddleware(locale))
     dp.callback_query.middleware(CallbackAnswerMiddleware())
+    
 
     dp.include_router(main_router)
 

@@ -68,6 +68,48 @@ async def get_product_by_name(product_name: str) -> Product:
             logger.error(f"Ошибка в get_product_by_name: {e}")
             raise
 
+async def set_categoriies(name: str, photo_filename: str) -> list[Category]:
+    """добавляет новую категорию в базу данных
+        Принимает:
+        name: любое строковое значение (32) | Название категории
+        photo_filename: любое строковое значение (32) | Название file_ids аватарки
+    """
+    async with async_session() as session:
+        try:
+            category = Category(name=name, photo_filename=photo_filename)
+            session.add(category)
+            await session.commit()
+            return category
+        except Exception as e:
+            logger.error(f"Ошибка в create_category: {e}")
+            await session.rollback()
+            raise
+
+async def delete_categories(name: str):
+    """удаляет категорию из базы данных
+    Принимает:
+    name: любое строковое значение (32) | Название категории
+    Возвращает:
+    True - успех ( че тупой чтоли?)
+    """
+    async with async_session() as session:
+        try:
+            async with session.begin():
+                category_result = await session.execute(select(Category).where(Category.name == name))
+                category = category_result.scalar_one_or_none()
+                
+                if category:
+                    await session.delete(category)
+                    await session.commit()
+                    logger.info(f"Категория '{name}' успешно удалена.")
+                    return True
+                else:
+                    logger.error(f"Категория '{name}' не найдена.")
+                    return False
+        except Exception as e:
+            logger.error(f"Ошибка при удалении категории '{name}': {e}")
+            await session.rollback()
+            raise
 
 async def get_all_categories() -> list[Category]:
     """Возвращает все categories"""
@@ -81,6 +123,29 @@ async def get_all_categories() -> list[Category]:
             raise
 
 
+
+async def get_all_Products() -> list[Product]:
+    """Возвращает все Products"""
+    async with async_session() as session:
+        try:
+            result = await session.scalars(select(Product))
+            product = result.all()
+            return product
+        except Exception as e:
+            logger.error(f"ошибка в get_all_categories: {e}")
+            raise
+
+async def get_all_users() -> list[User]:
+    """Возвращает все users"""
+    async with async_session() as session:
+        try:
+            result = await session.scalars(select(User))
+            users = result.all()
+            return users
+        except Exception as e:
+            logger.error(f"ошибка в get_all_users: {e}")
+            raise
+
 async def get_category_by_id(category_id: int) -> Category:
     """Возвращает category по ID."""
     async with async_session() as session:
@@ -91,6 +156,15 @@ async def get_category_by_id(category_id: int) -> Category:
             logger.error(f"ошибка в get_category_by_id: {e}")
             raise
 
+async def get_category_by_name(name: str) -> Category:
+    """Возвращает category по Name."""
+    async with async_session() as session:
+        async with session.begin():
+            result = await session.execute(
+                select(Category).where(Category.name == name)
+            )
+            category = result.scalars().first()
+            return category
 
 async def get_products_by_category(category_id: int) -> list[Product]:
     """Возвращает список product по category ID."""
