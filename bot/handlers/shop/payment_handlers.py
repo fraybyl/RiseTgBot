@@ -2,6 +2,7 @@ from aiogram import Router
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from fluent.runtime import FluentLocalization
+from loguru import logger
 
 from bot.keyboards.shop_keyboards import get_payment_settings_kb
 from bot.states.order_states import OrderStates
@@ -17,7 +18,7 @@ async def handle_payment_product(query: CallbackQuery, state: FSMContext, l10n: 
     quantity_bonus = data.get('quantity_bonus')
 
     payment_url = await initiate_payment(query.from_user.id, quantity_product)
-    print(payment_url)
+    logger.info(payment_url)
 
     await query.message.edit_caption(caption=l10n.format_value('payment-product'),
                                      reply_markup=get_payment_settings_kb())

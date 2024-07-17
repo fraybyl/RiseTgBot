@@ -2,10 +2,8 @@ import hashlib
 import requests
 from bot.core.config import settings
 
-
 def calculate_amount(quantity_product: int, price) -> float:
     return quantity_product * price
-
 
 async def initiate_payment(user_id: int, quantity_product: int) -> str:
     amount = calculate_amount(quantity_product, 100)
