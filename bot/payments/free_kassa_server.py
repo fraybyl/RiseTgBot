@@ -1,4 +1,6 @@
 import hashlib
+import logging
+
 from aiohttp import web
 from bot.core.config import settings
 from bot.core.loader import bot
@@ -19,6 +21,7 @@ async def handle_payment_notification(request):
     print(f"Remote address: {remote_addr}")
 
     if remote_addr not in settings.WHITELISTED_IPS:
+        logging.info(f'remote addr: {remote_addr}, whitelist: {settings.WHITELISTED_IPS}')
         print("Forbidden IP")
         return web.Response(status=403, text="Forbidden")
 
