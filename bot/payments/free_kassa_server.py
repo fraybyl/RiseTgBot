@@ -13,10 +13,11 @@ async def verify_signature(data):
 
 async def handle_payment_notification(request):
     data = await request.post()
-    remote_addr = request.remote
+
+    remote_addr = request.headers.get('X-Forwarded-For')
+    print(f"remote_addr: {remote_addr}")
 
     if remote_addr not in settings.WHITELISTED_IPS:
-        print(f"remote_addr: {remote_addr}")
         return web.Response(status=403, text="Forbidden")
 
     if not await verify_signature(data):
