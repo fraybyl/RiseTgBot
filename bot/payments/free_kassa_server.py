@@ -13,8 +13,7 @@ async def verify_signature(data):
 
 async def handle_payment_notification(request):
     data = await request.post()
-
-    remote_addr = request.headers.get('X-Forwarded-For')
+    remote_addr = request.headers.get('X-Real-IP', request.remote)
     print(f"remote_addr: {remote_addr}")
 
     if remote_addr not in settings.WHITELISTED_IPS:
