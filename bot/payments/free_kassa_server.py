@@ -16,6 +16,7 @@ async def handle_payment_notification(request):
     remote_addr = request.remote
 
     if remote_addr not in settings.WHITELISTED_IPS:
+        print(f"remote_addr: {remote_addr}")
         return web.Response(status=403, text="Forbidden")
 
     if not await verify_signature(data):
