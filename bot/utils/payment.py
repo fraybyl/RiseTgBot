@@ -5,7 +5,7 @@ from bot.database.models import Product, User
 from bot.utils.buy_math import calculate_discount_percentage
 
 
-def calculate_amount(quantity_product: int, product: dict[str, any], user: dict[str, any], quantity_bonus=0) -> float:
+def calculate_amount(quantity_product: int, product: dict[str, any], user: dict[str, any], quantity_bonus=0.0) -> float:
     return calculate_discount_percentage((quantity_product * product['price']), user['discount_percentage']) - quantity_bonus
 
 
