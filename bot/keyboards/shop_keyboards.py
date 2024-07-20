@@ -67,6 +67,19 @@ def get_payment_settings_kb() -> InlineKeyboardMarkup:
     )
 
 
+def get_buy_kb(payment_url: str) -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+              InlineKeyboardButton(text='Оплатить', callback_data=payment_url)
+            ],
+            [
+                InlineKeyboardButton(text='Отмена', callback_data='back_payment')
+            ]
+        ]
+    )
+
+
 def get_cancel_order_kb(product_id: int) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
