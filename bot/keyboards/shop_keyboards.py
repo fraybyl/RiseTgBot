@@ -71,7 +71,7 @@ def get_buy_kb(payment_url: str) -> InlineKeyboardMarkup:
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
-              InlineKeyboardButton(text='Оплатить', callback_data=payment_url)
+              InlineKeyboardButton(text='Оплатить', url=payment_url)
             ],
             [
                 InlineKeyboardButton(text='Отмена', callback_data='back_payment')
