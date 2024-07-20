@@ -21,7 +21,7 @@ async def handle_payment_product(query: CallbackQuery, state: FSMContext, l10n: 
 
     payment_url = await initiate_payment(user, quantity_product, product, quantity_bonus)
     logger.info(payment_url)
-    logger.info(quantity_product, quantity_bonus, product['price'], user['discount_percentage'])
+    logger.info(f"{quantity_product}, {quantity_bonus}, {product['price']}, {user['discount_percentage']}")
 
     await query.message.edit_caption(caption=l10n.format_value('payment-product'),
                                      reply_markup=get_buy_kb(payment_url))
