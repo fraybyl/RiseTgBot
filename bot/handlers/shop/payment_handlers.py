@@ -15,7 +15,7 @@ payment_router = Router(name=__name__)
 async def handle_payment_product(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
     data = await state.get_data()
     quantity_product = data.get('quantity_product')
-    quantity_bonus = data.get('quantity_bonus')
+    quantity_bonus = data.get('quantity_bonus', 0)
     product = data.get('product')
     user = data.get('user')
 
