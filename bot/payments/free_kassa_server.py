@@ -30,7 +30,7 @@ async def handle_payment_notification(request: web.Request) -> web.Response:
         remote_addr = request.headers.get('X-Real-IP', request.remote)
 
         # Проверка на IP-адрес из белого списка
-        if remote_addr not in settings.WHITELИСТED_IPS:
+        if remote_addr not in settings.WHITELISTED_IPS:
             return web.Response(status=403, text="Forbidden")
 
         # Проверка подписи
