@@ -37,5 +37,12 @@
     },
     "MODERATE": {
         "path": "data/photos/Moderate.png"
+    },
+    "Steam": {
+        "path": "data/photos/Steam.jpg",
+        "file_id": "AgACAgIAAxkDAAICxGaYNXKqZ9b08GuvSt_Of6nM6HFaAAKF2TEbAvLJSBtrV52v8CKnAQADAgADeQADNQQ"
+    },
+    "vjhghjghjg_hkjkj": {
+        "path": "data/photos/vjhghjghjg_hkjkj.jpg"
     }
 }

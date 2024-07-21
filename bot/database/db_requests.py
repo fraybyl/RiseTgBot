@@ -68,7 +68,7 @@ async def get_product_by_name(product_name: str) -> Product:
             logger.error(f"Ошибка в get_product_by_name: {e}")
             raise
 
-async def set_categoriies(name: str, photo_filename: str) -> list[Category]:
+async def set_categories(name: str, photo_filename: str) -> list[Category]:
     """добавляет новую категорию в базу данных
         Принимает:
         name: любое строковое значение (32) | Название категории
