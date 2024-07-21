@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import os
 import json
 from aiogram import Router
@@ -9,7 +8,7 @@ from aiogram.filters import Command
 from loguru import logger
 
 from bot.core.loader import bot
-from bot.database.db_requests import get_all_users, set_categoriies, get_category_by_name, delete_categories
+from bot.database.db_requests import get_all_users, set_categories, get_category_by_name, delete_categories
 from bot.keyboards.admin_keyboards import get_admins_kb, get_categories_kb, get_close_category_kb, add_category_kb, get_all_categories_kb, confirmation_delete_kb
 from bot.states.admins_state import AdminState
 from bot.core.config import settings
@@ -24,23 +23,22 @@ async def download_and_save_photo(file_id: str, photo_filename: str):
     file = await bot.get_file(file_id)
     file_path = file.file_path
     if not photo_filename.endswith('.jpg'):
-        photo_filename += '.jpg'    
+        photo_filename += '.jpg'
+        photo_filename.replace(' ', '_')    
     destination = os.path.join(PHOTO_DIR, photo_filename)    
     await bot.download_file(file_path, destination)
-    update_file_ids(photo_filename, destination, file_id)
+    update_file_ids(photo_filename, destination)
     return destination
 
-def update_file_ids(photo_filename, path, file_id):
+def update_file_ids(photo_filename, path):
     if photo_filename.endswith('.jpg'):
         photo_filename = photo_filename[:-4]
     photo_filename = photo_filename.replace(' ', '_')
     path = path.replace('\\', '/')
-    # Загружаем текущий JSON
     with open(FILE_IDS_JSON, 'r', encoding='utf-8') as file:
         file_ids = json.load(file)
     file_ids[photo_filename] = {
-        "path": path,
-        "file_id": file_id
+        "path": path
     }
     with open(FILE_IDS_JSON, 'w', encoding='utf-8') as file:
         json.dump(file_ids, file, ensure_ascii=False, indent=4)
@@ -100,7 +98,7 @@ async def set_new_category_handlers(query: CallbackQuery, state: FSMContext):
     photo = data.get('photo_file_id')   
 
     try:
-        await set_categoriies(name_category, photo_filename)
+        await set_categories(name_category, photo_filename)
         await query.message.answer_photo(photo=photo, caption=f"Категория: {name_category}\n\nДанные успешно добавлены в базу данных", reply_markup=get_close_category_kb())
         await state.clear()
     except Exception as e:
@@ -136,21 +134,3 @@ async def confirm_delete_handlers(query: CallbackQuery, state: FSMContext):
         if deleted:
             await edit_message_media(query, "RISE_PERSONAL", caption=f"Категория '{category_name}' успешно удалена", reply_markup=get_close_category_kb())
             await pop_state(state)
-=======
-from aiogram import F
-from aiogram import Router
-from aiogram.fsm.context import FSMContext
-from aiogram.types import Message
-from fluent.runtime import FluentLocalization
-
-from bot.core.config import BotSettings
-from bot.states.admins_state import AdminState
-
-router = Router(name=__name__)
-
-
-@router.message(AdminState.ADMIN_MESSAGE,
-                lambda message: message.text == "/admin" and F.from_user.id == BotSettings.ADMINS)
-async def admin_message(message: Message, state: FSMContext, l10n: FluentLocalization):
-    await message.answer()
->>>>>>> a2ef3fd1da804b7ceaac0ba9cc2c523c5a49a043

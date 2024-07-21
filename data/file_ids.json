@@ -1,41 +1,44 @@
 {
     "RISE_BACKGROUND": {
         "path": "data/photos/Main.png",
-        "file_id": "AgACAgIAAxkDAAOPZof6GOiRLaOcehPcCBqp5MCPbscAAoTdMRta0xBIh8h5sLfclZABAAMCAAN3AAM1BA"
+        "file_id": "AgACAgIAAxkDAAICp2aYK3XMxCjqEi_Ti6bwAAGesc85OAACMNkxGwLyyUibKj4zay-4swEAAwIAA3cAAzUE"
     },
     "RISE_SHOP": {
         "path": "data/photos/Shop.png",
-        "file_id": "AgACAgIAAxkDAAPeZog3oxNy6Tc4O2lkmIXVvOehEfAAAmfdMRta0xhIlN3IZAnEjMQBAAMCAAN3AAM1BA"
+        "file_id": "AgACAgIAAxkDAAICp2aYLOuyN0Ej754TAAF738evBkvYUgACN9kxGwLyyUj9yUR6GHop3QEAAwIAA3cAAzUE"
     },
     "RISE_FOR_FARMERS": {
-        "path": "data/photos/for_farmers.png",
-        "file_id": "AgACAgIAAxkDAAPeZog4m619G4BhOeHkLhLCgC1LHXMAAoXdMRta0xBIAYLen1nq03ABAAMCAAN3AAM1BA"
+        "path": "data/photos/for_farmers.png"
     },
     "RISE_PERSONAL": {
         "path": "data/photos/Personal.png",
-        "file_id": "AgACAgIAAxkDAAPeZog3mcinPITFovRTr94IW7rLHFoAAm3dMRta0xhIfEFJOi5MWH0BAAMCAAN3AAM1BA"
+        "file_id": "AgACAgIAAxkDAAICp2aYK3fa-VRq1jI0vjiJXNDOEkD3AAIx2TEbAvLJSBMEtGD5m2BhAQADAgADdwADNQQ"
     },
     "RISE_GIFT_CODE": {
         "path": "data/photos/Steam_gift.png",
-        "file_id": "AgACAgIAAxkDAAPeZog4YvZ0zjVu7PoqQUDzzo0JbWoAAvfgMRvZ7UFImN5bS0p_N3MBAAMCAAN5AAM1BA"
+        "file_id": "AgACAgIAAxkDAAICv2aYNRkRN5Wl107zd_nNhA_le5UtAAKE2TEbAvLJSAZiRizgduJUAQADAgADeQADNQQ"
     },
     "RISE_LIMIT_ACCOUNT": {
         "path": "data/photos/Steam_account.png",
-        "file_id": "AgACAgIAAxkDAAPeZog4ZVIyiEt9T4WH225DE8dwtfEAAvjgMRvZ7UFIz6HV7lX3144BAAMCAAN5AAM1BA"
+        "file_id": "AgACAgIAAxkDAAICp2aYNN9vEeMU5Cv7tE-Fj6zsKt-UAAKA2TEbAvLJSJXwEyfZgwkoAQADAgADeQADNQQ"
     },
     "RISE_STRATEGY": {
-        "path": "data/photos/strategy_info.png",
-        "file_id": "AgACAgIAAxkDAAIBe2aNgd4bhAQW0myd7unMBYXAKslZAAIH3DEbXrJwSGEfMCcxLNLtAQADAgADdwADNQQ"
+        "path": "data/photos/strategy_info.png"
     },
     "AGGRESSIVE": {
-        "path": "data/photos/Aggresive.png",
-        "file_id": "AgACAgIAAxkDAAIB6maOLJRFX_SWn-sG9FvmYpVyOREBAAJK3jEbXrJwSPd6G9QGwCc-AQADAgADeQADNQQ"
+        "path": "data/photos/Aggresive.png"
     },
     "CONSERVATIVE": {
-        "path": "data/photos/Konservate.png",
-        "file_id": "AgACAgIAAxkDAAIBe2aNgeD5WSW-A3rhwh1Qeteq-eriAAII3DEbXrJwSJtWfOElPN6YAQADAgADeQADNQQ"
+        "path": "data/photos/Konservate.png"
     },
     "MODERATE": {
         "path": "data/photos/Moderate.png"
+    },
+    "Steam": {
+        "path": "data/photos/Steam.jpg",
+        "file_id": "AgACAgIAAxkDAAICxGaYNXKqZ9b08GuvSt_Of6nM6HFaAAKF2TEbAvLJSBtrV52v8CKnAQADAgADeQADNQQ"
+    },
+    "vjhghjghjg_hkjkj": {
+        "path": "data/photos/vjhghjghjg_hkjkj.jpg"
     }
 }
