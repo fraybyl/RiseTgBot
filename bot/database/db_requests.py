@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 
 from bot.core.loader import config_json
 from bot.database.database import async_session
-from bot.database.models import User, Product, Category, SteamAccount
+from bot.database.models import User, Product, Category, SteamAccount, Order, OrderItem
 from bot.decorators.dec_cache import cached, build_key, clear_cache
 
 
@@ -68,6 +68,7 @@ async def get_product_by_name(product_name: str) -> Product:
             logger.error(f"Ошибка в get_product_by_name: {e}")
             raise
 
+
 async def set_categories(name: str, photo_filename: str) -> list[Category]:
     """добавляет новую категорию в базу данных
         Принимает:
@@ -85,6 +86,7 @@ async def set_categories(name: str, photo_filename: str) -> list[Category]:
             await session.rollback()
             raise
 
+
 async def delete_categories(name: str):
     """удаляет категорию из базы данных
     Принимает:
@@ -97,7 +99,7 @@ async def delete_categories(name: str):
             async with session.begin():
                 category_result = await session.execute(select(Category).where(Category.name == name))
                 category = category_result.scalar_one_or_none()
-                
+
                 if category:
                     await session.delete(category)
                     await session.commit()
@@ -111,6 +113,7 @@ async def delete_categories(name: str):
             await session.rollback()
             raise
 
+
 async def get_all_categories() -> list[Category]:
     """Возвращает все categories"""
     async with async_session() as session:
@@ -121,7 +124,6 @@ async def get_all_categories() -> list[Category]:
         except Exception as e:
             logger.error(f"ошибка в get_all_categories: {e}")
             raise
-
 
 
 async def get_all_Products() -> list[Product]:
@@ -135,6 +137,7 @@ async def get_all_Products() -> list[Product]:
             logger.error(f"ошибка в get_all_categories: {e}")
             raise
 
+
 async def get_all_users() -> list[User]:
     """Возвращает все users"""
     async with async_session() as session:
@@ -146,6 +149,7 @@ async def get_all_users() -> list[User]:
             logger.error(f"ошибка в get_all_users: {e}")
             raise
 
+
 async def get_category_by_id(category_id: int) -> Category:
     """Возвращает category по ID."""
     async with async_session() as session:
@@ -156,6 +160,7 @@ async def get_category_by_id(category_id: int) -> Category:
             logger.error(f"ошибка в get_category_by_id: {e}")
             raise
 
+
 async def get_category_by_name(name: str) -> Category:
     """Возвращает category по Name."""
     async with async_session() as session:
@@ -165,6 +170,7 @@ async def get_category_by_name(name: str) -> Category:
             )
             category = result.scalars().first()
             return category
+
 
 async def get_products_by_category(category_id: int) -> list[Product]:
     """Возвращает список product по category ID."""
@@ -336,7 +342,7 @@ async def create_order(user_id: int, product_id: int, quantity: int) -> Order:
     async with async_session() as session:
         try:
             user = await get_user_by_telegram_id(user_id)
-            product = await session.scalar(select(Product).where(Product.id == product_id))
+            product = await session.scalar(select(Product).where(product_id == Product.id))
 
             if not user or not product:
                 raise ValueError("User or Product not found")
@@ -361,20 +367,36 @@ async def create_order(user_id: int, product_id: int, quantity: int) -> Order:
 async def get_order_by_id(order_id: int) -> Order:
     async with async_session() as session:
         try:
-            order = await session.scalar(select(Order).where(Order.id == order_id))
+            order = await session.scalar(select(Order).where(order_id == Order.id))
             return order
         except Exception as e:
             logger.error(f"Error in get_order_by_id: {e}")
             raise
 
 
+async def update_order_payment_id(order_id: int, payment_id: str):
+    async with async_session() as session:
+        try:
+            order = await session.scalar(select(Order).where(order_id == Order.id))
+            if order:
+                order.payment_id = payment_id
+                await session.commit()
+        except Exception as e:
+            logger.error(f"Error in update_order_payment_id: {e}")
+            await session.rollback()
+            raise
+
+
 async def update_order_status(order_id: int, new_status: str):
     async with async_session() as session:
         try:
-            order = await session.scalar(select(Order).where(Order.id == order_id))
+            order = await session.scalar(select(Order).where(order_id == Order.id))
             if order:
                 order.status = new_status
                 await session.commit()
+            else:
+                logger.error(f"Order not found: {order_id}")
+                raise ValueError(f"Order not found: {order_id}")
         except Exception as e:
             logger.error(f"Error in update_order_status: {e}")
             await session.rollback()

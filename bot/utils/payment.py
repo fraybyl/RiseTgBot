@@ -9,11 +9,16 @@ def calculate_amount(quantity_product: int, product: dict[str, any], user: dict[
     return calculate_discount_percentage((quantity_product * product['price']), user['discount_percentage']) - quantity_bonus
 
 
-async def initiate_payment(user: dict[str, any], quantity_product: int, product: dict[str, any], quantity_bonus) -> str:
+async def initiate_payment(
+        user: dict[str, any],
+        quantity_product: int,
+        product: dict[str, any],
+        quantity_bonus,
+        order_id: int
+) -> str:
     amount = calculate_amount(quantity_product, product, user, quantity_bonus)
     merchant_id = settings.MERCHANT_ID
     secret_word = settings.SECRET_WORD_1
-    order_id = f"{product['label']}-{quantity_product}"
     currency = 'RUB'
 
     sign = hashlib.md5(f"{merchant_id}:{amount}:{secret_word}:{currency}:{order_id}".encode()).hexdigest()
