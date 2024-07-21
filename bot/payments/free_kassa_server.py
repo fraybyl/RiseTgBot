@@ -45,7 +45,6 @@ async def handle_payment_notification(request: web.Request) -> web.Response:
                 return web.Response(status=400, text=f"Отсутствует поле: {field}")
 
         order_id = int(data['MERCHANT_ORDER_ID'])
-        print(order_id)
         payment_id = data['intid']
 
         # Получение заказа

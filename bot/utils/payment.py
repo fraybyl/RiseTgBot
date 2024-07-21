@@ -21,9 +21,9 @@ async def initiate_payment(
     secret_word = settings.SECRET_WORD_1
     currency = 'RUB'
 
-    sign = hashlib.md5(f"{merchant_id}:{amount}:{secret_word}:{currency}:{product['label']}-{quantity_product}-{order_id}".encode()).hexdigest()
+    sign = hashlib.md5(f"{merchant_id}:{amount}:{secret_word}:{currency}:{order_id}".encode()).hexdigest()
 
     payment_url = (
-        f"https://pay.freekassa.com/?m={merchant_id}&oa={amount}&currency={currency}&o={product['label']}-{quantity_product}-{order_id}&s={sign}&lang=ru"
+        f"https://pay.freekassa.com/?m={merchant_id}&oa={amount}&currency={currency}&o={order_id}&s={sign}&lang=ru"
     )
     return payment_url
