@@ -24,6 +24,6 @@ async def initiate_payment(
     sign = hashlib.md5(f"{merchant_id}:{amount}:{secret_word}:{currency}:{order_id}".encode()).hexdigest()
 
     payment_url = (
-        f"https://pay.freekassa.com/?m={merchant_id}&oa={amount}&currency={currency}&o={order_id}&s={sign}&lang=ru"
+        f"https://pay.freekassa.com/?m={merchant_id}&oa={amount}&currency={currency}&o={product['label']-quantity_product-order_id}&s={sign}&lang=ru"
     )
     return payment_url
