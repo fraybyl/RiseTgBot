@@ -19,6 +19,7 @@ router = Router(name=__name__)
 PHOTO_DIR = 'data/photos'
 FILE_IDS_JSON = 'data/file_ids.json'
 
+
 async def download_and_save_photo(file_id: str, photo_filename: str):
     file = await bot.get_file(file_id)
     file_path = file.file_path
@@ -49,45 +50,57 @@ def update_file_ids(photo_filename, path):
 @router.callback_query(lambda query: query.data == "admin_panel")
 async def amdin_panel_handlers(query: CallbackQuery, l10n: FluentLocalization):
     users = await get_all_users()
-    await edit_message_media(query, 'RISE_PERSONAL', reply_markup=get_admins_kb(), caption=l10n.format_value('admin-info', {'members': len(users)}))
+    await edit_message_media(query, 'RISE_PERSONAL', reply_markup=get_admins_kb(),
+                             caption=l10n.format_value('admin-info', {'members': len(users)}))
 
-@router.callback_query(lambda query: query.data =="add_products")
-async def add_proudcts_handlers (query: CallbackQuery):
-    await edit_message_media(query, 'RISE_PERSONAL', caption="Пожалуйста, выберите категорию, которую вы хотите изменить", reply_markup=await get_categories_kb())
+
+@router.callback_query(lambda query: query.data == "add_products")
+async def add_proudcts_handlers(query: CallbackQuery):
+    await edit_message_media(query, 'RISE_PERSONAL',
+                             caption="Пожалуйста, выберите категорию, которую вы хотите изменить",
+                             reply_markup=await get_categories_kb())
+
 
 @router.callback_query(lambda query: query.data == "adding_new")
 async def category_new_handlers(query: CallbackQuery, state: FSMContext, l10n: FluentLocalization):
-    await edit_message_media(query, 'RISE_PERSONAL', caption="ПАЖЭ ВВЕДИ НАЗВАНИЕ КАТЕГОРИИ", reply_markup=get_close_category_kb())
+    await edit_message_media(query, 'RISE_PERSONAL', caption="ПАЖЭ ВВЕДИ НАЗВАНИЕ КАТЕГОРИИ",
+                             reply_markup=get_close_category_kb())
     await push_state(state, AdminState.ADD_CATEGORY_STATE.state)
+
 
 @router.message(AdminState.ADD_CATEGORY_STATE)
 async def category_new_message(message: Message, state: FSMContext):
     name_category = message.text
     await state.update_data(name_category=name_category)
     await message.delete()
-    await message.answer(text=f"название категории: {name_category}\nТеперь введите PHOTO_FILENAME или отправьте фото", reply_markup=get_close_category_kb())
+    await message.answer(text=f"название категории: {name_category}\nТеперь введите PHOTO_FILENAME или отправьте фото",
+                         reply_markup=get_close_category_kb())
     await push_state(state, AdminState.ADD_PHOTO_FILENAME_STATE.state)
+
 
 @router.message(AdminState.ADD_PHOTO_FILENAME_STATE)
 async def photo_filename_message(message: Message, state: FSMContext):
     photo = message.photo[-1].file_id
     data = await state.get_data()
     name_category = data.get('name_category')
-    
+
     if message.photo:
         photo_filename = name_category
 
         await download_and_save_photo(file_id=photo, photo_filename=photo_filename)
 
-        await state.update_data(photo_filename=photo_filename, photo_file_id=photo,name_category=name_category)
+        await state.update_data(photo_filename=photo_filename, photo_file_id=photo, name_category=name_category)
 
         await message.delete()
-        await message.answer_photo(photo=photo, caption=f"Категория: {name_category}\nФото загружено", reply_markup=add_category_kb())
+        await message.answer_photo(photo=photo, caption=f"Категория: {name_category}\nФото загружено",
+                                   reply_markup=add_category_kb())
     else:
         photo_filename = message.text
-        await state.update_data(photo_filename=photo_filename,name_category=name_category)  # Сохраняем имя файла фото в состоянии
+        await state.update_data(photo_filename=photo_filename,
+                                name_category=name_category)  # Сохраняем имя файла фото в состоянии
         await message.delete()
-        await message.answer(text=f"Имя файла фото: {photo_filename}\nТеперь отправьте фото", reply_markup=get_close_category_kb())
+        await message.answer(text=f"Имя файла фото: {photo_filename}\nТеперь отправьте фото",
+                             reply_markup=get_close_category_kb())
 
 
 @router.callback_query(lambda query: query.data == "send_adding")
@@ -95,21 +108,23 @@ async def set_new_category_handlers(query: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     name_category = data.get('name_category')
     photo_filename = data.get('photo_filename')
-    photo = data.get('photo_file_id')   
+    photo = data.get('photo_file_id')
 
     try:
         await set_categories(name_category, photo_filename)
         await query.message.answer_photo(photo=photo, caption=f"Категория: {name_category}\n\nДанные успешно добавлены в базу данных", reply_markup=get_close_category_kb())
         await state.clear()
     except Exception as e:
-        await query.message.answer(text=f"Произошла ошибка при добавлении категории: {e}", reply_markup=get_close_category_kb())
+        await query.message.answer(text=f"Произошла ошибка при добавлении категории: {e}",
+                                   reply_markup=get_close_category_kb())
         await state.clear()
-    
 
 
 @router.callback_query(lambda query: query.data == "adding_delete")
 async def adding_delete_handlers(query: CallbackQuery, state: FSMContext):
-    await edit_message_media(query, "RISE_PERSONAL", caption="ПАЖЭ НАЖМИ НА КАТЕГОРИЮ КОТОРУЮ ХОЧ УДАЛИТЬ", reply_markup=await get_all_categories_kb())
+    await edit_message_media(query, "RISE_PERSONAL", caption="ПАЖЭ НАЖМИ НА КАТЕГОРИЮ КОТОРУЮ ХОЧ УДАЛИТЬ",
+                             reply_markup=await get_all_categories_kb())
+
 
 @router.callback_query(lambda query: query.data.startswith("dell_"))
 async def category_handlers(query: CallbackQuery, state: FSMContext):
@@ -120,7 +135,8 @@ async def category_handlers(query: CallbackQuery, state: FSMContext):
     if category:
         await state.update_data(category_name=category.name)
         confirmation_text = f"Вы выбрали категорию '{category.name}'. Вы действительно хотите её удалить?"
-        await edit_message_media(query, "RISE_PERSONAL", caption=confirmation_text, reply_markup=confirmation_delete_kb())
+        await edit_message_media(query, "RISE_PERSONAL", caption=confirmation_text,
+                                 reply_markup=confirmation_delete_kb())
 
 
 @router.callback_query(lambda query: query.data == "delete_name")
@@ -132,5 +148,6 @@ async def confirm_delete_handlers(query: CallbackQuery, state: FSMContext):
         deleted = await delete_categories(category_name)
 
         if deleted:
-            await edit_message_media(query, "RISE_PERSONAL", caption=f"Категория '{category_name}' успешно удалена", reply_markup=get_close_category_kb())
+            await edit_message_media(query, "RISE_PERSONAL", caption=f"Категория '{category_name}' успешно удалена",
+                                     reply_markup=get_close_category_kb())
             await pop_state(state)

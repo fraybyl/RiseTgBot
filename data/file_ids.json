@@ -1,35 +1,39 @@
 {
     "RISE_BACKGROUND": {
         "path": "data/photos/Main.png",
-        "file_id": "AgACAgIAAxkDAAICp2aYK3XMxCjqEi_Ti6bwAAGesc85OAACMNkxGwLyyUibKj4zay-4swEAAwIAA3cAAzUE"
+        "file_id": "AgACAgIAAxkDAAIZBWaUMIBy8rfXBmmaL-Q-IB4ceo3NAAIv4TEb1WqhSLacVM2TXHWUAQADAgADdwADNQQ"
     },
     "RISE_SHOP": {
         "path": "data/photos/Shop.png",
-        "file_id": "AgACAgIAAxkDAAICp2aYLOuyN0Ej754TAAF738evBkvYUgACN9kxGwLyyUj9yUR6GHop3QEAAwIAA3cAAzUE"
+        "file_id": "AgACAgIAAxkDAAIZBWaUMKDbR64RG5-9GufoQvR_NaBiAAI14TEb1WqhSAUrohQFD99fAQADAgADdwADNQQ"
     },
     "RISE_FOR_FARMERS": {
-        "path": "data/photos/for_farmers.png"
+        "path": "data/photos/for_farmers.png",
+        "file_id": "AgACAgIAAxkDAAIZBWaUMIbiunBKkqOrHwle3MxbxBJAAAIx4TEb1WqhSAiDvR-MA68ZAQADAgADdwADNQQ"
     },
     "RISE_PERSONAL": {
         "path": "data/photos/Personal.png",
-        "file_id": "AgACAgIAAxkDAAICp2aYK3fa-VRq1jI0vjiJXNDOEkD3AAIx2TEbAvLJSBMEtGD5m2BhAQADAgADdwADNQQ"
+        "file_id": "AgACAgIAAxkDAAIZBWaUMIMVlpExwV9zxSfzkHn_vCF3AAIw4TEb1WqhSCQDcnoJ8uPsAQADAgADdwADNQQ"
     },
     "RISE_GIFT_CODE": {
         "path": "data/photos/Steam_gift.png",
-        "file_id": "AgACAgIAAxkDAAICv2aYNRkRN5Wl107zd_nNhA_le5UtAAKE2TEbAvLJSAZiRizgduJUAQADAgADeQADNQQ"
+        "file_id": "AgACAgIAAxkDAAIZBWaUMLsU123lDOX3TNIuXGU8PCDIAAI44TEb1WqhSJbRegaqHRUOAQADAgADeQADNQQ"
     },
     "RISE_LIMIT_ACCOUNT": {
         "path": "data/photos/Steam_account.png",
-        "file_id": "AgACAgIAAxkDAAICp2aYNN9vEeMU5Cv7tE-Fj6zsKt-UAAKA2TEbAvLJSJXwEyfZgwkoAQADAgADeQADNQQ"
+        "file_id": "AgACAgIAAxkDAAIZBWaUMKSbK5ZACmxH9TBc2MKmHpAuAAI24TEb1WqhSHCyt9XOodLeAQADAgADeQADNQQ"
     },
     "RISE_STRATEGY": {
-        "path": "data/photos/strategy_info.png"
+        "path": "data/photos/strategy_info.png",
+        "file_id": "AgACAgIAAxkDAAIZBWaUMJRTm7rYP9nzDsb2k8AwOrm3AAIy4TEb1WqhSPwFFSg7oOAUAQADAgADdwADNQQ"
     },
     "AGGRESSIVE": {
-        "path": "data/photos/Aggresive.png"
+        "path": "data/photos/Aggresive.png",
+        "file_id": "AgACAgIAAxkDAAIZBWaUMJZ4fLuFgjG_UCHupCLNSmtIAAIz4TEb1WqhSA2Lq-xNBpRJAQADAgADeQADNQQ"
     },
     "CONSERVATIVE": {
-        "path": "data/photos/Konservate.png"
+        "path": "data/photos/Konservate.png",
+        "file_id": "AgACAgIAAxkDAAIZBWaUMJuInMO35EQAAdpZuXHhvKevjAACNOExG9VqoUhcjL86ayaqZgEAAwIAA3kAAzUE"
     },
     "MODERATE": {
         "path": "data/photos/Moderate.png"

@@ -1,6 +1,7 @@
 import asyncio
 
 from aiogram.utils.callback_answer import CallbackAnswerMiddleware
+from aiohttp import web
 from loguru import logger
 
 import bot.utils.logging
@@ -10,6 +11,7 @@ from bot.handlers import router as main_router
 from bot.l10n.fluent_localization import get_fluent_localization
 from bot.middlewares.l10n import L10nMiddleware
 from bot.schedulers.schedule import start_schedulers
+from bot.payments.free_kassa_server import app
 
 
 async def on_startup() -> None:
@@ -20,15 +22,27 @@ async def on_startup() -> None:
     dp.message.outer_middleware(L10nMiddleware(locale))
     dp.callback_query.outer_middleware(L10nMiddleware(locale))
     dp.callback_query.middleware(CallbackAnswerMiddleware())
-    
+
     dp.include_router(main_router)
 
     start_schedulers()
 
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, host='localhost', port=8000)
+    await site.start()
+
 
 async def redis_shutdown() -> None:
+    logger.info('Bot shutdown...')
+    await dp.storage.close()
+    await dp.fsm.storage.close()
+
     await redis_db.connection_pool.aclose()
     await redis_db.aclose()
+
+    await app.shutdown()
+    await app.cleanup()
 
 
 async def on_shutdown() -> None:
