@@ -34,9 +34,6 @@ async def handle_payment_product(query: CallbackQuery, state: FSMContext, l10n: 
                                          reply_markup=get_buy_kb(payment_url))
         await state.set_state(OrderStates.WAITING_PAYMENT)
 
-        # Сохраняем ID заказа в состоянии для дальнейшего использования
-        await state.update_data(order_id=order.id)
-
     except ValueError as e:
         logger.error(f"Error creating order: {e}")
         await query.answer("Ошибка при создании заказа. Пожалуйста, попробуйте снова.", show_alert=True)
