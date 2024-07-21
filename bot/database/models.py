@@ -18,6 +18,7 @@ class User(BaseModel):
 
     referrer = relationship('User', remote_side=[telegram_id])
     steam_accounts = relationship('SteamAccount', back_populates='user')
+    orders = relationship('Order', back_populates='user')
 
 
 class SteamAccount(BaseModel):
@@ -54,6 +55,7 @@ class Product(BaseModel):
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey('categories.id'), nullable=False)
 
     category = relationship('Category', back_populates='products')
+    order_items = relationship('OrderItem', back_populates='product')
 
 
 class Order(BaseModel):
@@ -63,11 +65,13 @@ class Order(BaseModel):
     user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.telegram_id'), nullable=False, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
     total_price: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
-    status: Mapped[str] = mapped_column(Enum('pending', 'paid', 'cancelled', 'completed', name='order_status'), nullable=False)
+    status: Mapped[str] = mapped_column(Enum('pending', 'paid', 'cancelled', 'completed', name='order_status'),
+                                        nullable=False)
     payment_id: Mapped[str] = mapped_column(String(64), nullable=True)
 
     user = relationship('User', back_populates='orders')
     order_items = relationship('OrderItem', back_populates='order')
+
 
 class OrderItem(BaseModel):
     __tablename__ = 'order_items'
