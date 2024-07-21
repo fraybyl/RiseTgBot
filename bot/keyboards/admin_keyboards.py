@@ -43,7 +43,7 @@ async def get_categories_kb() -> InlineKeyboardMarkup:
     kb.row(InlineKeyboardButton(text="Новая категория", callback_data="adding_new"))
     kb.row(InlineKeyboardButton(text="Удалить категорию", callback_data="adding_delete"))
     for category in categories:
-        kb.row(InlineKeyboardButton(text=category.name, callback_data=f"category_{category.name}"))
+        kb.row(InlineKeyboardButton(text=category.name, callback_data=f"get_{category.id}"))
 
 
     kb.row(InlineKeyboardButton(text="назад", callback_data="admin_panel"))
