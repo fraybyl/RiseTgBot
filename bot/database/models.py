@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DECIMAL, Integer, String, DateTime, ForeignKey, BigInteger, func
+from sqlalchemy import DECIMAL, Integer, String, DateTime, ForeignKey, BigInteger, func, Enum
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 
 from .base_model import BaseModel
@@ -54,3 +54,29 @@ class Product(BaseModel):
     category_id: Mapped[int] = mapped_column(Integer, ForeignKey('categories.id'), nullable=False)
 
     category = relationship('Category', back_populates='products')
+
+
+class Order(BaseModel):
+    __tablename__ = 'orders'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, unique=True, nullable=False)
+    user_id: Mapped[int] = mapped_column(BigInteger, ForeignKey('user.telegram_id'), nullable=False, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), nullable=False)
+    total_price: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
+    status: Mapped[str] = mapped_column(Enum('pending', 'paid', 'cancelled', 'completed', name='order_status'), nullable=False)
+    payment_id: Mapped[str] = mapped_column(String(64), nullable=True)
+
+    user = relationship('User', back_populates='orders')
+    order_items = relationship('OrderItem', back_populates='order')
+
+class OrderItem(BaseModel):
+    __tablename__ = 'order_items'
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, index=True, unique=True, nullable=False)
+    order_id: Mapped[int] = mapped_column(Integer, ForeignKey('orders.id'), nullable=False)
+    product_id: Mapped[int] = mapped_column(Integer, ForeignKey('products.id'), nullable=False)
+    quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    price: Mapped[float] = mapped_column(DECIMAL(10, 2), nullable=False)
+
+    order = relationship('Order', back_populates='order_items')
+    product = relationship('Product', back_populates='order_items')

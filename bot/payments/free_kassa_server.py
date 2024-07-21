@@ -65,5 +65,9 @@ async def handle_payment_notification(request: web.Request) -> web.Response:
         logger.error(f"Ошибка при обработке уведомления о платеже: {e}")
         return web.Response(status=500, text="Внутренняя ошибка сервера")
 
+
+
+
+
 app = web.Application()
 app.router.add_post(settings.WEBHOOK_PATH, handle_payment_notification)

@@ -330,3 +330,52 @@ async def remove_steamid64_for_user(user_id: int, steamid64: list[int]) -> list[
             logger.error(f"ошибка в remove_steamid64_for_user: {e}")
             await session.rollback()
             raise
+
+
+async def create_order(user_id: int, product_id: int, quantity: int) -> Order:
+    async with async_session() as session:
+        try:
+            user = await get_user_by_telegram_id(user_id)
+            product = await session.scalar(select(Product).where(Product.id == product_id))
+
+            if not user or not product:
+                raise ValueError("User or Product not found")
+
+            total_price = product.price * quantity
+
+            order = Order(user_id=user.telegram_id, total_price=total_price, status='pending')
+            order_item = OrderItem(product_id=product.id, quantity=quantity, price=product.price)
+            order.order_items.append(order_item)
+
+            session.add(order)
+            await session.commit()
+            await session.refresh(order)
+
+            return order
+        except Exception as e:
+            logger.error(f"Error in create_order: {e}")
+            await session.rollback()
+            raise
+
+
+async def get_order_by_id(order_id: int) -> Order:
+    async with async_session() as session:
+        try:
+            order = await session.scalar(select(Order).where(Order.id == order_id))
+            return order
+        except Exception as e:
+            logger.error(f"Error in get_order_by_id: {e}")
+            raise
+
+
+async def update_order_status(order_id: int, new_status: str):
+    async with async_session() as session:
+        try:
+            order = await session.scalar(select(Order).where(Order.id == order_id))
+            if order:
+                order.status = new_status
+                await session.commit()
+        except Exception as e:
+            logger.error(f"Error in update_order_status: {e}")
+            await session.rollback()
+            raise
