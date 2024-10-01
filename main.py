@@ -1,25 +1,68 @@
 import asyncio
-from aiogram import Dispatcher
-from bot.handlers import start_handlers, shop_handlers, farmers_handlers, personal_handlers, strategy_handlers, steam_gift_code_handlers, steam_limit_accounts_handlers
-from loader import bot, dp
+
+from aiogram.utils.callback_answer import CallbackAnswerMiddleware
+from aiohttp import web
+from loguru import logger
+
+import bot.utils.logging
+from bot.core.loader import bot, dp, redis_db
+from bot.database.database import start_db_postgres, close_db_postgres, engine
+from bot.handlers import router as main_router
+from bot.l10n.fluent_localization import get_fluent_localization
+from bot.middlewares.l10n import L10nMiddleware
+from bot.schedulers.schedule import start_schedulers
+from bot.payments.free_kassa_server import app
 
 
-def register_routers(dp: Dispatcher):
-    dp.include_router(start_handlers.router)
-    dp.include_router(shop_handlers.router)
-    dp.include_router(farmers_handlers.router)
-    dp.include_router(personal_handlers.router)
-    dp.include_router(strategy_handlers.router)
-    dp.include_router(steam_gift_code_handlers.router)
-    dp.include_router(steam_limit_accounts_handlers.router)
-    
+async def on_startup() -> None:
+    logger.info('Bot starting...')
+    await start_db_postgres()
+    locale = get_fluent_localization()
+
+    dp.message.outer_middleware(L10nMiddleware(locale))
+    dp.callback_query.outer_middleware(L10nMiddleware(locale))
+    dp.callback_query.middleware(CallbackAnswerMiddleware())
+
+    dp.include_router(main_router)
+
+    start_schedulers()
+
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, host='localhost', port=8000)
+    await site.start()
+
+
+async def redis_shutdown() -> None:
+    logger.info('Bot shutdown...')
+    await dp.storage.close()
+    await dp.fsm.storage.close()
+
+    await redis_db.connection_pool.aclose()
+    await redis_db.aclose()
+
+    await app.shutdown()
+    await app.cleanup()
+
+
+async def on_shutdown() -> None:
+    logger.info('Bot shutdown...')
+    await dp.storage.close()
+    await dp.fsm.storage.close()
+
+    await redis_shutdown()
+    await close_db_postgres(engine)
+
+
 async def main() -> None:
-    #await async_main()
-    register_routers(dp)
-    await bot.delete_webhook(drop_pending_updates=True)
-    await dp.start_polling(bot)
-    
-## ЕСЛИ БУДЕШЬ ПЕРЕДЕЛЫВАТЬ БД ТО ГЕНЕРИРУЙ РЕФЕРАЛКУ ПО TELEGRAM_ID ПЖ!! ПРОСТО ЗАКОДИРУЙ ЕЁ В BASE64 И ВСЁ!!!!!!!!!!!!!!!!!
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
+
+    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
+
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        logger.info('Exit bot')

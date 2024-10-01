@@ -1,0 +1,14 @@
+{
+  "referral_bonus": 10.00,
+  "minimal_price": 150.00,
+  "account_price": 1203,
+  "steam_web_api_key": "89017D6FB681B31C8CCF8E6C050FFBA3",
+  "proxies": [
+    "http://jzdwnepi:iyhnzdzkxoin@154.95.36.199:6893",
+    "http://upydhjbu:6y03hyo3r224@38.154.227.167:5868",
+    "http://upydhjbu:6y03hyo3r224@188.74.183.10:8279",
+    "http://upydhjbu:6y03hyo3r224@45.155.68.129:8133"
+
+  ],
+  "accounts_per_account_limit": 2000
+}
